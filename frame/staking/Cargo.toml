@@ -31,7 +31,6 @@ pallet-authorship = { version = "4.0.0-dev", default-features = false, path = ".
 sp-application-crypto = { version = "4.0.0-dev", default-features = false, path = "../../primitives/application-crypto" }
 frame-election-provider-support = { version = "4.0.0-dev", default-features = false, path = "../election-provider-support" }
 log = { version = "0.4.14", default-features = false }
-
 # Optional imports for benchmarking
 frame-benchmarking = { version = "4.0.0-dev", default-features = false, path = "../benchmarking", optional = true }
 rand_chacha = { version = "0.2", default-features = false, optional = true }
@@ -43,7 +42,9 @@ sp-npos-elections = { version = "4.0.0-dev", path = "../../primitives/npos-elect
 pallet-balances = { version = "4.0.0-dev", path = "../balances" }
 pallet-timestamp = { version = "4.0.0-dev", path = "../timestamp" }
 pallet-staking-reward-curve = { version = "4.0.0-dev", path = "../staking/reward-curve" }
-pallet-bags-list = { version = "4.0.0-dev", features = ["runtime-benchmarks"], path = "../bags-list" }
+pallet-bags-list = { version = "4.0.0-dev", features = [
+	"runtime-benchmarks"
+], path = "../bags-list" }
 substrate-test-utils = { version = "4.0.0-dev", path = "../../test-utils" }
 frame-benchmarking = { version = "4.0.0-dev", path = "../benchmarking" }
 frame-election-provider-support = { version = "4.0.0-dev", path = "../election-provider-support" }

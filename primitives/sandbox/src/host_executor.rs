@@ -260,7 +260,7 @@ impl<T> super::SandboxInstance<T> for Instance<T> {
 				let return_val =
 					ReturnValue::decode(&mut &return_val[..]).map_err(|_| Error::Execution)?;
 				Ok(return_val)
-			},
+			}
 			sandbox_primitives::ERR_EXECUTION => Err(Error::Execution),
 			_ => unreachable!(),
 		}

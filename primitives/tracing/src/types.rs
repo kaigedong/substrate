@@ -88,14 +88,14 @@ impl core::fmt::Debug for WasmValue {
 				} else {
 					f.write_fmt(format_args!("{:?}", i))
 				}
-			},
+			}
 			WasmValue::Encoded(ref v) => {
 				f.write_str("Scale(")?;
 				for byte in v {
 					f.write_fmt(format_args!("{:02x}", byte))?;
 				}
 				f.write_str(")")
-			},
+			}
 		}
 	}
 }

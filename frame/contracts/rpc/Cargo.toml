@@ -18,7 +18,6 @@ jsonrpc-core = "18.0.0"
 jsonrpc-core-client = "18.0.0"
 jsonrpc-derive = "18.0.0"
 serde = { version = "1", features = ["derive"] }
-
 # Substrate Dependencies
 pallet-contracts-primitives = { version = "4.0.0-dev", path = "../common" }
 pallet-contracts-rpc-runtime-api = { version = "4.0.0-dev", path = "./runtime-api" }

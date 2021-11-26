@@ -111,7 +111,7 @@ where
 		{
 			changes
 		} else {
-			return Ok(None)
+			return Ok(None);
 		};
 
 		prove_finality(&*self.backend, authority_set_changes, block)
@@ -163,7 +163,7 @@ where
 			block, info.finalized_number,
 		);
 		trace!(target: "afg", "{}", &err);
-		return Err(FinalityProofError::BlockNotYetFinalized)
+		return Err(FinalityProofError::BlockNotYetFinalized);
 	}
 
 	let (justification, just_block) = match authority_set_changes.get_set_id(block) {
@@ -178,9 +178,9 @@ where
 					"No justification found for the latest finalized block. \
 					Returning empty proof.",
 				);
-				return Ok(None)
+				return Ok(None);
 			}
-		},
+		}
 		AuthoritySetChangeId::Set(_, last_block_for_set) => {
 			let last_block_for_set_id = BlockId::Number(last_block_for_set);
 			let justification = if let Some(grandpa_justification) = backend
@@ -196,10 +196,10 @@ where
 					Returning empty proof.",
 					block,
 				);
-				return Ok(None)
+				return Ok(None);
 			};
 			(justification, last_block_for_set)
-		},
+		}
 		AuthoritySetChangeId::Unknown => {
 			warn!(
 				target: "afg",
@@ -207,8 +207,8 @@ where
 				 You need to resync to populate AuthoritySetChanges properly.",
 				block,
 			);
-			return Err(FinalityProofError::BlockNotInAuthoritySetChanges)
-		},
+			return Err(FinalityProofError::BlockNotInAuthoritySetChanges);
+		}
 	};
 
 	// Collect all headers from the requested block until the last block of the set
@@ -217,7 +217,7 @@ where
 		let mut current = block + One::one();
 		loop {
 			if current > just_block || headers.len() >= MAX_UNKNOWN_HEADERS {
-				break
+				break;
 			}
 			headers.push(backend.blockchain().expect_header(BlockId::Number(current))?);
 			current += One::one();

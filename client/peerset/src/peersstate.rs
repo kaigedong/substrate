@@ -193,10 +193,12 @@ impl PeersState {
 		assert!(set < self.sets.len());
 
 		match self.nodes.get_mut(peer_id).map(|p| &p.sets[set]) {
-			None | Some(MembershipState::NotMember) =>
-				Peer::Unknown(UnknownPeer { parent: self, set, peer_id: Cow::Borrowed(peer_id) }),
-			Some(MembershipState::In) | Some(MembershipState::Out) =>
-				Peer::Connected(ConnectedPeer { state: self, set, peer_id: Cow::Borrowed(peer_id) }),
+			None | Some(MembershipState::NotMember) => {
+				Peer::Unknown(UnknownPeer { parent: self, set, peer_id: Cow::Borrowed(peer_id) })
+			}
+			Some(MembershipState::In) | Some(MembershipState::Out) => {
+				Peer::Connected(ConnectedPeer { state: self, set, peer_id: Cow::Borrowed(peer_id) })
+			}
 			Some(MembershipState::NotConnected { .. }) => Peer::NotConnected(NotConnectedPeer {
 				state: self,
 				set,
@@ -249,7 +251,7 @@ impl PeersState {
 			.fold(None::<(&PeerId, &mut Node)>, |mut cur_node, to_try| {
 				if let Some(cur_node) = cur_node.take() {
 					if cur_node.1.reputation >= to_try.1.reputation {
-						return Some(cur_node)
+						return Some(cur_node);
 					}
 				}
 				Some(to_try)
@@ -274,14 +276,14 @@ impl PeersState {
 	pub fn add_no_slot_node(&mut self, set: usize, peer_id: PeerId) {
 		// Reminder: `HashSet::insert` returns false if the node was already in the set
 		if !self.sets[set].no_slot_nodes.insert(peer_id) {
-			return
+			return;
 		}
 
 		if let Some(peer) = self.nodes.get_mut(&peer_id) {
 			match peer.sets[set] {
 				MembershipState::In => self.sets[set].num_in -= 1,
 				MembershipState::Out => self.sets[set].num_out -= 1,
-				MembershipState::NotConnected { .. } | MembershipState::NotMember => {},
+				MembershipState::NotConnected { .. } | MembershipState::NotMember => {}
 			}
 		}
 	}
@@ -292,14 +294,14 @@ impl PeersState {
 	pub fn remove_no_slot_node(&mut self, set: usize, peer_id: &PeerId) {
 		// Reminder: `HashSet::remove` returns false if the node was already not in the set
 		if !self.sets[set].no_slot_nodes.remove(peer_id) {
-			return
+			return;
 		}
 
 		if let Some(peer) = self.nodes.get_mut(peer_id) {
 			match peer.sets[set] {
 				MembershipState::In => self.sets[set].num_in += 1,
 				MembershipState::Out => self.sets[set].num_out += 1,
-				MembershipState::NotConnected { .. } | MembershipState::NotMember => {},
+				MembershipState::NotConnected { .. } | MembershipState::NotMember => {}
 			}
 		}
 	}
@@ -377,7 +379,7 @@ impl<'a> ConnectedPeer<'a> {
 							false,
 							"State inconsistency: disconnecting a disconnected node"
 						)
-					},
+					}
 				}
 			}
 			node.sets[self.set] = MembershipState::NotConnected { last_connected: Instant::now() };
@@ -449,8 +451,8 @@ impl<'a> NotConnectedPeer<'a> {
 					"State inconsistency with {}; not connected after borrow",
 					self.peer_id
 				);
-				return Instant::now()
-			},
+				return Instant::now();
+			}
 		};
 
 		match state.sets[self.set] {
@@ -458,7 +460,7 @@ impl<'a> NotConnectedPeer<'a> {
 			_ => {
 				error!(target: "peerset", "State inconsistency with {}", self.peer_id);
 				Instant::now()
-			},
+			}
 		}
 	}
 
@@ -474,7 +476,7 @@ impl<'a> NotConnectedPeer<'a> {
 		// Note that it is possible for num_out to be strictly superior to the max, in case we were
 		// connected to reserved node then marked them as not reserved.
 		if !self.state.has_free_outgoing_slot(self.set) && !is_no_slot_occupy {
-			return Err(self)
+			return Err(self);
 		}
 
 		if let Some(peer) = self.state.nodes.get_mut(&*self.peer_id) {
@@ -500,10 +502,10 @@ impl<'a> NotConnectedPeer<'a> {
 
 		// Note that it is possible for num_in to be strictly superior to the max, in case we were
 		// connected to reserved node then marked them as not reserved.
-		if self.state.sets[self.set].num_in >= self.state.sets[self.set].max_in &&
-			!is_no_slot_occupy
+		if self.state.sets[self.set].num_in >= self.state.sets[self.set].max_in
+			&& !is_no_slot_occupy
 		{
-			return Err(self)
+			return Err(self);
 		}
 
 		if let Some(peer) = self.state.nodes.get_mut(&*self.peer_id) {
@@ -544,8 +546,8 @@ impl<'a> NotConnectedPeer<'a> {
 			peer.sets[self.set] = MembershipState::NotMember;
 
 			// Remove the peer from `self.state.nodes` entirely if it isn't a member of any set.
-			if peer.reputation == 0 &&
-				peer.sets.iter().all(|set| matches!(set, MembershipState::NotMember))
+			if peer.reputation == 0
+				&& peer.sets.iter().all(|set| matches!(set, MembershipState::NotMember))
 			{
 				self.state.nodes.remove(&*self.peer_id);
 			}
@@ -616,8 +618,8 @@ impl<'a> Reputation<'a> {
 impl<'a> Drop for Reputation<'a> {
 	fn drop(&mut self) {
 		if let Some(node) = self.node.take() {
-			if node.get().reputation == 0 &&
-				node.get().sets.iter().all(|set| matches!(set, MembershipState::NotMember))
+			if node.get().reputation == 0
+				&& node.get().sets.iter().all(|set| matches!(set, MembershipState::NotMember))
 			{
 				node.remove();
 			}

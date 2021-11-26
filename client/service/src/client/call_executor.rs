@@ -249,7 +249,7 @@ where
 					execution_manager,
 					native_call.map(|n| || (n)().map_err(|e| Box::new(e) as Box<_>)),
 				)
-			},
+			}
 			None => {
 				let mut state_machine = StateMachine::new(
 					&state,
@@ -269,7 +269,7 @@ where
 					execution_manager,
 					native_call.map(|n| || (n)().map_err(|e| Box::new(e) as Box<_>)),
 				)
-			},
+			}
 		}
 		.map_err(Into::into)
 	}

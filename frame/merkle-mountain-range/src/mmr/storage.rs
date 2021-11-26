@@ -89,7 +89,7 @@ where
 
 	fn append(&mut self, pos: NodeIndex, elems: Vec<NodeOf<T, I, L>>) -> mmr_lib::Result<()> {
 		if elems.is_empty() {
-			return Ok(())
+			return Ok(());
 		}
 
 		sp_std::if_std! {
@@ -100,7 +100,7 @@ where
 		let size = NodesUtils::new(leaves).size();
 
 		if pos != size {
-			return Err(mmr_lib::Error::InconsistentStore)
+			return Err(mmr_lib::Error::InconsistentStore);
 		}
 
 		let new_size = size + elems.len() as NodeIndex;

@@ -202,18 +202,20 @@ fn open_database_at<Block: BlockT>(
 ) -> sp_blockchain::Result<Arc<dyn Database<DbHash>>> {
 	let db: Arc<dyn Database<DbHash>> = match &source {
 		DatabaseSource::ParityDb { path } => open_parity_db::<Block>(&path, db_type, true)?,
-		DatabaseSource::RocksDb { path, cache_size } =>
-			open_kvdb_rocksdb::<Block>(&path, db_type, true, *cache_size)?,
+		DatabaseSource::RocksDb { path, cache_size } => {
+			open_kvdb_rocksdb::<Block>(&path, db_type, true, *cache_size)?
+		}
 		DatabaseSource::Custom(db) => db.clone(),
 		DatabaseSource::Auto { paritydb_path, rocksdb_path, cache_size } => {
 			// check if rocksdb exists first, if not, open paritydb
 			match open_kvdb_rocksdb::<Block>(&rocksdb_path, db_type, false, *cache_size) {
 				Ok(db) => db,
-				Err(OpenDbError::NotEnabled(_)) | Err(OpenDbError::DoesNotExist) =>
-					open_parity_db::<Block>(&paritydb_path, db_type, true)?,
+				Err(OpenDbError::NotEnabled(_)) | Err(OpenDbError::DoesNotExist) => {
+					open_parity_db::<Block>(&paritydb_path, db_type, true)?
+				}
 				Err(_) => return Err(backend_err("cannot open rocksdb. corrupted database")),
 			}
-		},
+		}
 	};
 
 	check_database_type(&*db, db_type)?;
@@ -238,7 +240,7 @@ impl fmt::Display for OpenDbError {
 			OpenDbError::DoesNotExist => write!(f, "Database does not exist at given location"),
 			OpenDbError::NotEnabled(feat) => {
 				write!(f, "`{}` feature not enabled, database can not be opened", feat)
-			},
+			}
 		}
 	}
 }
@@ -325,7 +327,7 @@ fn open_kvdb_rocksdb<Block: BlockT>(
 				NUM_COLUMNS,
 				other_col_budget,
 			);
-		},
+		}
 	}
 	db_config.memory_budget = memory_budget;
 
@@ -351,19 +353,20 @@ pub fn check_database_type(
 	db_type: DatabaseType,
 ) -> sp_blockchain::Result<()> {
 	match db.get(COLUMN_META, meta_keys::TYPE) {
-		Some(stored_type) =>
+		Some(stored_type) => {
 			if db_type.as_str().as_bytes() != &*stored_type {
 				return Err(sp_blockchain::Error::Backend(format!(
 					"Unexpected database type. Expected: {}",
 					db_type.as_str()
 				))
-				.into())
-			},
+				.into());
+			}
+		}
 		None => {
 			let mut transaction = Transaction::new();
 			transaction.set(COLUMN_META, meta_keys::TYPE, db_type.as_str().as_bytes());
 			db.commit(transaction)?;
-		},
+		}
 	}
 
 	Ok(())
@@ -380,8 +383,8 @@ fn maybe_migrate_to_type_subdir<Block: BlockT>(
 		// Do we have to migrate to a database-type-based subdirectory layout:
 		// See if there's a file identifying a rocksdb or paritydb folder in the parent dir and
 		// the target path ends in a role specific directory
-		if (basedir.join("db_version").exists() || basedir.join("metadata").exists()) &&
-			(p.ends_with(DatabaseType::Full.as_str()))
+		if (basedir.join("db_version").exists() || basedir.join("metadata").exists())
+			&& (p.ends_with(DatabaseType::Full.as_str()))
 		{
 			// Try to open the database to check if the current `DatabaseType` matches the type of
 			// database stored in the target directory and close the database on success.
@@ -467,7 +470,7 @@ where
 {
 	let genesis_hash: Block::Hash = match read_genesis_hash(db)? {
 		Some(genesis_hash) => genesis_hash,
-		None =>
+		None => {
 			return Ok(Meta {
 				best_hash: Default::default(),
 				best_number: Zero::zero(),
@@ -476,7 +479,8 @@ where
 				genesis_hash: Default::default(),
 				finalized_state: None,
 				block_gap: None,
-			}),
+			})
+		}
 	};
 
 	let load_meta_block = |desc, key| -> Result<_, sp_blockchain::Error> {
@@ -530,8 +534,9 @@ pub fn read_genesis_hash<Hash: Decode>(
 	match db.get(COLUMN_META, meta_keys::GENESIS_HASH) {
 		Some(h) => match Decode::decode(&mut &h[..]) {
 			Ok(h) => Ok(Some(h)),
-			Err(err) =>
-				Err(sp_blockchain::Error::Backend(format!("Error decoding genesis hash: {}", err))),
+			Err(err) => {
+				Err(sp_blockchain::Error::Backend(format!("Error decoding genesis hash: {}", err)))
+			}
 		},
 		None => Ok(None),
 	}

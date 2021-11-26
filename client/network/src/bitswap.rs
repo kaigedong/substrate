@@ -217,7 +217,7 @@ impl<B: BlockT> NetworkBehaviour for Bitswap<B> {
 		trace!(target: LOG_TARGET, "Received request: {:?} from {}", request, peer);
 		if self.ready_blocks.len() > MAX_RESPONSE_QUEUE {
 			debug!(target: LOG_TARGET, "Ignored request: queue is full");
-			return
+			return;
 		}
 		let mut response = BitswapMessage {
 			wantlist: None,
@@ -230,27 +230,27 @@ impl<B: BlockT> NetworkBehaviour for Bitswap<B> {
 			Some(wantlist) => wantlist,
 			None => {
 				debug!(target: LOG_TARGET, "Unexpected bitswap message from {}", peer);
-				return
-			},
+				return;
+			}
 		};
 		if wantlist.entries.len() > MAX_WANTED_BLOCKS {
 			trace!(target: LOG_TARGET, "Ignored request: too many entries");
-			return
+			return;
 		}
 		for entry in wantlist.entries {
 			let cid = match cid::Cid::read_bytes(entry.block.as_slice()) {
 				Ok(cid) => cid,
 				Err(e) => {
 					trace!(target: LOG_TARGET, "Bad CID {:?}: {:?}", entry.block, e);
-					continue
-				},
+					continue;
+				}
 			};
-			if cid.version() != cid::Version::V1 ||
-				cid.hash().code() != u64::from(cid::multihash::Code::Blake2b256) ||
-				cid.hash().size() != 32
+			if cid.version() != cid::Version::V1
+				|| cid.hash().code() != u64::from(cid::multihash::Code::Blake2b256)
+				|| cid.hash().size() != 32
 			{
 				debug!(target: LOG_TARGET, "Ignoring unsupported CID {}: {}", peer, cid);
-				continue
+				continue;
 			}
 			let mut hash = B::Hash::default();
 			hash.as_mut().copy_from_slice(&cid.hash().digest()[0..32]);
@@ -259,7 +259,7 @@ impl<B: BlockT> NetworkBehaviour for Bitswap<B> {
 				Err(e) => {
 					error!(target: LOG_TARGET, "Error retrieving transaction {}: {}", hash, e);
 					None
-				},
+				}
 			};
 			match transaction {
 				Some(transaction) => {
@@ -280,7 +280,7 @@ impl<B: BlockT> NetworkBehaviour for Bitswap<B> {
 							cid: cid.to_bytes(),
 						});
 					}
-				},
+				}
 				None => {
 					trace!(target: LOG_TARGET, "Missing CID {:?}, hash {:?}", cid, hash);
 					if entry.send_dont_have {
@@ -289,7 +289,7 @@ impl<B: BlockT> NetworkBehaviour for Bitswap<B> {
 							cid: cid.to_bytes(),
 						});
 					}
-				},
+				}
 			}
 		}
 		trace!(target: LOG_TARGET, "Response: {:?}", response);
@@ -306,7 +306,7 @@ impl<B: BlockT> NetworkBehaviour for Bitswap<B> {
 				peer_id,
 				handler: NotifyHandler::Any,
 				event: message,
-			})
+			});
 		}
 		Poll::Pending
 	}

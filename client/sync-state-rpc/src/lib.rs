@@ -186,7 +186,7 @@ where
 {
 	fn system_gen_sync_spec(&self, raw: bool) -> jsonrpc_core::Result<jsonrpc_core::Value> {
 		if let Err(err) = self.deny_unsafe.check_if_safe() {
-			return Err(err.into())
+			return Err(err.into());
 		}
 
 		let mut chain_spec = self.chain_spec.cloned_box();

@@ -174,7 +174,7 @@ where
 					.iter()
 					.all(|&(ref id, ref service, _, _)| full_predicate(*id, service))
 				{
-					break
+					break;
 				}
 			}
 		};

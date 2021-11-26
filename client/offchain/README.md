@@ -11,6 +11,7 @@ that are not feasible for execution during regular block processing.
 It can either be tasks that no consensus is required for,
 or some form of consensus over the data can be built on-chain
 for instance via:
+
 1. Challenge period for incorrect computations
 2. Majority voting for results
 3. etc

@@ -61,10 +61,12 @@ fn fuse_nibbles_node<'a>(nibbles: &'a [u8], kind: NodeKind) -> impl Iterator<Ite
 
 	let iter_start = match kind {
 		NodeKind::Leaf => size_and_prefix_iterator(size, trie_constants::LEAF_PREFIX_MASK),
-		NodeKind::BranchNoValue =>
-			size_and_prefix_iterator(size, trie_constants::BRANCH_WITHOUT_MASK),
-		NodeKind::BranchWithValue =>
-			size_and_prefix_iterator(size, trie_constants::BRANCH_WITH_MASK),
+		NodeKind::BranchNoValue => {
+			size_and_prefix_iterator(size, trie_constants::BRANCH_WITHOUT_MASK)
+		}
+		NodeKind::BranchWithValue => {
+			size_and_prefix_iterator(size, trie_constants::BRANCH_WITH_MASK)
+		}
 	};
 	iter_start
 		.chain(if nibbles.len() % 2 == 1 { Some(nibbles[0]) } else { None })

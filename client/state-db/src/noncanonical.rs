@@ -117,10 +117,10 @@ fn discard_values<Key: Hash>(values: &mut HashMap<Key, (u32, DBValue)>, inserted
 				if *counter == 0 {
 					e.remove_entry();
 				}
-			},
+			}
 			Entry::Vacant(_) => {
 				debug_assert!(false, "Trying to discard missing value");
-			},
+			}
 		}
 	}
 }
@@ -147,8 +147,8 @@ fn discard_descendants<BlockHash: Hash, Key: Hash>(
 		while let Some(i) = level.blocks.iter().position(|overlay| {
 			parents
 				.get(&overlay.hash)
-				.expect("there is a parent entry for each entry in levels; qed") ==
-				hash
+				.expect("there is a parent entry for each entry in levels; qed")
+				== hash
 		}) {
 			let overlay = level.remove(i);
 			let mut num_pinned = discard_descendants(
@@ -222,7 +222,7 @@ impl<BlockHash: Hash, Key: Hash> NonCanonicalOverlay<BlockHash, Key> {
 					}
 				}
 				if level.blocks.is_empty() {
-					break
+					break;
 				}
 				levels.push_back(level);
 				block += 1;
@@ -261,15 +261,15 @@ impl<BlockHash: Hash, Key: Hash> NonCanonicalOverlay<BlockHash, Key> {
 				.push((to_meta_key(LAST_CANONICAL, &()), last_canonicalized.encode()));
 			self.last_canonicalized = Some(last_canonicalized);
 		} else if self.last_canonicalized.is_some() {
-			if number < front_block_number ||
-				number >= front_block_number + self.levels.len() as u64 + 1
+			if number < front_block_number
+				|| number >= front_block_number + self.levels.len() as u64 + 1
 			{
 				trace!(target: "state-db", "Failed to insert block {}, current is {} .. {})",
 					number,
 					front_block_number,
 					front_block_number + self.levels.len() as u64,
 				);
-				return Err(Error::InvalidBlockNumber)
+				return Err(Error::InvalidBlockNumber);
 			}
 			// check for valid parent if inserting on second level or higher
 			if number == front_block_number {
@@ -278,14 +278,14 @@ impl<BlockHash: Hash, Key: Hash> NonCanonicalOverlay<BlockHash, Key> {
 					.as_ref()
 					.map_or(false, |&(ref h, n)| h == parent_hash && n == number - 1)
 				{
-					return Err(Error::InvalidParent)
+					return Err(Error::InvalidParent);
 				}
 			} else if !self.parents.contains_key(&parent_hash) {
-				return Err(Error::InvalidParent)
+				return Err(Error::InvalidParent);
 			}
 		}
-		let level = if self.levels.is_empty() ||
-			number == front_block_number + self.levels.len() as u64
+		let level = if self.levels.is_empty()
+			|| number == front_block_number + self.levels.len() as u64
 		{
 			self.levels.push_back(OverlayLevel::new());
 			self.levels.back_mut().expect("can't be empty after insertion; qed")
@@ -295,7 +295,7 @@ impl<BlockHash: Hash, Key: Hash> NonCanonicalOverlay<BlockHash, Key> {
 		};
 
 		if level.blocks.len() >= MAX_BLOCKS_PER_LEVEL as usize {
-			return Err(Error::TooManySiblingBlocks)
+			return Err(Error::TooManySiblingBlocks);
 		}
 
 		let index = level.available_index();
@@ -359,8 +359,9 @@ impl<BlockHash: Hash, Key: Hash> NonCanonicalOverlay<BlockHash, Key> {
 	pub fn last_canonicalized_block_number(&self) -> Option<u64> {
 		match self.last_canonicalized.as_ref().map(|&(_, n)| n) {
 			Some(n) => Some(n + self.pending_canonicalizations.len() as u64),
-			None if !self.pending_canonicalizations.is_empty() =>
-				Some(self.pending_canonicalizations.len() as u64),
+			None if !self.pending_canonicalizations.is_empty() => {
+				Some(self.pending_canonicalizations.len() as u64)
+			}
 			_ => None,
 		}
 	}
@@ -491,15 +492,15 @@ impl<BlockHash: Hash, Key: Hash> NonCanonicalOverlay<BlockHash, Key> {
 		Q: std::hash::Hash + Eq,
 	{
 		if let Some((_, value)) = self.values.get(&key) {
-			return Some(value.clone())
+			return Some(value.clone());
 		}
 		None
 	}
 
 	/// Check if the block is in the canonicalization queue.
 	pub fn have_block(&self, hash: &BlockHash) -> bool {
-		(self.parents.contains_key(hash) || self.pending_insertions.contains(hash)) &&
-			!self.pending_canonicalizations.contains(hash)
+		(self.parents.contains_key(hash) || self.pending_insertions.contains(hash))
+			&& !self.pending_canonicalizations.contains(hash)
 	}
 
 	/// Revert a single level. Returns commit set that deletes the journal or `None` if not
@@ -529,13 +530,13 @@ impl<BlockHash: Hash, Key: Hash> NonCanonicalOverlay<BlockHash, Key> {
 			// Check that it does not have any children
 			if (level_index != level_count - 1) && self.parents.values().any(|h| h == hash) {
 				log::debug!(target: "state-db", "Trying to remove block {:?} with children", hash);
-				return None
+				return None;
 			}
 			let overlay = level.remove(index);
 			commit.meta.deleted.push(overlay.journal_key);
 			self.parents.remove(&overlay.hash);
 			discard_values(&mut self.values, overlay.inserted);
-			break
+			break;
 		}
 		if self.levels.back().map_or(false, |l| l.blocks.is_empty()) {
 			self.levels.pop_back();
@@ -557,8 +558,8 @@ impl<BlockHash: Hash, Key: Hash> NonCanonicalOverlay<BlockHash, Key> {
 				.levels
 				.iter()
 				.position(|level| {
-					level.blocks.last().expect("Hash is added in `insert` in reverse order").hash ==
-						hash
+					level.blocks.last().expect("Hash is added in `insert` in reverse order").hash
+						== hash
 				})
 				.expect("Hash is added in insert");
 
@@ -589,7 +590,7 @@ impl<BlockHash: Hash, Key: Hash> NonCanonicalOverlay<BlockHash, Key> {
 		if self.pending_insertions.contains(hash) {
 			// Pinning pending state is not implemented. Pending states
 			// won't be pruned for quite some time anyway, so it's not a big deal.
-			return
+			return;
 		}
 		let refs = self.pinned.entry(hash.clone()).or_default();
 		if *refs == 0 {
@@ -609,7 +610,7 @@ impl<BlockHash: Hash, Key: Hash> NonCanonicalOverlay<BlockHash, Key> {
 				} else {
 					false
 				}
-			},
+			}
 			Entry::Vacant(_) => false,
 		};
 
@@ -629,7 +630,7 @@ impl<BlockHash: Hash, Key: Hash> NonCanonicalOverlay<BlockHash, Key> {
 						} else {
 							false
 						}
-					},
+					}
 					Entry::Vacant(_) => break,
 				};
 			}
@@ -648,8 +649,8 @@ mod tests {
 	use std::io;
 
 	fn contains(overlay: &NonCanonicalOverlay<H256, H256>, key: u64) -> bool {
-		overlay.get(&H256::from_low_u64_be(key)) ==
-			Some(H256::from_low_u64_be(key).as_bytes().to_vec())
+		overlay.get(&H256::from_low_u64_be(key))
+			== Some(H256::from_low_u64_be(key).as_bytes().to_vec())
 	}
 
 	#[test]

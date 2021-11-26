@@ -41,7 +41,6 @@ hex-literal = "0.3.4"
 log = "0.4.8"
 rand = "0.7.2"
 structopt = { version = "0.3.25", optional = true }
-
 # primitives
 sp-authority-discovery = { version = "4.0.0-dev", path = "../../../primitives/authority-discovery" }
 sp-consensus-babe = { version = "0.10.0-dev", path = "../../../primitives/consensus/babe" }
@@ -57,7 +56,6 @@ sp-keystore = { version = "0.10.0-dev", path = "../../../primitives/keystore" }
 sp-consensus = { version = "0.10.0-dev", path = "../../../primitives/consensus/common" }
 sp-transaction-pool = { version = "4.0.0-dev", path = "../../../primitives/transaction-pool" }
 sp-transaction-storage-proof = { version = "4.0.0-dev", path = "../../../primitives/transaction-storage-proof" }
-
 # client dependencies
 sc-client-api = { version = "4.0.0-dev", path = "../../../client/api" }
 sc-chain-spec = { version = "4.0.0-dev", path = "../../../client/chain-spec" }
@@ -76,20 +74,17 @@ sc-telemetry = { version = "4.0.0-dev", path = "../../../client/telemetry" }
 sc-executor = { version = "0.10.0-dev", path = "../../../client/executor" }
 sc-authority-discovery = { version = "0.10.0-dev", path = "../../../client/authority-discovery" }
 sc-sync-state-rpc = { version = "0.10.0-dev", path = "../../../client/sync-state-rpc" }
-
 # frame dependencies
 frame-system = { version = "4.0.0-dev", path = "../../../frame/system" }
 frame-system-rpc-runtime-api = { version = "4.0.0-dev", path = "../../../frame/system/rpc/runtime-api" }
 pallet-transaction-payment = { version = "4.0.0-dev", path = "../../../frame/transaction-payment" }
 pallet-asset-tx-payment = { version = "4.0.0-dev", path = "../../../frame/transaction-payment/asset-tx-payment/" }
 pallet-im-online = { version = "4.0.0-dev", default-features = false, path = "../../../frame/im-online" }
-
 # node-specific dependencies
 node-runtime = { version = "3.0.0-dev", path = "../runtime" }
 node-rpc = { version = "3.0.0-dev", path = "../rpc" }
 node-primitives = { version = "2.0.0", path = "../primitives" }
 node-executor = { version = "3.0.0-dev", path = "../executor" }
-
 # CLI-specific dependencies
 sc-cli = { version = "0.10.0-dev", optional = true, path = "../../../client/cli" }
 frame-benchmarking-cli = { version = "4.0.0-dev", optional = true, path = "../../../utils/frame/benchmarking-cli" }
@@ -97,9 +92,7 @@ node-inspect = { version = "0.9.0-dev", optional = true, path = "../inspect" }
 try-runtime-cli = { version = "0.10.0-dev", optional = true, path = "../../../utils/frame/try-runtime/cli" }
 
 [target.'cfg(any(target_arch="x86_64", target_arch="aarch64"))'.dependencies]
-node-executor = { version = "3.0.0-dev", path = "../executor", features = [
-	"wasmtime",
-] }
+node-executor = { version = "3.0.0-dev", path = "../executor", features = ["wasmtime"] }
 sc-cli = { version = "0.10.0-dev", optional = true, path = "../../../client/cli", features = [
 	"wasmtime",
 ] }
@@ -129,7 +122,7 @@ regex = "1"
 platforms = "2.0"
 async-std = { version = "1.10.0", features = ["attributes"] }
 soketto = "0.4.2"
-criterion = { version = "0.3.5", features = [ "async_tokio" ] }
+criterion = { version = "0.3.5", features = ["async_tokio"] }
 tokio = { version = "1.13", features = ["macros", "time"] }
 jsonrpsee-ws-client = "0.4.1"
 wait-timeout = "0.2"
@@ -159,10 +152,7 @@ cli = [
 	"substrate-build-script-utils",
 	"try-runtime-cli",
 ]
-runtime-benchmarks = [
-	"node-runtime/runtime-benchmarks",
-	"frame-benchmarking-cli",
-]
+runtime-benchmarks = ["node-runtime/runtime-benchmarks", "frame-benchmarking-cli"]
 # Enable features that allow the runtime to be tried and debugged. Name might be subject to change
 # in the near future.
 try-runtime = ["node-runtime/try-runtime", "try-runtime-cli"]

@@ -24,10 +24,10 @@ sp-runtime-interface = { version = "4.0.0-dev", path = "../../../primitives/runt
 sp-core = { version = "4.0.0-dev", path = "../../../primitives/core" }
 sc-allocator = { version = "4.1.0-dev", path = "../../allocator" }
 wasmtime = { version = "0.31.0", default-features = false, features = [
-    "cache",
-    "cranelift",
-    "jitdump",
-    "parallel-compilation",
+	"cache",
+	"cranelift",
+	"jitdump",
+	"parallel-compilation",
 ] }
 
 [dev-dependencies]

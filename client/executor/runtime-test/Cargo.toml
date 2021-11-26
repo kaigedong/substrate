@@ -25,12 +25,5 @@ paste = "1.0.6"
 substrate-wasm-builder = { version = "5.0.0-dev", path = "../../../utils/wasm-builder" }
 
 [features]
-default = [ "std" ]
-std = [
-	"sp-core/std",
-	"sp-io/std",
-	"sp-runtime/std",
-	"sp-sandbox/std",
-	"sp-std/std",
- 	"sp-tasks/std",
-]
+default = ["std"]
+std = ["sp-core/std", "sp-io/std", "sp-runtime/std", "sp-sandbox/std", "sp-std/std", "sp-tasks/std"]

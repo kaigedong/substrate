@@ -295,9 +295,9 @@ pub mod pallet {
 					// - It's priority is `HARD_DEADLINE`
 					// - It does not push the weight past the limit.
 					// - It is the first item in the schedule
-					if s.priority <= schedule::HARD_DEADLINE ||
-						cumulative_weight <= limit ||
-						order == 0
+					if s.priority <= schedule::HARD_DEADLINE
+						|| cumulative_weight <= limit
+						|| order == 0
 					{
 						let r = s.call.clone().dispatch(s.origin.clone().into());
 						let maybe_id = s.maybe_id.clone();
@@ -526,7 +526,7 @@ impl<T: Config> Pallet<T> {
 		};
 
 		if when <= now {
-			return Err(Error::<T>::TargetBlockNumberInPast.into())
+			return Err(Error::<T>::TargetBlockNumberInPast.into());
 		}
 
 		Ok(when)
@@ -581,7 +581,7 @@ impl<T: Config> Pallet<T> {
 							T::OriginPrivilegeCmp::cmp_privilege(o, &s.origin),
 							Some(Ordering::Less) | None
 						) {
-							return Err(BadOrigin.into())
+							return Err(BadOrigin.into());
 						}
 					};
 					Ok(s.take())
@@ -606,7 +606,7 @@ impl<T: Config> Pallet<T> {
 		let new_time = Self::resolve_time(new_time)?;
 
 		if new_time == when {
-			return Err(Error::<T>::RescheduleNoChange.into())
+			return Err(Error::<T>::RescheduleNoChange.into());
 		}
 
 		Agenda::<T>::try_mutate(when, |agenda| -> DispatchResult {
@@ -633,7 +633,7 @@ impl<T: Config> Pallet<T> {
 	) -> Result<TaskAddress<T::BlockNumber>, DispatchError> {
 		// ensure id it is unique
 		if Lookup::<T>::contains_key(&id) {
-			return Err(Error::<T>::FailedToSchedule)?
+			return Err(Error::<T>::FailedToSchedule)?;
 		}
 
 		let when = Self::resolve_time(when)?;
@@ -679,7 +679,7 @@ impl<T: Config> Pallet<T> {
 								T::OriginPrivilegeCmp::cmp_privilege(o, &s.origin),
 								Some(Ordering::Less) | None
 							) {
-								return Err(BadOrigin.into())
+								return Err(BadOrigin.into());
 							}
 						}
 						*s = None;
@@ -706,7 +706,7 @@ impl<T: Config> Pallet<T> {
 				let (when, index) = lookup.ok_or(Error::<T>::NotFound)?;
 
 				if new_time == when {
-					return Err(Error::<T>::RescheduleNoChange.into())
+					return Err(Error::<T>::RescheduleNoChange.into());
 				}
 
 				Agenda::<T>::try_mutate(when, |agenda| -> DispatchResult {
@@ -1409,9 +1409,9 @@ mod tests {
 			let call_weight = MaximumSchedulerWeight::get() / 2;
 			assert_eq!(
 				actual_weight,
-				call_weight +
-					base_weight + base_multiplier +
-					named_multiplier + periodic_multiplier
+				call_weight
+					+ base_weight + base_multiplier
+					+ named_multiplier + periodic_multiplier
 			);
 			assert_eq!(logger::log(), vec![(root(), 2600u32)]);
 

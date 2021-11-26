@@ -71,7 +71,7 @@ impl RuntimeBuilder {
 				Some(wat) => {
 					wasm = wat::parse_str(wat).expect("wat parsing failed");
 					&wasm
-				},
+				}
 			};
 
 			RuntimeBlob::uncompress_if_needed(&wasm)

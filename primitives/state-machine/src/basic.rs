@@ -107,8 +107,8 @@ impl BasicExternalities {
 
 impl PartialEq for BasicExternalities {
 	fn eq(&self, other: &BasicExternalities) -> bool {
-		self.inner.top.eq(&other.inner.top) &&
-			self.inner.children_default.eq(&other.inner.children_default)
+		self.inner.top.eq(&other.inner.top)
+			&& self.inner.children_default.eq(&other.inner.children_default)
 	}
 }
 
@@ -174,16 +174,16 @@ impl Externalities for BasicExternalities {
 	fn place_storage(&mut self, key: StorageKey, maybe_value: Option<StorageValue>) {
 		if is_child_storage_key(&key) {
 			warn!(target: "trie", "Refuse to set child storage key via main storage");
-			return
+			return;
 		}
 
 		match maybe_value {
 			Some(value) => {
 				self.inner.top.insert(key, value);
-			},
+			}
 			None => {
 				self.inner.top.remove(&key);
-			},
+			}
 		}
 	}
 
@@ -224,7 +224,7 @@ impl Externalities for BasicExternalities {
 				target: "trie",
 				"Refuse to clear prefix that is part of child storage key via main storage"
 			);
-			return (false, 0)
+			return (false, 0);
 		}
 
 		let to_remove = self

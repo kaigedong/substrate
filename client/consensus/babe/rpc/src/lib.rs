@@ -88,7 +88,7 @@ where
 {
 	fn epoch_authorship(&self) -> FutureResult<HashMap<AuthorityId, EpochAuthorship>> {
 		if let Err(err) = self.deny_unsafe.check_if_safe() {
-			return async move { Err(err.into()) }.boxed()
+			return async move { Err(err.into()) }.boxed();
 		}
 
 		let (babe_config, keystore, shared_epoch, client, select_chain) = (
@@ -137,13 +137,13 @@ where
 					match claim {
 						PreDigest::Primary { .. } => {
 							claims.entry(key).or_default().primary.push(slot);
-						},
+						}
 						PreDigest::SecondaryPlain { .. } => {
 							claims.entry(key).or_default().secondary.push(slot);
-						},
+						}
 						PreDigest::SecondaryVRF { .. } => {
 							claims.entry(key).or_default().secondary_vrf.push(slot.into());
-						},
+						}
 					};
 				}
 			}

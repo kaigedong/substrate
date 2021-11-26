@@ -11,8 +11,7 @@ _round_ can be used interchangeably in this context.
 
 `TermDuration` might change during a round. This can shorten or extend the length of the round.
 The next election round's block number is never stored but rather always checked on the fly.
-Based on the current block number and `TermDuration`, the condition `BlockNumber % TermDuration
-== 0` being satisfied will always trigger a new election round.
+Based on the current block number and `TermDuration`, the condition `BlockNumber % TermDuration == 0` being satisfied will always trigger a new election round.
 
 ### Voting
 
@@ -36,16 +35,17 @@ submit a `remove_voter()` as soon as they are in the defunct state.
 
 Candidates also reserve a bond as they submit candidacy. A candidate cannot take their candidacy
 back. A candidate can end up in one of the below situations:
-  - **Winner**: A winner is kept as a _member_. They must still have a bond in reserve and they
-    are automatically counted as a candidate for the next election.
-  - **Runner-up**: Runners-up are the best candidates immediately after the winners. The number
-    of runners_up to keep is configurable. Runners-up are used, in order that they are elected,
-    as replacements when a candidate is kicked by `[remove_member]`, or when an active member
-    renounces their candidacy. Runners are automatically counted as a candidate for the next
-    election.
-  - **Loser**: Any of the candidate who are not a winner are left as losers. A loser might be an
-    _outgoing member or runner_, meaning that they are an active member who failed to keep their
-    spot. An outgoing will always lose their bond.
+
+- **Winner**: A winner is kept as a _member_. They must still have a bond in reserve and they
+  are automatically counted as a candidate for the next election.
+- **Runner-up**: Runners-up are the best candidates immediately after the winners. The number
+  of runners_up to keep is configurable. Runners-up are used, in order that they are elected,
+  as replacements when a candidate is kicked by `[remove_member]`, or when an active member
+  renounces their candidacy. Runners are automatically counted as a candidate for the next
+  election.
+- **Loser**: Any of the candidate who are not a winner are left as losers. A loser might be an
+  _outgoing member or runner_, meaning that they are an active member who failed to keep their
+  spot. An outgoing will always lose their bond.
 
 ##### Renouncing candidacy.
 

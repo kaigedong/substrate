@@ -70,13 +70,13 @@ impl<Block: BlockT> GrandpaJustification<Block> {
 			let mut current_hash = signed.precommit.target_hash;
 			loop {
 				if current_hash == commit.target_hash {
-					break
+					break;
 				}
 
 				match client.header(BlockId::Hash(current_hash))? {
 					Some(current_header) => {
 						if *current_header.number() <= commit.target_number {
-							return error()
+							return error();
 						}
 
 						let parent_hash = *current_header.parent_hash();
@@ -84,7 +84,7 @@ impl<Block: BlockT> GrandpaJustification<Block> {
 							votes_ancestries.push(current_header);
 						}
 						current_hash = parent_hash;
-					},
+					}
 					_ => return error(),
 				}
 			}
@@ -107,8 +107,8 @@ impl<Block: BlockT> GrandpaJustification<Block> {
 		let justification = GrandpaJustification::<Block>::decode(&mut &*encoded)
 			.map_err(|_| ClientError::JustificationDecode)?;
 
-		if (justification.commit.target_hash, justification.commit.target_number) !=
-			finalized_target
+		if (justification.commit.target_hash, justification.commit.target_number)
+			!= finalized_target
 		{
 			let msg = "invalid commit target in grandpa justification".to_string();
 			Err(ClientError::BadJustification(msg))
@@ -142,11 +142,11 @@ impl<Block: BlockT> GrandpaJustification<Block> {
 		let ancestry_chain = AncestryChain::<Block>::new(&self.votes_ancestries);
 
 		match finality_grandpa::validate_commit(&self.commit, voters, &ancestry_chain) {
-			Ok(ref result) if result.ghost().is_some() => {},
+			Ok(ref result) if result.ghost().is_some() => {}
 			_ => {
 				let msg = "invalid commit in grandpa justification".to_string();
-				return Err(ClientError::BadJustification(msg))
-			},
+				return Err(ClientError::BadJustification(msg));
+			}
 		}
 
 		let mut buf = Vec::new();
@@ -162,11 +162,11 @@ impl<Block: BlockT> GrandpaJustification<Block> {
 			) {
 				return Err(ClientError::BadJustification(
 					"invalid signature for precommit in grandpa justification".to_string(),
-				))
+				));
 			}
 
 			if self.commit.target_hash == signed.precommit.target_hash {
-				continue
+				continue;
 			}
 
 			match ancestry_chain.ancestry(self.commit.target_hash, signed.precommit.target_hash) {
@@ -177,11 +177,12 @@ impl<Block: BlockT> GrandpaJustification<Block> {
 					for hash in route {
 						visited_hashes.insert(hash);
 					}
-				},
-				_ =>
+				}
+				_ => {
 					return Err(ClientError::BadJustification(
 						"invalid precommit ancestry proof in grandpa justification".to_string(),
-					)),
+					))
+				}
 			}
 		}
 
@@ -192,7 +193,7 @@ impl<Block: BlockT> GrandpaJustification<Block> {
 			return Err(ClientError::BadJustification(
 				"invalid precommit ancestries in grandpa justification with unused headers"
 					.to_string(),
-			))
+			));
 		}
 
 		Ok(())
@@ -233,13 +234,13 @@ where
 		let mut current_hash = block;
 		loop {
 			if current_hash == base {
-				break
+				break;
 			}
 			match self.ancestry.get(&current_hash) {
 				Some(current_header) => {
 					current_hash = *current_header.parent_hash();
 					route.push(current_hash);
-				},
+				}
 				_ => return Err(GrandpaError::NotDescendent),
 			}
 		}

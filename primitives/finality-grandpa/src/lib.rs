@@ -271,10 +271,10 @@ where
 	macro_rules! check {
 		( $equivocation:expr, $message:expr ) => {
 			// if both votes have the same target the equivocation is invalid.
-			if $equivocation.first.0.target_hash == $equivocation.second.0.target_hash &&
-				$equivocation.first.0.target_number == $equivocation.second.0.target_number
+			if $equivocation.first.0.target_hash == $equivocation.second.0.target_hash
+				&& $equivocation.first.0.target_number == $equivocation.second.0.target_number
 			{
-				return false
+				return false;
 			}
 
 			// check signatures on both votes are valid
@@ -301,10 +301,10 @@ where
 	match report.equivocation {
 		Equivocation::Prevote(equivocation) => {
 			check!(equivocation, grandpa::Message::Prevote);
-		},
+		}
 		Equivocation::Precommit(equivocation) => {
 			check!(equivocation, grandpa::Message::Precommit);
-		},
+		}
 	}
 }
 
@@ -453,7 +453,7 @@ impl<'a> Decode for VersionedAuthorityList<'a> {
 	fn decode<I: Input>(value: &mut I) -> Result<Self, codec::Error> {
 		let (version, authorities): (u8, AuthorityList) = Decode::decode(value)?;
 		if version != AUTHORITIES_VERSION {
-			return Err("unknown Grandpa authorities version".into())
+			return Err("unknown Grandpa authorities version".into());
 		}
 		Ok(authorities.into())
 	}

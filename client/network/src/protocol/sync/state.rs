@@ -75,11 +75,11 @@ impl<B: BlockT> StateSync<B> {
 	pub fn import(&mut self, response: StateResponse) -> ImportResult<B> {
 		if response.entries.is_empty() && response.proof.is_empty() {
 			debug!(target: "sync", "Bad state response");
-			return ImportResult::BadResponse
+			return ImportResult::BadResponse;
 		}
 		if !self.skip_proof && response.proof.is_empty() {
 			debug!(target: "sync", "Missing proof");
-			return ImportResult::BadResponse
+			return ImportResult::BadResponse;
 		}
 		let complete = if !self.skip_proof {
 			debug!(target: "sync", "Importing state from {} trie nodes", response.proof.len());
@@ -88,8 +88,8 @@ impl<B: BlockT> StateSync<B> {
 				Ok(proof) => proof,
 				Err(e) => {
 					debug!(target: "sync", "Error decoding proof: {:?}", e);
-					return ImportResult::BadResponse
-				},
+					return ImportResult::BadResponse;
+				}
 			};
 			let (values, completed) = match self.client.verify_range_proof(
 				self.target_root,
@@ -102,8 +102,8 @@ impl<B: BlockT> StateSync<B> {
 						"StateResponse failed proof verification: {:?}",
 						e,
 					);
-					return ImportResult::BadResponse
-				},
+					return ImportResult::BadResponse;
+				}
 				Ok(values) => values,
 			};
 			debug!(target: "sync", "Imported with {} keys", values.len());

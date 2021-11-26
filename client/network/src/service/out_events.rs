@@ -220,28 +220,28 @@ impl Metrics {
 		match event {
 			Event::Dht(_) => {
 				self.events_total.with_label_values(&["dht", "sent", name]).inc_by(num);
-			},
+			}
 			Event::SyncConnected { .. } => {
 				self.events_total
 					.with_label_values(&["sync-connected", "sent", name])
 					.inc_by(num);
-			},
+			}
 			Event::SyncDisconnected { .. } => {
 				self.events_total
 					.with_label_values(&["sync-disconnected", "sent", name])
 					.inc_by(num);
-			},
+			}
 			Event::NotificationStreamOpened { protocol, .. } => {
 				self.events_total
 					.with_label_values(&[&format!("notif-open-{:?}", protocol), "sent", name])
 					.inc_by(num);
-			},
+			}
 			Event::NotificationStreamClosed { protocol, .. } => {
 				self.events_total
 					.with_label_values(&[&format!("notif-closed-{:?}", protocol), "sent", name])
 					.inc_by(num);
-			},
-			Event::NotificationsReceived { messages, .. } =>
+			}
+			Event::NotificationsReceived { messages, .. } => {
 				for (protocol, message) in messages {
 					self.events_total
 						.with_label_values(&[&format!("notif-{:?}", protocol), "sent", name])
@@ -249,7 +249,8 @@ impl Metrics {
 					self.notifications_sizes.with_label_values(&[protocol, "sent", name]).inc_by(
 						num.saturating_mul(u64::try_from(message.len()).unwrap_or(u64::MAX)),
 					);
-				},
+				}
+			}
 		}
 	}
 
@@ -257,26 +258,26 @@ impl Metrics {
 		match event {
 			Event::Dht(_) => {
 				self.events_total.with_label_values(&["dht", "received", name]).inc();
-			},
+			}
 			Event::SyncConnected { .. } => {
 				self.events_total.with_label_values(&["sync-connected", "received", name]).inc();
-			},
+			}
 			Event::SyncDisconnected { .. } => {
 				self.events_total
 					.with_label_values(&["sync-disconnected", "received", name])
 					.inc();
-			},
+			}
 			Event::NotificationStreamOpened { protocol, .. } => {
 				self.events_total
 					.with_label_values(&[&format!("notif-open-{:?}", protocol), "received", name])
 					.inc();
-			},
+			}
 			Event::NotificationStreamClosed { protocol, .. } => {
 				self.events_total
 					.with_label_values(&[&format!("notif-closed-{:?}", protocol), "received", name])
 					.inc();
-			},
-			Event::NotificationsReceived { messages, .. } =>
+			}
+			Event::NotificationsReceived { messages, .. } => {
 				for (protocol, message) in messages {
 					self.events_total
 						.with_label_values(&[&format!("notif-{:?}", protocol), "received", name])
@@ -284,7 +285,8 @@ impl Metrics {
 					self.notifications_sizes
 						.with_label_values(&[&protocol, "received", name])
 						.inc_by(u64::try_from(message.len()).unwrap_or(u64::MAX));
-				},
+				}
+			}
 		}
 	}
 }

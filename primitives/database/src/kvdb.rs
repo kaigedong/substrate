@@ -27,7 +27,7 @@ fn handle_err<T>(result: std::io::Result<T>) -> T {
 		Ok(r) => r,
 		Err(e) => {
 			panic!("Critical database error: {:?}", e);
-		},
+		}
 	}
 }
 
@@ -53,12 +53,12 @@ impl<D: KeyValueDB> DbAdapter<D> {
 					return Err(error::DatabaseError(Box::new(std::io::Error::new(
 						std::io::ErrorKind::Other,
 						format!("Unexpected counter len {}", data.len()),
-					))))
+					))));
 				}
 				counter_data.copy_from_slice(&data);
 				let counter = u32::from_le_bytes(counter_data);
 				(counter_key, Some(counter))
-			},
+			}
 			None => (counter_key, None),
 		})
 	}
@@ -75,12 +75,12 @@ impl<D: KeyValueDB, H: Clone + AsRef<[u8]>> Database<H> for DbAdapter<D> {
 					(counter_key, Some(mut counter)) => {
 						counter += 1;
 						tx.put(col, &counter_key, &counter.to_le_bytes());
-					},
+					}
 					(counter_key, None) => {
 						let d = 1u32.to_le_bytes();
 						tx.put(col, &counter_key, &d);
 						tx.put_vec(col, key.as_ref(), value);
-					},
+					}
 				},
 				Change::Reference(col, key) => {
 					if let (counter_key, Some(mut counter)) =
@@ -89,7 +89,7 @@ impl<D: KeyValueDB, H: Clone + AsRef<[u8]>> Database<H> for DbAdapter<D> {
 						counter += 1;
 						tx.put(col, &counter_key, &counter.to_le_bytes());
 					}
-				},
+				}
 				Change::Release(col, key) => {
 					if let (counter_key, Some(mut counter)) =
 						self.read_counter(col, key.as_ref())?
@@ -102,7 +102,7 @@ impl<D: KeyValueDB, H: Clone + AsRef<[u8]>> Database<H> for DbAdapter<D> {
 							tx.put(col, &counter_key, &counter.to_le_bytes());
 						}
 					}
-				},
+				}
 			}
 		}
 		self.0.write(tx).map_err(|e| error::DatabaseError(Box::new(e)))

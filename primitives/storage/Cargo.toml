@@ -19,8 +19,10 @@ serde = { version = "1.0.126", optional = true, features = ["derive"] }
 impl-serde = { version = "0.3.1", optional = true }
 ref-cast = "1.0.0"
 sp-debug-derive = { version = "4.0.0-dev", default-features = false, path = "../debug-derive" }
-codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false, features = ["derive"] }
+codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false, features = [
+	"derive"
+] }
 
 [features]
-default = [ "std" ]
-std = [ "sp-std/std", "serde", "impl-serde", "codec/std", "sp-debug-derive/std" ]
+default = ["std"]
+std = ["sp-std/std", "serde", "impl-serde", "codec/std", "sp-debug-derive/std"]

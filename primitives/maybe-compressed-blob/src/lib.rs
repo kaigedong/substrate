@@ -93,7 +93,7 @@ pub fn compress(blob: &[u8], bomb_limit: usize) -> Option<Vec<u8>> {
 	use std::io::Write;
 
 	if blob.len() > bomb_limit {
-		return None
+		return None;
 	}
 
 	let mut buf = ZSTD_PREFIX.to_vec();

@@ -121,12 +121,13 @@ where
 	for (id, ref mut peer) in peers.iter_mut() {
 		for (message_hash, topic, message) in messages.clone() {
 			let intent = match intent {
-				MessageIntent::Broadcast { .. } =>
+				MessageIntent::Broadcast { .. } => {
 					if peer.known_messages.contains(&message_hash) {
-						continue
+						continue;
 					} else {
 						MessageIntent::Broadcast
-					},
+					}
+				}
 				MessageIntent::PeriodicRebroadcast => {
 					if peer.known_messages.contains(&message_hash) {
 						MessageIntent::PeriodicRebroadcast
@@ -135,12 +136,12 @@ where
 						// initial broadcast.
 						MessageIntent::Broadcast
 					}
-				},
+				}
 				other => other,
 			};
 
 			if !message_allowed(id, intent, &topic, &message) {
-				continue
+				continue;
 			}
 
 			peer.known_messages.insert(message_hash.clone());
@@ -180,7 +181,7 @@ impl<B: BlockT> ConsensusGossip<B> {
 			Some(Err(e)) => {
 				tracing::debug!(target: "gossip", "Failed to register metrics: {:?}", e);
 				None
-			},
+			}
 			None => None,
 		};
 
@@ -361,7 +362,7 @@ impl<B: BlockT> ConsensusGossip<B> {
 					"Ignored already known message",
 				);
 				network.report_peer(who.clone(), rep::DUPLICATE_GOSSIP);
-				continue
+				continue;
 			}
 
 			// validate the message
@@ -381,8 +382,8 @@ impl<B: BlockT> ConsensusGossip<B> {
 						protocol = %self.protocol,
 						"Discard message from peer",
 					);
-					continue
-				},
+					continue;
+				}
 			};
 
 			let peer = match self.peers.get_mut(&who) {
@@ -394,8 +395,8 @@ impl<B: BlockT> ConsensusGossip<B> {
 						protocol = %self.protocol,
 						"Got message from unregistered peer",
 					);
-					continue
-				},
+					continue;
+				}
 			};
 
 			network.report_peer(who.clone(), rep::GOSSIP_SUCCESS);
@@ -429,11 +430,11 @@ impl<B: BlockT> ConsensusGossip<B> {
 					if force { MessageIntent::ForcedBroadcast } else { MessageIntent::Broadcast };
 
 				if !force && peer.known_messages.contains(&entry.message_hash) {
-					continue
+					continue;
 				}
 
 				if !message_allowed(who, intent, &entry.topic, &entry.message) {
-					continue
+					continue;
 				}
 
 				peer.known_messages.insert(entry.message_hash.clone());

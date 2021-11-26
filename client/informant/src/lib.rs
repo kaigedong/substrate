@@ -128,7 +128,7 @@ where
 						Colour::White.bold().paint(format!("{}", ancestor.number)),
 						ancestor.hash,
 					),
-					Ok(_) => {},
+					Ok(_) => {}
 					Err(e) => debug!("Error computing tree route: {}", e),
 				}
 			}

@@ -1,4 +1,5 @@
 # Utility Module
+
 A stateless module with helpers for dispatch management which does no re-authentication.
 
 - [`utility::Config`](https://docs.rs/pallet-utility/latest/pallet_utility/trait.Config.html)
@@ -7,12 +8,13 @@ A stateless module with helpers for dispatch management which does no re-authent
 ## Overview
 
 This module contains two basic pieces of functionality:
+
 - Batch dispatch: A stateless operation, allowing any origin to execute multiple calls in a
   single dispatch. This can be useful to amalgamate proposals, combining `set_code` with
   corresponding `set_storage`s, for efficient multiple payouts with just a single signature
   verify, or in combination with one of the other two dispatch functionality.
 - Pseudonymal dispatch: A stateless operation, allowing a signed origin to execute a call from
-  an alternative signed origin. Each account has 2 * 2**16 possible "pseudonyms" (alternative
+  an alternative signed origin. Each account has 2 \* 2\*\*16 possible "pseudonyms" (alternative
   account IDs) and these can be stacked. This can be useful as a key management tool, where you
   need multiple distinct accounts (e.g. as controllers for many staking accounts), but where
   it's perfectly fine to have each of them controlled by the same underlying keypair.
@@ -27,12 +29,14 @@ filtered by any proxy.
 ### Dispatchable Functions
 
 #### For batch dispatch
-* `batch` - Dispatch multiple calls from the sender's origin.
+
+- `batch` - Dispatch multiple calls from the sender's origin.
 
 #### For pseudonymal dispatch
-* `as_derivative` - Dispatch a call from a derivative signed origin.
 
-[`Call`]: ./enum.Call.html
-[`Config`]: ./trait.Config.html
+- `as_derivative` - Dispatch a call from a derivative signed origin.
+
+[`call`]: ./enum.Call.html
+[`config`]: ./trait.Config.html
 
 License: Apache-2.0

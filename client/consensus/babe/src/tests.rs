@@ -596,8 +596,8 @@ fn can_author_block() {
 			None => i += 1,
 			Some(s) => {
 				debug!(target: "babe", "Authored block {:?}", s.0);
-				break
-			},
+				break;
+			}
 		}
 	}
 }
@@ -666,7 +666,7 @@ fn propose_and_import_block<Transaction: Send + 'static>(
 	let import_result = block_on(block_import.import_block(import, Default::default())).unwrap();
 
 	match import_result {
-		ImportResult::Imported(_) => {},
+		ImportResult::Imported(_) => {}
 		_ => panic!("expected block to be imported"),
 	}
 

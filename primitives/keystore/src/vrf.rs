@@ -56,10 +56,10 @@ pub fn make_transcript(data: VRFTranscriptData) -> Transcript {
 		match value {
 			VRFTranscriptValue::Bytes(bytes) => {
 				transcript.append_message(label.as_bytes(), &bytes);
-			},
+			}
 			VRFTranscriptValue::U64(val) => {
 				transcript.append_u64(label.as_bytes(), val);
-			},
+			}
 		}
 	}
 	transcript

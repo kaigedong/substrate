@@ -129,7 +129,7 @@ where
 					// schedule wait.
 					let wait_dur = time_until_next_slot(self.slot_duration);
 					Some(Delay::new(wait_dur))
-				},
+				}
 				Some(d) => Some(d),
 			};
 
@@ -155,8 +155,8 @@ where
 					);
 					// Let's try at the next slot..
 					self.inner_delay.take();
-					continue
-				},
+					continue;
+				}
 			};
 
 			let inherent_data_providers = self
@@ -186,7 +186,7 @@ where
 					self.slot_duration,
 					chain_head,
 					None,
-				))
+				));
 			}
 		}
 	}

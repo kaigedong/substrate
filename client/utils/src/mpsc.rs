@@ -119,7 +119,7 @@ mod inner {
 			let mut count = 0;
 			loop {
 				if self.1.is_terminated() {
-					break
+					break;
 				}
 
 				match self.try_next() {
@@ -171,7 +171,7 @@ mod inner {
 						UNBOUNDED_CHANNELS_COUNTER.with_label_values(&[s.0, "received"]).inc();
 					}
 					Poll::Ready(msg)
-				},
+				}
 				Poll::Pending => Poll::Pending,
 			}
 		}

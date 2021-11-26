@@ -166,7 +166,7 @@ where
 				hash::ExtrinsicOrHash::Extrinsic(bytes) => {
 					let xt = Decode::decode(&mut &bytes[..])?;
 					Ok(self.pool.hash_of(&xt))
-				},
+				}
 			})
 			.collect::<Result<Vec<_>>>()?;
 
@@ -192,8 +192,8 @@ where
 				// reject the subscriber (ignore errors - we don't care if subscriber is no longer
 				// there).
 				let _ = subscriber.reject(err.into());
-				return
-			},
+				return;
+			}
 		};
 
 		let submit = self
@@ -215,8 +215,8 @@ where
 					// reject the subscriber (ignore errors - we don't care if subscriber is no
 					// longer there).
 					let _ = subscriber.reject(err.into());
-					return
-				},
+					return;
+				}
 			};
 
 			subscriptions.add(subscriber, move |sink| {

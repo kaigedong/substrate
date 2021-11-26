@@ -210,7 +210,7 @@ where
 
 		backend.insert_aux(&[(SET_STATE_KEY, set_state.encode().as_slice())], &[])?;
 
-		return Ok(Some((new_set, set_state)))
+		return Ok(Some((new_set, set_state)));
 	}
 
 	Ok(None)
@@ -250,7 +250,7 @@ where
 				VoterSetState::Paused {
 					completed_rounds: completed_rounds(last_round_number, set_state, base),
 				}
-			},
+			}
 			Some(V1VoterSetState::Live(last_round_number, set_state)) => {
 				let base = set_state.prevote_ghost
 					.expect("state is for completed round; completed rounds must have a prevote ghost; qed.");
@@ -262,19 +262,19 @@ where
 					completed_rounds: completed_rounds(last_round_number, set_state, base),
 					current_rounds,
 				}
-			},
+			}
 			None => {
 				let set_state = genesis_round();
 				let base = set_state.prevote_ghost
 					.expect("state is for completed round; completed rounds must have a prevote ghost; qed.");
 
 				VoterSetState::live(set_id, &set, base)
-			},
+			}
 		};
 
 		backend.insert_aux(&[(SET_STATE_KEY, set_state.encode().as_slice())], &[])?;
 
-		return Ok(Some((set, set_state)))
+		return Ok(Some((set, set_state)));
 	}
 
 	Ok(None)
@@ -304,10 +304,10 @@ where
 					.expect("state is for completed round; completed rounds must have a prevote ghost; qed.");
 
 				VoterSetState::live(new_set.set_id, &new_set, base)
-			},
+			}
 		};
 
-		return Ok(Some((new_set, set_state)))
+		return Ok(Some((new_set, set_state)));
 	}
 
 	Ok(None)
@@ -336,9 +336,9 @@ where
 				return Ok(PersistentData {
 					authority_set: new_set.into(),
 					set_state: set_state.into(),
-				})
+				});
 			}
-		},
+		}
 		Some(1) => {
 			if let Some((new_set, set_state)) =
 				migrate_from_version1::<Block, _, _>(backend, &make_genesis_round)?
@@ -346,9 +346,9 @@ where
 				return Ok(PersistentData {
 					authority_set: new_set.into(),
 					set_state: set_state.into(),
-				})
+				});
 			}
-		},
+		}
 		Some(2) => {
 			if let Some((new_set, set_state)) =
 				migrate_from_version2::<Block, _, _>(backend, &make_genesis_round)?
@@ -356,9 +356,9 @@ where
 				return Ok(PersistentData {
 					authority_set: new_set.into(),
 					set_state: set_state.into(),
-				})
+				});
 			}
-		},
+		}
 		Some(3) => {
 			if let Some(set) = load_decode::<_, AuthoritySet<Block::Hash, NumberFor<Block>>>(
 				backend,
@@ -373,14 +373,21 @@ where
 							.expect("state is for completed round; completed rounds must have a prevote ghost; qed.");
 
 							VoterSetState::live(set.set_id, &set, base)
-						},
+						}
 					};
 
-				return Ok(PersistentData { authority_set: set.into(), set_state: set_state.into() })
+				return Ok(PersistentData {
+					authority_set: set.into(),
+					set_state: set_state.into(),
+				});
 			}
-		},
-		Some(other) =>
-			return Err(ClientError::Backend(format!("Unsupported GRANDPA DB version: {:?}", other))),
+		}
+		Some(other) => {
+			return Err(ClientError::Backend(format!(
+				"Unsupported GRANDPA DB version: {:?}",
+				other
+			)))
+		}
 	}
 
 	// genesis.

@@ -210,7 +210,7 @@ async fn submit_tx_and_wait_for_inclusion(
 		match watch.select_next_some().await {
 			TransactionStatus::Finalized(_) => break,
 			TransactionStatus::InBlock(_) if !wait_for_finalized => break,
-			_ => {},
+			_ => {}
 		}
 	}
 }

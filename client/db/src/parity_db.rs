@@ -29,7 +29,7 @@ fn handle_err<T>(result: parity_db::Result<T>) -> T {
 		Ok(r) => r,
 		Err(e) => {
 			panic!("Critical database error: {:?}", e);
-		},
+		}
 	}
 }
 
@@ -60,7 +60,7 @@ pub fn open<H: Clone + AsRef<[u8]>>(
 			state_col.ref_counted = true;
 			state_col.preimage = true;
 			state_col.uniform = true;
-		},
+		}
 	}
 
 	let db = if create {

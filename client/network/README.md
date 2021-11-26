@@ -7,7 +7,7 @@ Substrate-specific P2P networking.
 In a decentralized network, each node possesses a network private key and a network public key.
 In Substrate, the keys are based on the ed25519 curve.
 
-From a node's public key, we can derive its *identity*. In Substrate and libp2p, a node's
+From a node's public key, we can derive its _identity_. In Substrate and libp2p, a node's
 identity is represented with the [`PeerId`] struct. All network communications between nodes on
 the network use encryption derived from both sides's keys, which means that **identities cannot
 be faked**.
@@ -30,14 +30,14 @@ Building such a list is called the **discovery** mechanism. There are three mech
 Substrate uses:
 
 - Bootstrap nodes. These are hard-coded node identities and addresses passed alongside with
-the network configuration.
+  the network configuration.
 - mDNS. We perform a UDP broadcast on the local network. Nodes that listen may respond with
-their identity. More info [here](https://github.com/libp2p/specs/blob/master/discovery/mdns.md).
-mDNS can be disabled in the network configuration.
+  their identity. More info [here](https://github.com/libp2p/specs/blob/master/discovery/mdns.md).
+  mDNS can be disabled in the network configuration.
 - Kademlia random walk. Once connected, we perform random Kademlia `FIND_NODE` requests on the
-configured Kademlia DHTs (one per configured chain protocol) in order for nodes to propagate to
-us their view of the network. More information about Kademlia can be found [on
-Wikipedia](https://en.wikipedia.org/wiki/Kademlia).
+  configured Kademlia DHTs (one per configured chain protocol) in order for nodes to propagate to
+  us their view of the network. More information about Kademlia can be found [on
+  Wikipedia](https://en.wikipedia.org/wiki/Kademlia).
 
 ## Connection establishment
 
@@ -53,12 +53,12 @@ As of the writing of this documentation, the following base-layer protocols are 
 Substrate:
 
 - TCP/IP for addresses of the form `/ip4/1.2.3.4/tcp/5`. Once the TCP connection is open, an
-encryption and a multiplexing layer are negotiated on top.
+  encryption and a multiplexing layer are negotiated on top.
 - WebSockets for addresses of the form `/ip4/1.2.3.4/tcp/5/ws`. A TCP/IP connection is open and
-the WebSockets protocol is negotiated on top. Communications then happen inside WebSockets data
-frames. Encryption and multiplexing are additionally negotiated again inside this channel.
+  the WebSockets protocol is negotiated on top. Communications then happen inside WebSockets data
+  frames. Encryption and multiplexing are additionally negotiated again inside this channel.
 - DNS for addresses of the form `/dns/example.com/tcp/5` or `/dns/example.com/tcp/5/ws`. A
-node's address can contain a domain name.
+  node's address can contain a domain name.
 - (All of the above using IPv6 instead of IPv4.)
 
 On top of the base-layer protocol, the [Noise](https://noiseprotocol.org/) protocol is
@@ -67,7 +67,7 @@ negotiated and applied. The exact handshake protocol is experimental and is subj
 The following multiplexing protocols are supported:
 
 - [Mplex](https://github.com/libp2p/specs/tree/master/mplex). Support for mplex will likely
-be deprecated in the future.
+  be deprecated in the future.
 - [Yamux](https://github.com/hashicorp/yamux/blob/master/spec.md).
 
 ## Substreams
@@ -82,46 +82,46 @@ is "dot". In the protocol names below, `<protocol-id>` must be replaced with the
 protocol ID.
 
 > **Note**: It is possible for the same connection to be used for multiple chains. For example,
->           one can use both the `/dot/sync/2` and `/sub/sync/2` protocols on the same
->           connection, provided that the remote supports them.
+> one can use both the `/dot/sync/2` and `/sub/sync/2` protocols on the same
+> connection, provided that the remote supports them.
 
 Substrate uses the following standard libp2p protocols:
 
 - **`/ipfs/ping/1.0.0`**. We periodically open an ephemeral substream in order to ping the
-remote and check whether the connection is still alive. Failure for the remote to reply leads
-to a disconnection.
+  remote and check whether the connection is still alive. Failure for the remote to reply leads
+  to a disconnection.
 - **[`/ipfs/id/1.0.0`](https://github.com/libp2p/specs/tree/master/identify)**. We
-periodically open an ephemeral substream in order to ask information from the remote.
+  periodically open an ephemeral substream in order to ask information from the remote.
 - **[`/<protocol_id>/kad`](https://github.com/libp2p/specs/pull/108)**. We periodically open
-ephemeral substreams for Kademlia random walk queries. Each Kademlia query is done in a
-separate substream.
+  ephemeral substreams for Kademlia random walk queries. Each Kademlia query is done in a
+  separate substream.
 
 Additionally, Substrate uses the following non-libp2p-standard protocols:
 
 - **`/substrate/<protocol-id>/<version>`** (where `<protocol-id>` must be replaced with the
-protocol ID of the targeted chain, and `<version>` is a number between 2 and 6). For each
-connection we optionally keep an additional substream for all Substrate-based communications alive.
-This protocol is considered legacy, and is progressively being replaced with alternatives.
-This is designated as "The legacy Substrate substream" in this documentation. See below for
-more details.
+  protocol ID of the targeted chain, and `<version>` is a number between 2 and 6). For each
+  connection we optionally keep an additional substream for all Substrate-based communications alive.
+  This protocol is considered legacy, and is progressively being replaced with alternatives.
+  This is designated as "The legacy Substrate substream" in this documentation. See below for
+  more details.
 - **`/<protocol-id>/sync/2`** is a request-response protocol (see below) that lets one perform
-requests for information about blocks. Each request is the encoding of a `BlockRequest` and
-each response is the encoding of a `BlockResponse`, as defined in the `api.v1.proto` file in
-this source tree.
+  requests for information about blocks. Each request is the encoding of a `BlockRequest` and
+  each response is the encoding of a `BlockResponse`, as defined in the `api.v1.proto` file in
+  this source tree.
 - **`/<protocol-id>/light/2`** is a request-response protocol (see below) that lets one perform
-light-client-related requests for information about the state. Each request is the encoding of
-a `light::Request` and each response is the encoding of a `light::Response`, as defined in the
-`light.v1.proto` file in this source tree.
+  light-client-related requests for information about the state. Each request is the encoding of
+  a `light::Request` and each response is the encoding of a `light::Response`, as defined in the
+  `light.v1.proto` file in this source tree.
 - **`/<protocol-id>/transactions/1`** is a notifications protocol (see below) where
-transactions are pushed to other nodes. The handshake is empty on both sides. The message
-format is a SCALE-encoded list of transactions, where each transaction is an opaque list of
-bytes.
+  transactions are pushed to other nodes. The handshake is empty on both sides. The message
+  format is a SCALE-encoded list of transactions, where each transaction is an opaque list of
+  bytes.
 - **`/<protocol-id>/block-announces/1`** is a notifications protocol (see below) where
-block announces are pushed to other nodes. The handshake is empty on both sides. The message
-format is a SCALE-encoded tuple containing a block header followed with an opaque list of
-bytes containing some data associated with this block announcement, e.g. a candidate message.
+  block announces are pushed to other nodes. The handshake is empty on both sides. The message
+  format is a SCALE-encoded tuple containing a block header followed with an opaque list of
+  bytes containing some data associated with this block announcement, e.g. a candidate message.
 - Notifications protocols that are registered using `NetworkConfiguration::notifications_protocols`.
-For example: `/paritytech/grandpa/1`. See below for more information.
+  For example: `/paritytech/grandpa/1`. See below for more information.
 
 ## The legacy Substrate substream
 
@@ -131,7 +131,7 @@ we should perform Substrate-based communications with. For these nodes, we open 
 if necessary and open a unique substream for Substrate-based communications. If the PSM decides
 that we should disconnect a node, then that substream is closed.
 
-For more information about the PSM, see the *sc-peerset* crate.
+For more information about the PSM, see the _sc-peerset_ crate.
 
 Note that at the moment there is no mechanism in place to solve the issues that arise where the
 two sides of a connection open the unique substream simultaneously. In order to not run into
@@ -140,18 +140,18 @@ substream is closed, the entire connection is closed as well. This is a bug that
 resolved by deprecating the protocol entirely.
 
 Within the unique Substrate substream, messages encoded using
-[*parity-scale-codec*](https://github.com/paritytech/parity-scale-codec) are exchanged.
+[_parity-scale-codec_](https://github.com/paritytech/parity-scale-codec) are exchanged.
 The detail of theses messages is not totally in place, but they can be found in the
 `message.rs` file.
 
-Once the substream is open, the first step is an exchange of a *status* message from both
+Once the substream is open, the first step is an exchange of a _status_ message from both
 sides, containing information such as the chain root hash, head of chain, and so on.
 
 Communications within this substream include:
 
 - Syncing. Blocks are announced and requested from other nodes.
 - Light-client requests. When a light client requires information, a random node we have a
-substream open with is chosen, and the information is requested from it.
+  substream open with is chosen, and the information is requested from it.
 - Gossiping. Used for example by grandpa.
 
 ## Request-response protocols
@@ -159,11 +159,11 @@ substream open with is chosen, and the information is requested from it.
 A so-called request-response protocol is defined as follow:
 
 - When a substream is opened, the opening side sends a message whose content is
-protocol-specific. The message must be prefixed with an
-[LEB128-encoded number](https://en.wikipedia.org/wiki/LEB128) indicating its length. After the
-message has been sent, the writing side is closed.
+  protocol-specific. The message must be prefixed with an
+  [LEB128-encoded number](https://en.wikipedia.org/wiki/LEB128) indicating its length. After the
+  message has been sent, the writing side is closed.
 - The remote sends back the response prefixed with a LEB128-encoded length, and closes its
-side as well.
+  side as well.
 
 Each request is performed in a new separate substream.
 
@@ -172,19 +172,19 @@ Each request is performed in a new separate substream.
 A so-called notifications protocol is defined as follow:
 
 - When a substream is opened, the opening side sends a handshake message whose content is
-protocol-specific. The handshake message must be prefixed with an
-[LEB128-encoded number](https://en.wikipedia.org/wiki/LEB128) indicating its length. The
-handshake message can be of length 0, in which case the sender has to send a single `0`.
+  protocol-specific. The handshake message must be prefixed with an
+  [LEB128-encoded number](https://en.wikipedia.org/wiki/LEB128) indicating its length. The
+  handshake message can be of length 0, in which case the sender has to send a single `0`.
 - The receiver then either immediately closes the substream, or answers with its own
-LEB128-prefixed protocol-specific handshake response. The message can be of length 0, in which
-case a single `0` has to be sent back.
+  LEB128-prefixed protocol-specific handshake response. The message can be of length 0, in which
+  case a single `0` has to be sent back.
 - Once the handshake has completed, the notifications protocol is unidirectional. Only the
-node which initiated the substream can push notifications. If the remote wants to send
-notifications as well, it has to open its own undirectional substream.
+  node which initiated the substream can push notifications. If the remote wants to send
+  notifications as well, it has to open its own undirectional substream.
 - Each notification must be prefixed with an LEB128-encoded length. The encoding of the
-messages is specific to each protocol.
+  messages is specific to each protocol.
 - Either party can signal that it doesn't want a notifications substream anymore by closing
-its writing side. The other party should respond by closing its own writing side soon after.
+  its writing side. The other party should respond by closing its own writing side soon after.
 
 The API of `sc-network` allows one to register user-defined notification protocols.
 `sc-network` automatically tries to open a substream towards each node for which the legacy
@@ -278,12 +278,11 @@ See the [`config`] module for more information about how to configure the networ
 After the `NetworkWorker` has been created, the important things to do are:
 
 - Calling `NetworkWorker::poll` in order to advance the network. This can be done by
-dispatching a background task with the [`NetworkWorker`].
+  dispatching a background task with the [`NetworkWorker`].
 - Calling `on_block_import` whenever a block is added to the client.
 - Calling `on_block_finalized` whenever a block is finalized.
 - Calling `trigger_repropagate` when a transaction is added to the pool.
 
 More precise usage details are still being worked on and will likely change in the future.
-
 
 License: GPL-3.0-or-later WITH Classpath-exception-2.0

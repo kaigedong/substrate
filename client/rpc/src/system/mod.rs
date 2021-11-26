@@ -38,7 +38,7 @@ mod tests;
 macro_rules! bail_if_unsafe {
 	($value: expr) => {
 		if let Err(err) = $value.check_if_safe() {
-			return async move { Err(err.into()) }.boxed()
+			return async move { Err(err.into()) }.boxed();
 		}
 	};
 }

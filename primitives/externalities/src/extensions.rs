@@ -153,7 +153,7 @@ impl Extensions {
 			Entry::Vacant(vacant) => {
 				vacant.insert(extension);
 				Ok(())
-			},
+			}
 			Entry::Occupied(_) => Err(Error::ExtensionAlreadyRegistered),
 		}
 	}

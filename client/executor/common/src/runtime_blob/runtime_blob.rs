@@ -110,8 +110,9 @@ impl RuntimeBlob {
 	) -> impl Iterator<Item = &'module str> {
 		let exports = self.raw_module.export_section().map(|es| es.entries()).unwrap_or(&[]);
 		exports.iter().filter_map(|export| match export.internal() {
-			Internal::Global(_) if export.field().starts_with("exported_internal_global") =>
-				Some(export.field()),
+			Internal::Global(_) if export.field().starts_with("exported_internal_global") => {
+				Some(export.field())
+			}
 			_ => None,
 		})
 	}

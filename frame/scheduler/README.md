@@ -1,4 +1,5 @@
 # Scheduler
+
 A module for scheduling dispatches.
 
 - [`scheduler::Config`](https://docs.rs/pallet-scheduler/latest/pallet_scheduler/trait.Config.html)
@@ -23,12 +24,12 @@ then those filter will not be used when dispatching the schedule call.
 
 ### Dispatchable Functions
 
-* `schedule` - schedule a dispatch, which may be periodic, to occur at a
+- `schedule` - schedule a dispatch, which may be periodic, to occur at a
   specified block and with a specified priority.
-* `cancel` - cancel a scheduled dispatch, specified by block number and
+- `cancel` - cancel a scheduled dispatch, specified by block number and
   index.
-* `schedule_named` - augments the `schedule` interface with an additional
+- `schedule_named` - augments the `schedule` interface with an additional
   `Vec<u8>` parameter that can be used for identification.
-* `cancel_named` - the named complement to the cancel function.
+- `cancel_named` - the named complement to the cancel function.
 
 License: Unlicense

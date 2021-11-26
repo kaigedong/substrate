@@ -383,14 +383,15 @@ impl SandboxInstance {
 		sandbox_context: &mut dyn SandboxContext,
 	) -> std::result::Result<Option<wasmi::RuntimeValue>, wasmi::Error> {
 		match &self.backend_instance {
-			BackendInstance::Wasmi(wasmi_instance) =>
+			BackendInstance::Wasmi(wasmi_instance) => {
 				with_guest_externals(self, state, |guest_externals| {
 					let wasmi_result = SandboxContextStore::using(sandbox_context, || {
 						wasmi_instance.invoke_export(export_name, args, guest_externals)
 					})?;
 
 					Ok(wasmi_result)
-				}),
+				})
+			}
 
 			#[cfg(feature = "wasmer-sandbox")]
 			BackendInstance::Wasmer(wasmer_instance) => {
@@ -416,7 +417,7 @@ impl SandboxInstance {
 				if wasmer_result.len() > 1 {
 					return Err(wasmi::Error::Function(
 						"multiple return types are not supported yet".into(),
-					))
+					));
 				}
 
 				wasmer_result
@@ -427,17 +428,18 @@ impl SandboxInstance {
 							wasmer::Val::I64(val) => RuntimeValue::I64(val),
 							wasmer::Val::F32(val) => RuntimeValue::F32(val.into()),
 							wasmer::Val::F64(val) => RuntimeValue::F64(val.into()),
-							_ =>
+							_ => {
 								return Err(wasmi::Error::Function(format!(
 									"Unsupported return value: {:?}",
 									wasm_value,
-								))),
+								)))
+							}
 						};
 
 						Ok(wasmer_value)
 					})
 					.transpose()
-			},
+			}
 		}
 	}
 
@@ -450,7 +452,7 @@ impl SandboxInstance {
 				let wasmi_global = wasmi_instance.export_by_name(name)?.as_global()?.get();
 
 				Some(wasmi_global.into())
-			},
+			}
 
 			#[cfg(feature = "wasmer-sandbox")]
 			BackendInstance::Wasmer(wasmer_instance) => {
@@ -466,7 +468,7 @@ impl SandboxInstance {
 				};
 
 				Some(wasmtime_value)
-			},
+			}
 		}
 	}
 }
@@ -506,7 +508,7 @@ fn decode_environment_definition(
 				let externals_idx =
 					guest_to_supervisor_mapping.define(SupervisorFuncIndex(func_idx as usize));
 				func_map.insert((module, field), externals_idx);
-			},
+			}
 			sandbox_primitives::ExternEntity::Memory(memory_idx) => {
 				let memory_ref = memories
 					.get(memory_idx as usize)
@@ -514,7 +516,7 @@ fn decode_environment_definition(
 					.ok_or_else(|| InstantiationError::EnvironmentDefinitionCorrupted)?
 					.ok_or_else(|| InstantiationError::EnvironmentDefinitionCorrupted)?;
 				memories_map.insert((module, field), memory_ref);
-			},
+			}
 		}
 	}
 
@@ -665,7 +667,7 @@ impl BackendContext {
 				BackendContext::Wasmer(WasmerBackend {
 					store: wasmer::Store::new(&wasmer::JIT::new(compiler).engine()),
 				})
-			},
+			}
 		}
 	}
 }
@@ -721,7 +723,7 @@ impl<DT: Clone> Store<DT> {
 					wasmer::Memory::new(&context.store, ty)
 						.map_err(|_| Error::InvalidMemoryReference)?,
 				))
-			},
+			}
 		};
 
 		let mem_idx = memories.len();
@@ -788,7 +790,7 @@ impl<DT: Clone> Store<DT> {
 			Some(memory) => {
 				*memory = None;
 				Ok(())
-			},
+			}
 		}
 	}
 
@@ -805,7 +807,7 @@ impl<DT: Clone> Store<DT> {
 			Some(instance) => {
 				*instance = None;
 				Ok(())
-			},
+			}
 		}
 	}
 
@@ -827,12 +829,14 @@ impl<DT: Clone> Store<DT> {
 		sandbox_context: &mut dyn SandboxContext,
 	) -> std::result::Result<UnregisteredInstance, InstantiationError> {
 		let sandbox_instance = match self.backend_context {
-			BackendContext::Wasmi =>
-				Self::instantiate_wasmi(wasm, guest_env, state, sandbox_context)?,
+			BackendContext::Wasmi => {
+				Self::instantiate_wasmi(wasm, guest_env, state, sandbox_context)?
+			}
 
 			#[cfg(feature = "wasmer-sandbox")]
-			BackendContext::Wasmer(ref context) =>
-				Self::instantiate_wasmer(&context, wasm, guest_env, state, sandbox_context)?,
+			BackendContext::Wasmer(ref context) => {
+				Self::instantiate_wasmer(&context, wasm, guest_env, state, sandbox_context)?
+			}
 		};
 
 		Ok(UnregisteredInstance { sandbox_instance })
@@ -927,7 +931,7 @@ impl<DT> Store<DT> {
 					let wasmer_memory = unsafe { wasmer_memory_ref.clone_inner() };
 
 					exports.insert(import.name(), wasmer::Extern::Memory(wasmer_memory));
-				},
+				}
 
 				wasmer::ExternType::Function(func_ty) => {
 					let guest_func_index =
@@ -937,7 +941,7 @@ impl<DT> Store<DT> {
 						index
 					} else {
 						// Missing import (should we abort here?)
-						continue
+						continue;
 					};
 
 					let supervisor_func_index = guest_env
@@ -957,7 +961,7 @@ impl<DT> Store<DT> {
 						.or_insert(wasmer::Exports::new());
 
 					exports.insert(import.name(), wasmer::Extern::Function(function));
-				},
+				}
 			}
 		}
 
@@ -970,8 +974,9 @@ impl<DT> Store<DT> {
 			wasmer::Instance::new(&module, &import_object).map_err(|error| match error {
 				wasmer::InstantiationError::Link(_) => InstantiationError::Instantiation,
 				wasmer::InstantiationError::Start(_) => InstantiationError::StartTrapped,
-				wasmer::InstantiationError::HostEnvInitialization(_) =>
-					InstantiationError::EnvironmentDefinitionCorrupted,
+				wasmer::InstantiationError::HostEnvInitialization(_) => {
+					InstantiationError::EnvironmentDefinitionCorrupted
+				}
 			})
 		})?;
 
@@ -1035,7 +1040,7 @@ impl<DT> Store<DT> {
 						"Failed dealloction after failed write of invoke arguments",
 					)?;
 
-					return Err(wasmer::RuntimeError::new("Can't write invoke args into memory"))
+					return Err(wasmer::RuntimeError::new("Can't write invoke args into memory"));
 				}
 
 				// Perform the actuall call

@@ -554,7 +554,7 @@ fn transition_3_voters_twice_1_full_observer() {
 					1 => {
 						// first 14 blocks.
 						net.lock().peer(0).push_blocks(13, false);
-					},
+					}
 					14 => {
 						// generate transition at block 15, applied at 20.
 						net.lock().peer(0).generate_blocks(1, BlockOrigin::File, |builder| {
@@ -567,7 +567,7 @@ fn transition_3_voters_twice_1_full_observer() {
 							block
 						});
 						net.lock().peer(0).push_blocks(5, false);
-					},
+					}
 					20 => {
 						// at block 21 we do another transition, but this time instant.
 						// add more until we have 30.
@@ -581,8 +581,8 @@ fn transition_3_voters_twice_1_full_observer() {
 							block
 						});
 						net.lock().peer(0).push_blocks(9, false);
-					},
-					_ => {},
+					}
+					_ => {}
 				}
 
 				future::ready(())
@@ -1156,8 +1156,8 @@ fn voter_persists_its_votes() {
 					Pin::new(&mut *round_tx.lock())
 						.start_send(finality_grandpa::Message::Prevote(prevote))
 						.unwrap();
-				} else if state.compare_exchange(1, 2, Ordering::SeqCst, Ordering::SeqCst).unwrap() ==
-					1
+				} else if state.compare_exchange(1, 2, Ordering::SeqCst, Ordering::SeqCst).unwrap()
+					== 1
 				{
 					// the next message we receive should be our own prevote
 					let prevote = match signed.message {
@@ -1171,8 +1171,8 @@ fn voter_persists_its_votes() {
 				// after alice restarts it should send its previous prevote
 				// therefore we won't ever receive it again since it will be a
 				// known message on the gossip layer
-				} else if state.compare_exchange(2, 3, Ordering::SeqCst, Ordering::SeqCst).unwrap() ==
-					2
+				} else if state.compare_exchange(2, 3, Ordering::SeqCst, Ordering::SeqCst).unwrap()
+					== 2
 				{
 					// we then receive a precommit from alice for block 15
 					// even though we casted a prevote for block 30

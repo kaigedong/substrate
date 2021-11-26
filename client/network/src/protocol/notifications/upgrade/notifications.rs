@@ -154,7 +154,7 @@ where
 				return Err(NotificationsHandshakeError::TooLarge {
 					requested: handshake_len,
 					max: MAX_HANDSHAKE_SIZE,
-				})
+				});
 			}
 
 			let mut handshake = vec![0u8; handshake_len];
@@ -202,7 +202,7 @@ where
 	pub fn send_handshake(&mut self, message: impl Into<Vec<u8>>) {
 		if !matches!(self.handshake, NotificationsInSubstreamHandshake::NotSent) {
 			error!(target: "sub-libp2p", "Tried to send handshake twice");
-			return
+			return;
 		}
 
 		self.handshake = NotificationsInSubstreamHandshake::PendingSend(message.into());
@@ -223,34 +223,35 @@ where
 						Poll::Ready(_) => {
 							*this.handshake = NotificationsInSubstreamHandshake::Flush;
 							match Sink::start_send(this.socket.as_mut(), io::Cursor::new(msg)) {
-								Ok(()) => {},
+								Ok(()) => {}
 								Err(err) => return Poll::Ready(Err(err)),
 							}
-						},
+						}
 						Poll::Pending => {
 							*this.handshake = NotificationsInSubstreamHandshake::PendingSend(msg);
-							return Poll::Pending
-						},
+							return Poll::Pending;
+						}
 					}
-				},
+				}
 				NotificationsInSubstreamHandshake::Flush => {
 					match Sink::poll_flush(this.socket.as_mut(), cx)? {
-						Poll::Ready(()) =>
-							*this.handshake = NotificationsInSubstreamHandshake::Sent,
+						Poll::Ready(()) => {
+							*this.handshake = NotificationsInSubstreamHandshake::Sent
+						}
 						Poll::Pending => {
 							*this.handshake = NotificationsInSubstreamHandshake::Flush;
-							return Poll::Pending
-						},
+							return Poll::Pending;
+						}
 					}
-				},
+				}
 
-				st @ NotificationsInSubstreamHandshake::NotSent |
-				st @ NotificationsInSubstreamHandshake::Sent |
-				st @ NotificationsInSubstreamHandshake::ClosingInResponseToRemote |
-				st @ NotificationsInSubstreamHandshake::BothSidesClosed => {
+				st @ NotificationsInSubstreamHandshake::NotSent
+				| st @ NotificationsInSubstreamHandshake::Sent
+				| st @ NotificationsInSubstreamHandshake::ClosingInResponseToRemote
+				| st @ NotificationsInSubstreamHandshake::BothSidesClosed => {
 					*this.handshake = st;
-					return Poll::Pending
-				},
+					return Poll::Pending;
+				}
 			}
 		}
 	}
@@ -270,60 +271,64 @@ where
 			match mem::replace(this.handshake, NotificationsInSubstreamHandshake::Sent) {
 				NotificationsInSubstreamHandshake::NotSent => {
 					*this.handshake = NotificationsInSubstreamHandshake::NotSent;
-					return Poll::Pending
-				},
+					return Poll::Pending;
+				}
 				NotificationsInSubstreamHandshake::PendingSend(msg) => {
 					match Sink::poll_ready(this.socket.as_mut(), cx) {
 						Poll::Ready(_) => {
 							*this.handshake = NotificationsInSubstreamHandshake::Flush;
 							match Sink::start_send(this.socket.as_mut(), io::Cursor::new(msg)) {
-								Ok(()) => {},
+								Ok(()) => {}
 								Err(err) => return Poll::Ready(Some(Err(err))),
 							}
-						},
+						}
 						Poll::Pending => {
 							*this.handshake = NotificationsInSubstreamHandshake::PendingSend(msg);
-							return Poll::Pending
-						},
+							return Poll::Pending;
+						}
 					}
-				},
+				}
 				NotificationsInSubstreamHandshake::Flush => {
 					match Sink::poll_flush(this.socket.as_mut(), cx)? {
-						Poll::Ready(()) =>
-							*this.handshake = NotificationsInSubstreamHandshake::Sent,
+						Poll::Ready(()) => {
+							*this.handshake = NotificationsInSubstreamHandshake::Sent
+						}
 						Poll::Pending => {
 							*this.handshake = NotificationsInSubstreamHandshake::Flush;
-							return Poll::Pending
-						},
+							return Poll::Pending;
+						}
 					}
-				},
+				}
 
 				NotificationsInSubstreamHandshake::Sent => {
 					match Stream::poll_next(this.socket.as_mut(), cx) {
-						Poll::Ready(None) =>
+						Poll::Ready(None) => {
 							*this.handshake =
-								NotificationsInSubstreamHandshake::ClosingInResponseToRemote,
+								NotificationsInSubstreamHandshake::ClosingInResponseToRemote
+						}
 						Poll::Ready(Some(msg)) => {
 							*this.handshake = NotificationsInSubstreamHandshake::Sent;
-							return Poll::Ready(Some(msg))
-						},
+							return Poll::Ready(Some(msg));
+						}
 						Poll::Pending => {
 							*this.handshake = NotificationsInSubstreamHandshake::Sent;
-							return Poll::Pending
-						},
+							return Poll::Pending;
+						}
 					}
-				},
+				}
 
-				NotificationsInSubstreamHandshake::ClosingInResponseToRemote =>
+				NotificationsInSubstreamHandshake::ClosingInResponseToRemote => {
 					match Sink::poll_close(this.socket.as_mut(), cx)? {
-						Poll::Ready(()) =>
-							*this.handshake = NotificationsInSubstreamHandshake::BothSidesClosed,
+						Poll::Ready(()) => {
+							*this.handshake = NotificationsInSubstreamHandshake::BothSidesClosed
+						}
 						Poll::Pending => {
 							*this.handshake =
 								NotificationsInSubstreamHandshake::ClosingInResponseToRemote;
-							return Poll::Pending
-						},
-					},
+							return Poll::Pending;
+						}
+					}
+				}
 
 				NotificationsInSubstreamHandshake::BothSidesClosed => return Poll::Ready(None),
 			}
@@ -393,7 +398,7 @@ where
 				return Err(NotificationsHandshakeError::TooLarge {
 					requested: handshake_len,
 					max: MAX_HANDSHAKE_SIZE,
-				})
+				});
 			}
 
 			let mut handshake = vec![0u8; handshake_len];
@@ -483,7 +488,7 @@ impl From<unsigned_varint::io::ReadError> for NotificationsHandshakeError {
 			_ => {
 				warn!("Unrecognized varint decoding error");
 				Self::Io(From::from(io::ErrorKind::InvalidData))
-			},
+			}
 		}
 	}
 }

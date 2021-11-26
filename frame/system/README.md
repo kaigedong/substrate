@@ -30,17 +30,17 @@ See the [`Pallet`](https://docs.rs/frame-system/latest/frame_system/pallet/struc
 
 The System module defines the following extensions:
 
-  - [`CheckWeight`]: Checks the weight and length of the block and ensure that it does not
-    exceed the limits.
-  - [`CheckNonce`]: Checks the nonce of the transaction. Contains a single payload of type
-    `T::Index`.
-  - [`CheckEra`]: Checks the era of the transaction. Contains a single payload of type `Era`.
-  - [`CheckGenesis`]: Checks the provided genesis hash of the transaction. Must be a part of the
-    signed payload of the transaction.
-  - [`CheckSpecVersion`]: Checks that the runtime version is the same as the one used to sign the
-    transaction.
-  - [`CheckTxVersion`]: Checks that the transaction version is the same as the one used to sign the
-    transaction.
+- [`CheckWeight`]: Checks the weight and length of the block and ensure that it does not
+  exceed the limits.
+- [`CheckNonce`]: Checks the nonce of the transaction. Contains a single payload of type
+  `T::Index`.
+- [`CheckEra`]: Checks the era of the transaction. Contains a single payload of type `Era`.
+- [`CheckGenesis`]: Checks the provided genesis hash of the transaction. Must be a part of the
+  signed payload of the transaction.
+- [`CheckSpecVersion`]: Checks that the runtime version is the same as the one used to sign the
+  transaction.
+- [`CheckTxVersion`]: Checks that the transaction version is the same as the one used to sign the
+  transaction.
 
 Lookup the runtime aggregator file (e.g. `node/runtime`) to see the full list of signed
 extensions included in a chain.

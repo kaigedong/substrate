@@ -72,8 +72,8 @@ impl<B: BlockT> WarpSync<B> {
 		match &mut self.phase {
 			Phase::WarpProof { .. } => {
 				log::debug!(target: "sync", "Unexpected state response");
-				return ImportResult::BadResponse
-			},
+				return ImportResult::BadResponse;
+			}
 			Phase::State(sync) => sync.import(response),
 		}
 	}
@@ -84,13 +84,13 @@ impl<B: BlockT> WarpSync<B> {
 			Phase::State(_) => {
 				log::debug!(target: "sync", "Unexpected warp proof response");
 				WarpProofImportResult::BadResponse
-			},
+			}
 			Phase::WarpProof { set_id, authorities, last_hash } => {
 				match self.warp_sync_provider.verify(&response, *set_id, authorities.clone()) {
 					Err(e) => {
 						log::debug!(target: "sync", "Bad warp proof response: {:?}", e);
-						return WarpProofImportResult::BadResponse
-					},
+						return WarpProofImportResult::BadResponse;
+					}
 					Ok(VerificationResult::Partial(new_set_id, new_authorities, new_last_hash)) => {
 						log::debug!(target: "sync", "Verified partial proof, set_id={:?}", new_set_id);
 						*set_id = new_set_id;
@@ -98,16 +98,16 @@ impl<B: BlockT> WarpSync<B> {
 						*last_hash = new_last_hash.clone();
 						self.total_proof_bytes += response.0.len() as u64;
 						WarpProofImportResult::Success
-					},
+					}
 					Ok(VerificationResult::Complete(new_set_id, _, header)) => {
 						log::debug!(target: "sync", "Verified complete proof, set_id={:?}", new_set_id);
 						self.total_proof_bytes += response.0.len() as u64;
 						let state_sync = StateSync::new(self.client.clone(), header, false);
 						self.phase = Phase::State(state_sync);
 						WarpProofImportResult::Success
-					},
+					}
 				}
-			},
+			}
 		}
 	}
 

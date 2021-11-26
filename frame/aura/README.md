@@ -16,7 +16,7 @@ The Aura module extends Aura consensus by managing offline reporting.
 ## Related Modules
 
 - [Timestamp](https://docs.rs/pallet-timestamp/latest/pallet_timestamp/): The Timestamp module is used in Aura to track
-consensus rounds (via `slots`).
+  consensus rounds (via `slots`).
 
 ## References
 

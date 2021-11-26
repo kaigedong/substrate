@@ -35,24 +35,24 @@ where
 			match change {
 				Change::Set(col, key, value) => {
 					s.entry(col).or_default().insert(key, (1, value));
-				},
+				}
 				Change::Remove(col, key) => {
 					s.entry(col).or_default().remove(&key);
-				},
+				}
 				Change::Store(col, hash, value) => {
 					s.entry(col)
 						.or_default()
 						.entry(hash.as_ref().to_vec())
 						.and_modify(|(c, _)| *c += 1)
 						.or_insert_with(|| (1, value));
-				},
+				}
 				Change::Reference(col, hash) => {
 					if let Entry::Occupied(mut entry) =
 						s.entry(col).or_default().entry(hash.as_ref().to_vec())
 					{
 						entry.get_mut().0 += 1;
 					}
-				},
+				}
 				Change::Release(col, hash) => {
 					if let Entry::Occupied(mut entry) =
 						s.entry(col).or_default().entry(hash.as_ref().to_vec())
@@ -62,7 +62,7 @@ where
 							entry.remove();
 						}
 					}
-				},
+				}
 			}
 		}
 

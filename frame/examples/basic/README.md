@@ -1,7 +1,9 @@
 <!-- markdown-link-check-disable -->
+
 # Basic Example Pallet
 
 <!-- Original author of paragraph: @gavofyork -->
+
 The Example: A simple example of a FRAME pallet demonstrating
 concepts, APIs and structures common to most FRAME runtimes.
 
@@ -38,6 +40,7 @@ Run `cargo doc --package pallet-example-basic --open` to view this pallet's docu
 
 Copy and paste this template from frame/examples/basic/src/lib.rs into file
 `frame/<INSERT_CUSTOM_PALLET_NAME>/src/lib.rs` of your own custom pallet and complete it.
+
 <details><p><pre>
 // Add heading with custom pallet name
 
@@ -55,6 +58,7 @@ Copy and paste this template from frame/examples/basic/src/lib.rs into file
 \## Overview
 
 <!-- Original author of paragraph: Various. See https://github.com/paritytech/substrate-developer-hub/issues/44 -->
+
 // Short description of pallet's purpose.
 // Links to Traits that should be implemented.
 // What this pallet is for.
@@ -235,6 +239,7 @@ pub trait Config: <INSERT_CUSTOM_PALLET_NAME>::Config { }
 
 // Links to reference material, if applicable. For example, Phragmen, W3F research, etc.
 // that the implementation is based on.
+
 </pre></p></details>
 
 License: Unlicense

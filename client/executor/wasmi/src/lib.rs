@@ -154,7 +154,7 @@ impl Sandbox for FunctionExecutor {
 		};
 
 		if let Err(_) = self.memory.set(buf_ptr.into(), &buffer) {
-			return Ok(sandbox_primitives::ERR_OUT_OF_BOUNDS)
+			return Ok(sandbox_primitives::ERR_OUT_OF_BOUNDS);
 		}
 
 		Ok(sandbox_primitives::ERR_OK)
@@ -178,7 +178,7 @@ impl Sandbox for FunctionExecutor {
 		};
 
 		if let Err(_) = sandboxed_memory.write_from(Pointer::new(offset as u32), &buffer) {
-			return Ok(sandbox_primitives::ERR_OUT_OF_BOUNDS)
+			return Ok(sandbox_primitives::ERR_OUT_OF_BOUNDS);
 		}
 
 		Ok(sandbox_primitives::ERR_OK)
@@ -241,7 +241,7 @@ impl Sandbox for FunctionExecutor {
 					self.write_memory(return_val, val).map_err(|_| "Return value buffer is OOB")?;
 					Ok(sandbox_primitives::ERR_OK)
 				})
-			},
+			}
 			Err(_) => Ok(sandbox_primitives::ERR_EXECUTION),
 		}
 	}
@@ -353,14 +353,14 @@ impl<'a> wasmi::ModuleImportResolver for Resolver<'a> {
 		for (function_index, function) in self.host_functions.iter().enumerate() {
 			if name == function.name() {
 				if signature == function.signature() {
-					return Ok(wasmi::FuncInstance::alloc_host(signature.into(), function_index))
+					return Ok(wasmi::FuncInstance::alloc_host(signature.into(), function_index));
 				} else {
 					return Err(wasmi::Error::Instantiation(format!(
 						"Invalid signature for function `{}` expected `{:?}`, got `{:?}`",
 						function.name(),
 						signature,
 						function.signature(),
-					)))
+					)));
 				}
 			}
 		}
@@ -383,8 +383,9 @@ impl<'a> wasmi::ModuleImportResolver for Resolver<'a> {
 	) -> Result<MemoryRef, wasmi::Error> {
 		if field_name == "memory" {
 			match &mut *self.import_memory.borrow_mut() {
-				Some(_) =>
-					Err(wasmi::Error::Instantiation("Memory can not be imported twice!".into())),
+				Some(_) => {
+					Err(wasmi::Error::Instantiation("Memory can not be imported twice!".into()))
+				}
 				memory_ref @ None => {
 					if memory_type
 						.maximum()
@@ -408,7 +409,7 @@ impl<'a> wasmi::ModuleImportResolver for Resolver<'a> {
 						*memory_ref = Some(memory.clone());
 						Ok(memory)
 					}
-				},
+				}
 			}
 		} else {
 			Err(wasmi::Error::Instantiation(format!(
@@ -433,9 +434,9 @@ impl wasmi::Externals for FunctionExecutor {
 				.map_err(|msg| Error::FunctionExecution(function.name().to_string(), msg))
 				.map_err(wasmi::Trap::from)
 				.map(|v| v.map(Into::into))
-		} else if self.allow_missing_func_imports &&
-			index >= self.host_functions.len() &&
-			index < self.host_functions.len() + self.missing_functions.len()
+		} else if self.allow_missing_func_imports
+			&& index >= self.host_functions.len()
+			&& index < self.host_functions.len() + self.missing_functions.len()
 		{
 			Err(Error::from(format!(
 				"Function `{}` is only a stub. Calling a stub is not allowed.",
@@ -519,7 +520,7 @@ fn call_in_wasm_module(
 				&mut function_executor,
 			)
 			.map_err(Into::into)
-		},
+		}
 		InvokeMethod::TableWithWrapper { dispatcher_ref, func } => {
 			let dispatcher = table
 				.ok_or(Error::NoTable)?
@@ -532,14 +533,14 @@ fn call_in_wasm_module(
 				&mut function_executor,
 			)
 			.map_err(Into::into)
-		},
+		}
 	};
 
 	match result {
 		Ok(Some(I64(r))) => {
 			let (ptr, length) = unpack_ptr_and_len(r as u64);
 			memory.get(ptr.into(), length as usize).map_err(|_| Error::Runtime)
-		},
+		}
 		Err(e) => {
 			trace!(
 				target: "wasm-executor",
@@ -547,7 +548,7 @@ fn call_in_wasm_module(
 				memory.current_size().0,
 			);
 			Err(e.into())
-		},
+		}
 		_ => Err(Error::InvalidReturn),
 	}
 }
@@ -581,7 +582,7 @@ fn instantiate_module(
 			memory.grow(Pages(heap_pages)).map_err(|_| Error::Runtime)?;
 
 			memory
-		},
+		}
 	};
 
 	if intermediate_instance.has_start() {

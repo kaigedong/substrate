@@ -79,8 +79,12 @@ impl ParseRuntimeVersion {
 	fn parse_expr(init_expr: &Expr) -> Result<ParseRuntimeVersion> {
 		let init_expr = match init_expr {
 			Expr::Struct(ref e) => e,
-			_ =>
-				return Err(Error::new(init_expr.span(), "expected a struct initializer expression")),
+			_ => {
+				return Err(Error::new(
+					init_expr.span(),
+					"expected a struct initializer expression",
+				))
+			}
 		};
 
 		let mut parsed = ParseRuntimeVersion::default();
@@ -93,8 +97,9 @@ impl ParseRuntimeVersion {
 	fn parse_field_value(&mut self, field_value: &FieldValue) -> Result<()> {
 		let field_name = match field_value.member {
 			syn::Member::Named(ref ident) => ident,
-			syn::Member::Unnamed(_) =>
-				return Err(Error::new(field_value.span(), "only named members must be used")),
+			syn::Member::Unnamed(_) => {
+				return Err(Error::new(field_value.span(), "only named members must be used"))
+			}
 		};
 
 		fn parse_once<T>(
@@ -103,7 +108,7 @@ impl ParseRuntimeVersion {
 			parser: impl FnOnce(&Expr) -> Result<T>,
 		) -> Result<()> {
 			if value.is_some() {
-				return Err(Error::new(field.span(), "field is already initialized before"))
+				return Err(Error::new(field.span(), "field is already initialized before"));
 			} else {
 				*value = Some(parser(&field.expr)?);
 				Ok(())
@@ -129,7 +134,7 @@ impl ParseRuntimeVersion {
 			// the "runtime_version" custom section. `impl_runtime_apis` is responsible for
 			// generating a custom section with the supported runtime apis descriptor.
 		} else {
-			return Err(Error::new(field_name.span(), "unknown field"))
+			return Err(Error::new(field_name.span(), "unknown field"));
 		}
 
 		Ok(())
@@ -138,11 +143,12 @@ impl ParseRuntimeVersion {
 	fn parse_num_literal(expr: &Expr) -> Result<u32> {
 		let lit = match *expr {
 			Expr::Lit(ExprLit { lit: Lit::Int(ref lit), .. }) => lit,
-			_ =>
+			_ => {
 				return Err(Error::new(
 					expr.span(),
 					"only numeric literals (e.g. `10`) are supported here",
-				)),
+				))
+			}
 		};
 		lit.base10_parse::<u32>()
 	}

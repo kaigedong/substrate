@@ -710,7 +710,7 @@ impl<'a> OverlayedExtensions<'a> {
 			MapEntry::Vacant(vacant) => {
 				vacant.insert(OverlayedExtension::Owned(extension));
 				Ok(())
-			},
+			}
 			MapEntry::Occupied(_) => Err(sp_externalities::Error::ExtensionAlreadyRegistered),
 		}
 	}

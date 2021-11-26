@@ -875,7 +875,7 @@ where
 			Some(Err(e)) => {
 				debug!(target: "afg", "Failed to register metrics: {:?}", e);
 				None
-			},
+			}
 			None => None,
 		};
 
@@ -982,7 +982,7 @@ where
 				}
 
 				self.voter = Box::pin(voter);
-			},
+			}
 			VoterSetState::Paused { .. } => self.voter = Box::pin(future::pending()),
 		};
 	}
@@ -1042,7 +1042,7 @@ where
 
 				self.rebuild_voter();
 				Ok(())
-			},
+			}
 			VoterCommand::Pause(reason) => {
 				info!(target: "afg", "Pausing old validator set: {}", reason);
 
@@ -1057,7 +1057,7 @@ where
 
 				self.rebuild_voter();
 				Ok(())
-			},
+			}
 		}
 	}
 }
@@ -1077,35 +1077,35 @@ where
 
 	fn poll(mut self: Pin<&mut Self>, cx: &mut Context) -> Poll<Self::Output> {
 		match Future::poll(Pin::new(&mut self.voter), cx) {
-			Poll::Pending => {},
+			Poll::Pending => {}
 			Poll::Ready(Ok(())) => {
 				// voters don't conclude naturally
 				return Poll::Ready(Err(Error::Safety(
 					"finality-grandpa inner voter has concluded.".into(),
-				)))
-			},
+				)));
+			}
 			Poll::Ready(Err(CommandOrError::Error(e))) => {
 				// return inner observer error
-				return Poll::Ready(Err(e))
-			},
+				return Poll::Ready(Err(e));
+			}
 			Poll::Ready(Err(CommandOrError::VoterCommand(command))) => {
 				// some command issued internally
 				self.handle_voter_command(command)?;
 				cx.waker().wake_by_ref();
-			},
+			}
 		}
 
 		match Stream::poll_next(Pin::new(&mut self.voter_commands_rx), cx) {
-			Poll::Pending => {},
+			Poll::Pending => {}
 			Poll::Ready(None) => {
 				// the `voter_commands_rx` stream should never conclude since it's never closed.
-				return Poll::Ready(Err(Error::Safety("`voter_commands_rx` was closed.".into())))
-			},
+				return Poll::Ready(Err(Error::Safety("`voter_commands_rx` was closed.".into())));
+			}
 			Poll::Ready(Some(command)) => {
 				// some command issued externally
 				self.handle_voter_command(command)?;
 				cx.waker().wake_by_ref();
-			},
+			}
 		}
 
 		Future::poll(Pin::new(&mut self.network), cx)

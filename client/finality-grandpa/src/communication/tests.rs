@@ -120,10 +120,11 @@ impl Tester {
 		futures::future::poll_fn(move |cx| loop {
 			match Stream::poll_next(Pin::new(&mut s.as_mut().unwrap().events), cx) {
 				Poll::Ready(None) => panic!("concluded early"),
-				Poll::Ready(Some(item)) =>
+				Poll::Ready(Some(item)) => {
 					if pred(item) {
-						return Poll::Ready(s.take().unwrap())
-					},
+						return Poll::Ready(s.take().unwrap());
+					}
+				}
 				Poll::Pending => return Poll::Pending,
 			}
 		})
@@ -326,7 +327,7 @@ fn good_commit_leads_to_relay() {
 					};
 
 					true
-				},
+				}
 				_ => false,
 			});
 
@@ -334,7 +335,7 @@ fn good_commit_leads_to_relay() {
 			let handle_commit = commits_in.into_future().map(|(item, _)| match item.unwrap() {
 				finality_grandpa::voter::CommunicationIn::Commit(_, _, mut callback) => {
 					callback.run(finality_grandpa::voter::CommitProcessingOutcome::good());
-				},
+				}
 				_ => panic!("commit expected"),
 			});
 
@@ -446,7 +447,7 @@ fn bad_commit_leads_to_report() {
 					});
 
 					true
-				},
+				}
 				_ => false,
 			});
 
@@ -454,7 +455,7 @@ fn bad_commit_leads_to_report() {
 			let handle_commit = commits_in.into_future().map(|(item, _)| match item.unwrap() {
 				finality_grandpa::voter::CommunicationIn::Commit(_, _, mut callback) => {
 					callback.run(finality_grandpa::voter::CommitProcessingOutcome::bad());
-				},
+				}
 				_ => panic!("commit expected"),
 			});
 
@@ -463,8 +464,9 @@ fn bad_commit_leads_to_report() {
 			let fut = future::join(send_message, handle_commit)
 				.then(move |(tester, ())| {
 					tester.filter_network_events(move |event| match event {
-						Event::Report(who, cost_benefit) =>
-							who == id && cost_benefit == super::cost::INVALID_COMMIT,
+						Event::Report(who, cost_benefit) => {
+							who == id && cost_benefit == super::cost::INVALID_COMMIT
+						}
 						_ => false,
 					})
 				})
@@ -504,7 +506,7 @@ fn peer_with_higher_view_leads_to_catch_up_request() {
 
 			// neighbor packets are always discard
 			match result {
-				sc_network_gossip::ValidationResult::Discard => {},
+				sc_network_gossip::ValidationResult::Discard => {}
 				_ => panic!("wrong expected outcome from neighbor validation"),
 			}
 
@@ -523,7 +525,7 @@ fn peer_with_higher_view_leads_to_catch_up_request() {
 						);
 
 						true
-					},
+					}
 					_ => false,
 				})
 				.map(|_| ())

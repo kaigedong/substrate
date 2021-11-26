@@ -473,10 +473,11 @@ impl State {
 		<Block::Hash as FromStr>::Err: Debug,
 	{
 		Ok(match self {
-			State::Snap { snapshot_path } =>
+			State::Snap { snapshot_path } => {
 				Builder::<Block>::new().mode(Mode::Offline(OfflineConfig {
 					state_snapshot: SnapshotConfig::new(snapshot_path),
-				})),
+				}))
+			}
 			State::Live { snapshot_path, pallets, uri, at } => {
 				let at = match at {
 					Some(at_str) => Some(hash_of::<Block>(at_str)?),
@@ -492,7 +493,7 @@ impl State {
 					.inject_hashed_key(
 						&[twox_128(b"System"), twox_128(b"LastRuntimeUpgrade")].concat(),
 					)
-			},
+			}
 		})
 	}
 
@@ -517,34 +518,38 @@ impl TryRuntimeCmd {
 		ExecDispatch: NativeExecutionDispatch + 'static,
 	{
 		match &self.command {
-			Command::OnRuntimeUpgrade(ref cmd) =>
+			Command::OnRuntimeUpgrade(ref cmd) => {
 				commands::on_runtime_upgrade::on_runtime_upgrade::<Block, ExecDispatch>(
 					self.shared.clone(),
 					cmd.clone(),
 					config,
 				)
-				.await,
-			Command::OffchainWorker(cmd) =>
+				.await
+			}
+			Command::OffchainWorker(cmd) => {
 				commands::offchain_worker::offchain_worker::<Block, ExecDispatch>(
 					self.shared.clone(),
 					cmd.clone(),
 					config,
 				)
-				.await,
-			Command::ExecuteBlock(cmd) =>
+				.await
+			}
+			Command::ExecuteBlock(cmd) => {
 				commands::execute_block::execute_block::<Block, ExecDispatch>(
 					self.shared.clone(),
 					cmd.clone(),
 					config,
 				)
-				.await,
-			Command::FollowChain(cmd) =>
+				.await
+			}
+			Command::FollowChain(cmd) => {
 				commands::follow_chain::follow_chain::<Block, ExecDispatch>(
 					self.shared.clone(),
 					cmd.clone(),
 					config,
 				)
-				.await,
+				.await
+			}
 		}
 	}
 }
@@ -631,7 +636,7 @@ pub(crate) async fn ensure_matching_spec<Block: BlockT + serde::de::DeserializeO
 					version
 				);
 			}
-		},
+		}
 		Err(why) => {
 			log::error!(
 				target: LOG_TARGET,
@@ -639,7 +644,7 @@ pub(crate) async fn ensure_matching_spec<Block: BlockT + serde::de::DeserializeO
 				uri,
 				why
 			);
-		},
+		}
 	}
 }
 

@@ -80,8 +80,9 @@ impl TestPersistentOffchainDB {
 		let mut me = self.persistent.write();
 		for ((_prefix, key), value_operation) in changes {
 			match value_operation {
-				OffchainOverlayedChange::SetValue(val) =>
-					me.set(Self::PREFIX, key.as_slice(), val.as_slice()),
+				OffchainOverlayedChange::SetValue(val) => {
+					me.set(Self::PREFIX, key.as_slice(), val.as_slice())
+				}
 				OffchainOverlayedChange::Remove => me.remove(Self::PREFIX, key.as_slice()),
 			}
 		}
@@ -148,12 +149,12 @@ impl OffchainState {
 		match self.requests.get_mut(&RequestId(id)) {
 			None => {
 				panic!("Missing pending request: {:?}.\n\nAll: {:?}", id, self.requests);
-			},
+			}
 			Some(req) => {
 				assert_eq!(*req, expected);
 				req.response = Some(response.into());
 				req.response_headers = response_headers.into_iter().collect();
-			},
+			}
 		}
 	}
 
@@ -302,7 +303,7 @@ impl offchain::Externalities for TestOffchainExt {
 			.map(|id| match state.requests.get(id) {
 				Some(req) if req.response.is_none() => {
 					panic!("No `response` provided for request with id: {:?}", id)
-				},
+				}
 				None => RequestStatus::Invalid,
 				_ => RequestStatus::Finished(200),
 			})
@@ -381,10 +382,12 @@ impl offchain::DbExternalities for TestOffchainExt {
 	) -> bool {
 		let mut state = self.0.write();
 		match kind {
-			StorageKind::LOCAL =>
-				state.local_storage.compare_and_set(b"", key, old_value, new_value),
-			StorageKind::PERSISTENT =>
-				state.persistent_storage.compare_and_set(b"", key, old_value, new_value),
+			StorageKind::LOCAL => {
+				state.local_storage.compare_and_set(b"", key, old_value, new_value)
+			}
+			StorageKind::PERSISTENT => {
+				state.persistent_storage.compare_and_set(b"", key, old_value, new_value)
+			}
 		}
 	}
 

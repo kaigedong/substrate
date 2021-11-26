@@ -8,26 +8,26 @@ In the interest of fostering an open and welcoming environment, we as contributo
 
 Examples of behavior that contributes to creating a positive environment include:
 
-* Using welcoming and inclusive language
-* Being respectful of differing viewpoints and experiences
-* Gracefully accepting constructive criticism
-* Focusing on what is best for the community
-* Showing empathy towards other community members
+- Using welcoming and inclusive language
+- Being respectful of differing viewpoints and experiences
+- Gracefully accepting constructive criticism
+- Focusing on what is best for the community
+- Showing empathy towards other community members
 
 Examples of unacceptable behavior by participants include:
 
-* The use of sexualized language or imagery and unwelcome sexual attention or advances
-* Trolling, insulting/derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or electronic address, without explicit permission
-* Other conduct which could reasonably be considered inappropriate in a professional setting
+- The use of sexualized language or imagery and unwelcome sexual attention or advances
+- Trolling, insulting/derogatory comments, and personal or political attacks
+- Public or private harassment
+- Publishing others' private information, such as a physical or electronic address, without explicit permission
+- Other conduct which could reasonably be considered inappropriate in a professional setting
 
 ### Facilitation, Not Strongarming
 
 We recognise that this software is merely a tool for users to create and maintain their blockchain of preference. We see that blockchains are naturally community platforms with users being the ultimate decision makers. We assert that good software will maximise user agency by facilitate user-expression on the network. As such:
 
-* This project will strive to give users as much choice as is both reasonable and possible over what protocol they adhere to; but
-* use of the project's technical forums, commenting systems, pull requests and issue trackers as a means to express individual protocol preferences is forbidden.
+- This project will strive to give users as much choice as is both reasonable and possible over what protocol they adhere to; but
+- use of the project's technical forums, commenting systems, pull requests and issue trackers as a means to express individual protocol preferences is forbidden.
 
 ## Our Responsibilities
 

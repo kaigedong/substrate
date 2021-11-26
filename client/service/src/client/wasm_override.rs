@@ -137,7 +137,7 @@ impl WasmOverride {
 		};
 
 		if !dir.is_dir() {
-			return Err(WasmOverrideError::NotADirectory(dir.to_owned()).into())
+			return Err(WasmOverrideError::NotADirectory(dir.to_owned()).into());
 		}
 
 		let mut overrides = HashMap::new();
@@ -164,13 +164,13 @@ impl WasmOverride {
 						);
 						duplicates.push(format!("{}", path.display()));
 					}
-				},
+				}
 				_ => (),
 			}
 		}
 
 		if !duplicates.is_empty() {
-			return Err(WasmOverrideError::DuplicateRuntime(duplicates).into())
+			return Err(WasmOverrideError::DuplicateRuntime(duplicates).into());
 		}
 
 		Ok(overrides)
@@ -261,10 +261,10 @@ mod tests {
 					match e.downcast_ref::<WasmOverrideError>() {
 						Some(WasmOverrideError::DuplicateRuntime(duplicates)) => {
 							assert_eq!(duplicates.len(), 1);
-						},
+						}
 						_ => panic!("Test should end with Msg Error Variant"),
 					}
-				},
+				}
 				_ => panic!("Test should end in error"),
 			}
 		});

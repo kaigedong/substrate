@@ -10,36 +10,37 @@ the session length, and handles session rotation.
 ## Overview
 
 ### Terminology
+
 <!-- Original author of paragraph: @gavofyork -->
 
 - **Session:** A session is a period of time that has a constant set of validators. Validators can only join
-or exit the validator set at a session change. It is measured in block numbers. The block where a session is
-ended is determined by the `ShouldEndSession` trait. When the session is ending, a new validator set
-can be chosen by `OnSessionEnding` implementations.
+  or exit the validator set at a session change. It is measured in block numbers. The block where a session is
+  ended is determined by the `ShouldEndSession` trait. When the session is ending, a new validator set
+  can be chosen by `OnSessionEnding` implementations.
 - **Session key:** A session key is actually several keys kept together that provide the various signing
-functions required by network authorities/validators in pursuit of their duties.
+  functions required by network authorities/validators in pursuit of their duties.
 - **Validator ID:** Every account has an associated validator ID. For some simple staking systems, this
-may just be the same as the account ID. For staking systems using a stash/controller model,
-the validator ID would be the stash account ID of the controller.
+  may just be the same as the account ID. For staking systems using a stash/controller model,
+  the validator ID would be the stash account ID of the controller.
 - **Session key configuration process:** Session keys are set using `set_keys` for use not in
-the next session, but the session after next. They are stored in `NextKeys`, a mapping between
-the caller's `ValidatorId` and the session keys provided. `set_keys` allows users to set their
-session key prior to being selected as validator.
-It is a public call since it uses `ensure_signed`, which checks that the origin is a signed account.
-As such, the account ID of the origin stored in `NextKeys` may not necessarily be associated with
-a block author or a validator. The session keys of accounts are removed once their account balance is zero.
+  the next session, but the session after next. They are stored in `NextKeys`, a mapping between
+  the caller's `ValidatorId` and the session keys provided. `set_keys` allows users to set their
+  session key prior to being selected as validator.
+  It is a public call since it uses `ensure_signed`, which checks that the origin is a signed account.
+  As such, the account ID of the origin stored in `NextKeys` may not necessarily be associated with
+  a block author or a validator. The session keys of accounts are removed once their account balance is zero.
 - **Session length:** This pallet does not assume anything about the length of each session.
-Rather, it relies on an implementation of `ShouldEndSession` to dictate a new session's start.
-This pallet provides the `PeriodicSessions` struct for simple periodic sessions.
+  Rather, it relies on an implementation of `ShouldEndSession` to dictate a new session's start.
+  This pallet provides the `PeriodicSessions` struct for simple periodic sessions.
 - **Session rotation configuration:** Configure as either a 'normal' (rewardable session where rewards are
-applied) or 'exceptional' (slashable) session rotation.
+  applied) or 'exceptional' (slashable) session rotation.
 - **Session rotation process:** At the beginning of each block, the `on_initialize` function
-queries the provided implementation of `ShouldEndSession`. If the session is to end the newly
-activated validator IDs and session keys are taken from storage and passed to the
-`SessionHandler`. The validator set supplied by `SessionManager::new_session` and the corresponding session
-keys, which may have been registered via `set_keys` during the previous session, are written
-to storage where they will wait one session before being passed to the `SessionHandler`
-themselves.
+  queries the provided implementation of `ShouldEndSession`. If the session is to end the newly
+  activated validator IDs and session keys are taken from storage and passed to the
+  `SessionHandler`. The validator set supplied by `SessionManager::new_session` and the corresponding session
+  keys, which may have been registered via `set_keys` during the previous session, are written
+  to storage where they will wait one session before being passed to the `SessionHandler`
+  themselves.
 
 ### Goals
 
@@ -58,7 +59,7 @@ The Session pallet is designed to make the following possible:
 ### Public Functions
 
 - `rotate_session` - Change to the next session. Register the new authority set. Queue changes
-for next session rotation.
+  for next session rotation.
 - `disable_index` - Disable a validator by index.
 - `disable` - Disable a validator by Validator ID
 

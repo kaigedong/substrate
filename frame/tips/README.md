@@ -18,7 +18,7 @@ any finders fee, in case of a public (and bonded) original report.
 - **Tip Reason:** The reason for a tip; generally a URL which embodies or explains why a particular
   individual (identified by an account ID) is worthy of a recognition by the treasury.
 - **Finder:** The original public reporter of some reason for tipping.
-- **Finders Fee:** Some proportion of the tip amount that is paid to the reporter of  the tip,
+- **Finders Fee:** Some proportion of the tip amount that is paid to the reporter of the tip,
   rather than the main beneficiary.
 
 ## Interface

@@ -62,7 +62,7 @@ fn main() {
 
 				if score[0] == 0 {
 					// such cases cannot be improved by balancing.
-					return
+					return;
 				}
 				score
 			};
@@ -92,9 +92,9 @@ fn main() {
 			// The only guarantee of balancing is such that the first and third element of the score
 			// cannot decrease.
 			assert!(
-				balanced_score[0] >= unbalanced_score[0] &&
-					balanced_score[1] == unbalanced_score[1] &&
-					balanced_score[2] <= unbalanced_score[2]
+				balanced_score[0] >= unbalanced_score[0]
+					&& balanced_score[1] == unbalanced_score[1]
+					&& balanced_score[2] <= unbalanced_score[2]
 			);
 		});
 	}

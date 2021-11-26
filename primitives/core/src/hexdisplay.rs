@@ -113,7 +113,7 @@ pub fn ascii_format(asciish: &[u8]) -> String {
 					latch = true;
 				}
 				r.push_str(&format!("{:02x}", *c));
-			},
+			}
 		}
 	}
 	r

@@ -46,12 +46,12 @@ cargo run --release -- --chain=sc.json -d /tmp/charlie --storage-chain --keep-bl
 To store data use the `transactionStorage.store` extrinsic. And IPFS CID can be generated from the Blake2-256 hash of the data.
 
 ```js
-const util_crypto = require('@polkadot/util-crypto');
-const keyring_api = require('@polkadot/keyring');
-const polkadot_api = require('@polkadot/api');
-const fs = require('fs');
-const multihash = require('multihashes');
-const CID = require('cids')
+const util_crypto = require("@polkadot/util-crypto");
+const keyring_api = require("@polkadot/keyring");
+const polkadot_api = require("@polkadot/api");
+const fs = require("fs");
+const multihash = require("multihashes");
+const CID = require("cids");
 
 const wsProvider = new polkadot_api.WsProvider();
 const api = await polkadot_api.ApiPromise.create({ provider: wsProvider });
@@ -59,15 +59,18 @@ const api = await polkadot_api.ApiPromise.create({ provider: wsProvider });
 const keyring = new keyring_api.Keyring({ type: "sr25519" });
 const alice = keyring.addFromUri("//Alice");
 
-const file = fs.readFileSync('cute_kitten.jpeg');
-const hash = util_crypto.blake2AsU8a(file)
-const encoded_hash = multihash.encode(hash, 'blake2b-256');
+const file = fs.readFileSync("cute_kitten.jpeg");
+const hash = util_crypto.blake2AsU8a(file);
+const encoded_hash = multihash.encode(hash, "blake2b-256");
 
-const cid = new CID(1, 'blake2b-256', encoded_hash)
+const cid = new CID(1, "blake2b-256", encoded_hash);
 console.log(cid.toString());
 
-const txHash = await api.tx.transactionStorage.store('0x' + file.toString('hex')).signAndSend(alice);
+const txHash = await api.tx.transactionStorage
+  .store("0x" + file.toString("hex"))
+  .signAndSend(alice);
 ```
+
 Data can be queried over IPFS
 
 ```bash
@@ -77,6 +80,5 @@ ipfs block get /ipfs/<CID> > kitten.jpeg
 
 To renew data and prevent it from being disposed after the storage period, use `transactionStorage.renew(block, index)`
 where `block` is the block number of the previous store or renew transction, and index is the index of that transaction in the block.
-
 
 License: Apache-2.0

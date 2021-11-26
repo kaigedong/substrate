@@ -17,7 +17,9 @@ sp-application-crypto = { version = "4.0.0-dev", default-features = false, path 
 sp-consensus-aura = { version = "0.10.0-dev", default-features = false, path = "../../primitives/consensus/aura" }
 sp-consensus-babe = { version = "0.10.0-dev", default-features = false, path = "../../primitives/consensus/babe" }
 sp-block-builder = { version = "4.0.0-dev", default-features = false, path = "../../primitives/block-builder" }
-codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false, features = ["derive"] }
+codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false, features = [
+	"derive"
+] }
 scale-info = { version = "1.0", default-features = false, features = ["derive"] }
 sp-inherents = { version = "4.0.0-dev", default-features = false, path = "../../primitives/inherents" }
 sp-keyring = { version = "4.0.0-dev", optional = true, path = "../../primitives/keyring" }
@@ -41,10 +43,11 @@ sp-trie = { version = "4.0.0-dev", default-features = false, path = "../../primi
 sp-transaction-pool = { version = "4.0.0-dev", default-features = false, path = "../../primitives/transaction-pool" }
 trie-db = { version = "0.22.6", default-features = false }
 parity-util-mem = { version = "0.10.2", default-features = false, features = ["primitive-types"] }
-sc-service = { version = "0.10.0-dev", default-features = false, optional = true, features = ["test-helpers"], path = "../../client/service" }
+sc-service = { version = "0.10.0-dev", default-features = false, optional = true, features = [
+	"test-helpers"
+], path = "../../client/service" }
 sp-state-machine = { version = "0.10.0-dev", default-features = false, path = "../../primitives/state-machine" }
 sp-externalities = { version = "0.10.0-dev", default-features = false, path = "../../primitives/externalities" }
-
 # 3rd party
 cfg-if = "1.0"
 log = { version = "0.4.14", default-features = false }
@@ -61,9 +64,7 @@ futures = "0.3.9"
 substrate-wasm-builder = { version = "5.0.0-dev", path = "../../utils/wasm-builder" }
 
 [features]
-default = [
-	"std",
-]
+default = ["std"]
 std = [
 	"sp-application-crypto/std",
 	"sp-consensus-aura/std",
@@ -100,4 +101,4 @@ std = [
 	"trie-db/std",
 ]
 # Special feature to disable logging
-disable-logging = [ "sp-api/disable-logging" ]
+disable-logging = ["sp-api/disable-logging"]

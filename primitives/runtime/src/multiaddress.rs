@@ -48,10 +48,10 @@ where
 			Self::Raw(inner) => write!(f, "MultiAddress::Raw({})", HexDisplay::from(inner)),
 			Self::Address32(inner) => {
 				write!(f, "MultiAddress::Address32({})", HexDisplay::from(inner))
-			},
+			}
 			Self::Address20(inner) => {
 				write!(f, "MultiAddress::Address20({})", HexDisplay::from(inner))
-			},
+			}
 			_ => write!(f, "{:?}", self),
 		}
 	}

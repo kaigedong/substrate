@@ -44,7 +44,7 @@ fn combine_batches(
 	db_batches: Vec<BenchmarkBatch>,
 ) -> Vec<BenchmarkBatchSplitResults> {
 	if time_batches.is_empty() && db_batches.is_empty() {
-		return Default::default()
+		return Default::default();
 	}
 
 	let mut all_benchmarks =
@@ -62,7 +62,7 @@ fn combine_batches(
 				// New benchmark, so we add a new entry with the initial results.
 				None => {
 					all_benchmarks.insert(key, (Vec::new(), results));
-				},
+				}
 			}
 		});
 
@@ -98,19 +98,19 @@ impl BenchmarkCmd {
 	{
 		if let Some(output_path) = &self.output {
 			if !output_path.is_dir() && output_path.file_name().is_none() {
-				return Err("Output file or path is invalid!".into())
+				return Err("Output file or path is invalid!".into());
 			}
 		}
 
 		if let Some(header_file) = &self.header {
 			if !header_file.is_file() {
-				return Err("Header file is invalid!".into())
+				return Err("Header file is invalid!".into());
 			};
 		}
 
 		if let Some(handlebars_template_file) = &self.template {
 			if !handlebars_template_file.is_file() {
-				return Err("Handlebars template file is invalid!".into())
+				return Err("Handlebars template file is invalid!".into());
 			};
 		}
 
@@ -147,7 +147,7 @@ impl BenchmarkCmd {
 			extensions.register(OffchainWorkerExt::new(offchain.clone()));
 			extensions.register(OffchainDbExt::new(offchain));
 			extensions.register(TransactionPoolExt::new(pool));
-			return extensions
+			return extensions;
 		};
 
 		// Get Benchmark List
@@ -175,9 +175,9 @@ impl BenchmarkCmd {
 			.filter(|item| pallet.is_empty() || pallet == &b"*"[..] || pallet == &item.pallet[..])
 			.for_each(|item| {
 				for benchmark in &item.benchmarks {
-					if extrinsic.is_empty() ||
-						&extrinsic[..] == &b"*"[..] ||
-						extrinsic == benchmark.name
+					if extrinsic.is_empty()
+						|| &extrinsic[..] == &b"*"[..]
+						|| extrinsic == benchmark.name
 					{
 						benchmarks_to_run.push((
 							item.pallet.clone(),
@@ -189,13 +189,13 @@ impl BenchmarkCmd {
 			});
 
 		if benchmarks_to_run.is_empty() {
-			return Err("No benchmarks found which match your input.".into())
+			return Err("No benchmarks found which match your input.".into());
 		}
 
 		if self.list {
 			// List benchmarks instead of running them
 			list_benchmark(benchmarks_to_run);
-			return Ok(())
+			return Ok(());
 		}
 
 		// Run the benchmarks
@@ -372,7 +372,7 @@ impl BenchmarkCmd {
 
 			// Skip raw data + analysis if there are no results
 			if batch.time_results.is_empty() {
-				continue
+				continue;
 			}
 
 			if self.raw_data {

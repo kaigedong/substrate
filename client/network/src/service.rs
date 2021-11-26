@@ -264,11 +264,11 @@ impl<B: BlockT + 'static, H: ExHashT> NetworkWorker<B, H> {
 					TransportConfig::MemoryOnly => {
 						config.with_mdns(false);
 						config.allow_private_ipv4(false);
-					},
+					}
 					TransportConfig::Normal { enable_mdns, allow_private_ipv4, .. } => {
 						config.with_mdns(enable_mdns);
 						config.allow_private_ipv4(allow_private_ipv4);
-					},
+					}
 				}
 
 				config
@@ -343,8 +343,9 @@ impl<B: BlockT + 'static, H: ExHashT> NetworkWorker<B, H> {
 
 				match result {
 					Ok(b) => b,
-					Err(crate::request_responses::RegisterError::DuplicateProtocol(proto)) =>
-						return Err(Error::DuplicateRequestResponseProtocol { protocol: proto }),
+					Err(crate::request_responses::RegisterError::DuplicateProtocol(proto)) => {
+						return Err(Error::DuplicateRequestResponseProtocol { protocol: proto })
+					}
 				}
 			};
 
@@ -567,7 +568,7 @@ impl<B: BlockT + 'static, H: ExHashT> NetworkWorker<B, H> {
 					} else {
 						error!(target: "sub-libp2p", "Found state inconsistency between custom protocol \
 						and debug information about {:?}", peer_id);
-						return None
+						return None;
 					};
 
 					Some((
@@ -731,7 +732,7 @@ impl<B: BlockT + 'static, H: ExHashT> NetworkService<B, H> {
 					"Attempted to send notification on missing or closed substream: {}, {:?}",
 					target, protocol,
 				);
-				return
+				return;
 			}
 		};
 
@@ -831,7 +832,7 @@ impl<B: BlockT + 'static, H: ExHashT> NetworkService<B, H> {
 			if let Some(sink) = peers_notifications_sinks.get(&(target, protocol.clone())) {
 				sink.clone()
 			} else {
-				return Err(NotificationSenderError::Closed)
+				return Err(NotificationSenderError::Closed);
 			}
 		};
 
@@ -1059,7 +1060,7 @@ impl<B: BlockT + 'static, H: ExHashT> NetworkService<B, H> {
 		let (peer_id, addr) = parse_str_addr(&peer).map_err(|e| format!("{:?}", e))?;
 		// Make sure the local peer ID is never added to the PSM.
 		if peer_id == self.local_peer_id {
-			return Err("Local peer ID cannot be added as a reserved peer.".to_string())
+			return Err("Local peer ID cannot be added as a reserved peer.".to_string());
 		}
 
 		let _ = self
@@ -1102,7 +1103,7 @@ impl<B: BlockT + 'static, H: ExHashT> NetworkService<B, H> {
 		for (peer_id, addr) in peers_addrs.into_iter() {
 			// Make sure the local peer ID is never added to the PSM.
 			if peer_id == self.local_peer_id {
-				return Err("Local peer ID cannot be added as a reserved peer.".to_string())
+				return Err("Local peer ID cannot be added as a reserved peer.".to_string());
 			}
 
 			peers.insert(peer_id);
@@ -1138,7 +1139,7 @@ impl<B: BlockT + 'static, H: ExHashT> NetworkService<B, H> {
 		for (peer_id, addr) in peers.into_iter() {
 			// Make sure the local peer ID is never added to the PSM.
 			if peer_id == self.local_peer_id {
-				return Err("Local peer ID cannot be added as a reserved peer.".to_string())
+				return Err("Local peer ID cannot be added as a reserved peer.".to_string());
 			}
 
 			if !addr.is_empty() {
@@ -1192,7 +1193,7 @@ impl<B: BlockT + 'static, H: ExHashT> NetworkService<B, H> {
 		for (peer_id, addr) in peers.into_iter() {
 			// Make sure the local peer ID is never added to the PSM.
 			if peer_id == self.local_peer_id {
-				return Err("Local peer ID cannot be added as a reserved peer.".to_string())
+				return Err("Local peer ID cannot be added as a reserved peer.".to_string());
 			}
 
 			if !addr.is_empty() {
@@ -1482,7 +1483,7 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 			num_iterations += 1;
 			if num_iterations >= 100 {
 				cx.waker().wake_by_ref();
-				break
+				break;
 			}
 
 			// Process the next message coming from the `NetworkService`.
@@ -1508,14 +1509,18 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 					.behaviour_mut()
 					.user_protocol_mut()
 					.clear_justification_requests(),
-				ServiceToWorkerMsg::PropagateTransaction(hash) =>
-					this.tx_handler_controller.propagate_transaction(hash),
-				ServiceToWorkerMsg::PropagateTransactions =>
-					this.tx_handler_controller.propagate_transactions(),
-				ServiceToWorkerMsg::GetValue(key) =>
-					this.network_service.behaviour_mut().get_value(&key),
-				ServiceToWorkerMsg::PutValue(key, value) =>
-					this.network_service.behaviour_mut().put_value(key, value),
+				ServiceToWorkerMsg::PropagateTransaction(hash) => {
+					this.tx_handler_controller.propagate_transaction(hash)
+				}
+				ServiceToWorkerMsg::PropagateTransactions => {
+					this.tx_handler_controller.propagate_transactions()
+				}
+				ServiceToWorkerMsg::GetValue(key) => {
+					this.network_service.behaviour_mut().get_value(&key)
+				}
+				ServiceToWorkerMsg::PutValue(key, value) => {
+					this.network_service.behaviour_mut().put_value(key, value)
+				}
 				ServiceToWorkerMsg::SetReservedOnly(reserved_only) => this
 					.network_service
 					.behaviour_mut()
@@ -1551,8 +1556,9 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 					.behaviour_mut()
 					.user_protocol_mut()
 					.remove_set_reserved_peer(protocol, peer_id),
-				ServiceToWorkerMsg::AddKnownAddress(peer_id, addr) =>
-					this.network_service.behaviour_mut().add_known_address(peer_id, addr),
+				ServiceToWorkerMsg::AddKnownAddress(peer_id, addr) => {
+					this.network_service.behaviour_mut().add_known_address(peer_id, addr)
+				}
 				ServiceToWorkerMsg::AddToPeersSet(protocol, peer_id) => this
 					.network_service
 					.behaviour_mut()
@@ -1583,13 +1589,13 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 						pending_response,
 						connect,
 					);
-				},
+				}
 				ServiceToWorkerMsg::NetworkStatus { pending_response } => {
 					let _ = pending_response.send(Ok(this.status()));
-				},
+				}
 				ServiceToWorkerMsg::NetworkState { pending_response } => {
 					let _ = pending_response.send(Ok(this.network_state()));
-				},
+				}
 				ServiceToWorkerMsg::DisconnectPeer(who, protocol_name) => this
 					.network_service
 					.behaviour_mut()
@@ -1610,7 +1616,7 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 			num_iterations += 1;
 			if num_iterations >= 1000 {
 				cx.waker().wake_by_ref();
-				break
+				break;
 			}
 
 			// Process the next action coming from the network.
@@ -1625,7 +1631,7 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 						metrics.import_queue_blocks_submitted.inc();
 					}
 					this.import_queue.import_blocks(origin, blocks);
-				},
+				}
 				Poll::Ready(SwarmEvent::Behaviour(BehaviourOut::JustificationImport(
 					origin,
 					hash,
@@ -1636,7 +1642,7 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 						metrics.import_queue_justifications_submitted.inc();
 					}
 					this.import_queue.import_justifications(origin, hash, nb, justifications);
-				},
+				}
 				Poll::Ready(SwarmEvent::Behaviour(BehaviourOut::InboundRequest {
 					protocol,
 					result,
@@ -1649,7 +1655,7 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 									.requests_in_success_total
 									.with_label_values(&[&protocol])
 									.observe(serve_time.as_secs_f64());
-							},
+							}
 							Err(err) => {
 								let reason = match err {
 									ResponseFailure::Network(InboundFailure::Timeout) => "timeout",
@@ -1660,27 +1666,31 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 									// inbound request whenever a request with an unsupported
 									// protocol is received. This is not reported in order to
 									// avoid confusions.
-										continue,
-									ResponseFailure::Network(InboundFailure::ResponseOmission) =>
-										"busy-omitted",
-									ResponseFailure::Network(InboundFailure::ConnectionClosed) =>
-										"connection-closed",
+									{
+										continue
+									}
+									ResponseFailure::Network(InboundFailure::ResponseOmission) => {
+										"busy-omitted"
+									}
+									ResponseFailure::Network(InboundFailure::ConnectionClosed) => {
+										"connection-closed"
+									}
 								};
 
 								metrics
 									.requests_in_failure_total
 									.with_label_values(&[&protocol, reason])
 									.inc();
-							},
+							}
 						}
 					}
-				},
+				}
 				Poll::Ready(SwarmEvent::Behaviour(BehaviourOut::RequestFinished {
 					protocol,
 					duration,
 					result,
 					..
-				})) =>
+				})) => {
 					if let Some(metrics) = this.metrics.as_ref() {
 						match result {
 							Ok(_) => {
@@ -1688,18 +1698,20 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 									.requests_out_success_total
 									.with_label_values(&[&protocol])
 									.observe(duration.as_secs_f64());
-							},
+							}
 							Err(err) => {
 								let reason = match err {
 									RequestFailure::NotConnected => "not-connected",
 									RequestFailure::UnknownProtocol => "unknown-protocol",
 									RequestFailure::Refused => "refused",
 									RequestFailure::Obsolete => "obsolete",
-									RequestFailure::Network(OutboundFailure::DialFailure) =>
-										"dial-failure",
+									RequestFailure::Network(OutboundFailure::DialFailure) => {
+										"dial-failure"
+									}
 									RequestFailure::Network(OutboundFailure::Timeout) => "timeout",
-									RequestFailure::Network(OutboundFailure::ConnectionClosed) =>
-										"connection-closed",
+									RequestFailure::Network(OutboundFailure::ConnectionClosed) => {
+										"connection-closed"
+									}
 									RequestFailure::Network(
 										OutboundFailure::UnsupportedProtocols,
 									) => "unsupported",
@@ -1709,18 +1721,20 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 									.requests_out_failure_total
 									.with_label_values(&[&protocol, reason])
 									.inc();
-							},
+							}
 						}
-					},
+					}
+				}
 				Poll::Ready(SwarmEvent::Behaviour(BehaviourOut::RandomKademliaStarted(
 					protocol,
-				))) =>
+				))) => {
 					if let Some(metrics) = this.metrics.as_ref() {
 						metrics
 							.kademlia_random_queries_total
 							.with_label_values(&[&protocol.as_ref()])
 							.inc();
-					},
+					}
+				}
 				Poll::Ready(SwarmEvent::Behaviour(BehaviourOut::NotificationStreamOpened {
 					remote,
 					protocol,
@@ -1746,7 +1760,7 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 						negotiated_fallback,
 						role,
 					});
-				},
+				}
 				Poll::Ready(SwarmEvent::Behaviour(BehaviourOut::NotificationStreamReplaced {
 					remote,
 					protocol,
@@ -1783,7 +1797,7 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 					// protocol,
 					// role,
 					// });
-				},
+				}
 				Poll::Ready(SwarmEvent::Behaviour(BehaviourOut::NotificationStreamClosed {
 					remote,
 					protocol,
@@ -1804,7 +1818,7 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 							peers_notifications_sinks.remove(&(remote.clone(), protocol));
 						debug_assert!(_previous_value.is_some());
 					}
-				},
+				}
 				Poll::Ready(SwarmEvent::Behaviour(BehaviourOut::NotificationsReceived {
 					remote,
 					messages,
@@ -1818,13 +1832,13 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 						}
 					}
 					this.event_streams.send(Event::NotificationsReceived { remote, messages });
-				},
+				}
 				Poll::Ready(SwarmEvent::Behaviour(BehaviourOut::SyncConnected(remote))) => {
 					this.event_streams.send(Event::SyncConnected { remote });
-				},
+				}
 				Poll::Ready(SwarmEvent::Behaviour(BehaviourOut::SyncDisconnected(remote))) => {
 					this.event_streams.send(Event::SyncDisconnected { remote });
-				},
+				}
 				Poll::Ready(SwarmEvent::Behaviour(BehaviourOut::Dht(event, duration))) => {
 					if let Some(metrics) = this.metrics.as_ref() {
 						let query_type = match event {
@@ -1840,7 +1854,7 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 					}
 
 					this.event_streams.send(Event::Dht(event));
-				},
+				}
 				Poll::Ready(SwarmEvent::ConnectionEstablished {
 					peer_id,
 					endpoint,
@@ -1864,7 +1878,7 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 							metrics.distinct_peers_connections_opened_total.inc();
 						}
 					}
-				},
+				}
 				Poll::Ready(SwarmEvent::ConnectionClosed {
 					peer_id,
 					cause,
@@ -1889,8 +1903,9 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 									NotifsHandlerError::SyncNotificationsClogged,
 								)))),
 							))) => "sync-notifications-clogged",
-							Some(ConnectionError::Handler(NodeHandlerWrapperError::Handler(_))) =>
-								"protocol-error",
+							Some(ConnectionError::Handler(NodeHandlerWrapperError::Handler(_))) => {
+								"protocol-error"
+							}
 							Some(ConnectionError::Handler(
 								NodeHandlerWrapperError::KeepAliveTimeout,
 							)) => "keep-alive-timeout",
@@ -1906,19 +1921,19 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 							metrics.distinct_peers_connections_closed_total.inc();
 						}
 					}
-				},
+				}
 				Poll::Ready(SwarmEvent::NewListenAddr { address, .. }) => {
 					trace!(target: "sub-libp2p", "Libp2p => NewListenAddr({})", address);
 					if let Some(metrics) = this.metrics.as_ref() {
 						metrics.listeners_local_addresses.inc();
 					}
-				},
+				}
 				Poll::Ready(SwarmEvent::ExpiredListenAddr { address, .. }) => {
 					info!(target: "sub-libp2p", "📪 No longer listening on {}", address);
 					if let Some(metrics) = this.metrics.as_ref() {
 						metrics.listeners_local_addresses.dec();
 					}
-				},
+				}
 				Poll::Ready(SwarmEvent::OutgoingConnectionError { peer_id, error }) => {
 					if let Some(peer_id) = peer_id {
 						trace!(
@@ -1941,13 +1956,14 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 						let reason = match error {
 							DialError::ConnectionLimit(_) => Some("limit-reached"),
 							DialError::InvalidPeerId => Some("invalid-peer-id"),
-							DialError::Transport(_) | DialError::ConnectionIo(_) =>
-								Some("transport-error"),
-							DialError::Banned |
-							DialError::LocalPeerId |
-							DialError::NoAddresses |
-							DialError::DialPeerConditionFalse(_) |
-							DialError::Aborted => None, // ignore them
+							DialError::Transport(_) | DialError::ConnectionIo(_) => {
+								Some("transport-error")
+							}
+							DialError::Banned
+							| DialError::LocalPeerId
+							| DialError::NoAddresses
+							| DialError::DialPeerConditionFalse(_)
+							| DialError::Aborted => None, // ignore them
 						};
 						if let Some(reason) = reason {
 							metrics
@@ -1956,17 +1972,17 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 								.inc();
 						}
 					}
-				},
+				}
 				Poll::Ready(SwarmEvent::Dialing(peer_id)) => {
 					trace!(target: "sub-libp2p", "Libp2p => Dialing({:?})", peer_id)
-				},
+				}
 				Poll::Ready(SwarmEvent::IncomingConnection { local_addr, send_back_addr }) => {
 					trace!(target: "sub-libp2p", "Libp2p => IncomingConnection({},{}))",
 						local_addr, send_back_addr);
 					if let Some(metrics) = this.metrics.as_ref() {
 						metrics.incoming_connections_total.inc();
 					}
-				},
+				}
 				Poll::Ready(SwarmEvent::IncomingConnectionError {
 					local_addr,
 					send_back_addr,
@@ -1981,8 +1997,8 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 						let reason = match error {
 							PendingConnectionError::ConnectionLimit(_) => Some("limit-reached"),
 							PendingConnectionError::InvalidPeerId => Some("invalid-peer-id"),
-							PendingConnectionError::Transport(_) |
-							PendingConnectionError::IO(_) => Some("transport-error"),
+							PendingConnectionError::Transport(_)
+							| PendingConnectionError::IO(_) => Some("transport-error"),
 							PendingConnectionError::Aborted => None, // ignore it
 						};
 
@@ -1993,7 +2009,7 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 								.inc();
 						}
 					}
-				},
+				}
 				Poll::Ready(SwarmEvent::BannedPeer { peer_id, endpoint }) => {
 					debug!(
 						target: "sub-libp2p",
@@ -2006,7 +2022,7 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 							.with_label_values(&["banned"])
 							.inc();
 					}
-				},
+				}
 				Poll::Ready(SwarmEvent::ListenerClosed { reason, addresses, .. }) => {
 					if let Some(metrics) = this.metrics.as_ref() {
 						metrics.listeners_local_addresses.sub(addresses.len() as u64);
@@ -2025,13 +2041,13 @@ impl<B: BlockT + 'static, H: ExHashT> Future for NetworkWorker<B, H> {
 							addrs, e
 						),
 					}
-				},
+				}
 				Poll::Ready(SwarmEvent::ListenerError { error, .. }) => {
 					debug!(target: "sub-libp2p", "Libp2p => ListenerError: {}", error);
 					if let Some(metrics) = this.metrics.as_ref() {
 						metrics.listeners_errors_total.inc();
 					}
-				},
+				}
 			};
 		}
 
@@ -2163,7 +2179,7 @@ fn ensure_addresses_consistent_with_transport<'a>(
 			return Err(Error::AddressesForAnotherTransport {
 				transport: transport.clone(),
 				addresses,
-			})
+			});
 		}
 	} else {
 		let addresses: Vec<_> = addresses
@@ -2175,7 +2191,7 @@ fn ensure_addresses_consistent_with_transport<'a>(
 			return Err(Error::AddressesForAnotherTransport {
 				transport: transport.clone(),
 				addresses,
-			})
+			});
 		}
 	}
 

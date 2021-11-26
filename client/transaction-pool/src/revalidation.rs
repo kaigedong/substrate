@@ -87,12 +87,12 @@ async fn batch_revalidate<Api: ChainApi>(
 			Ok(Err(TransactionValidityError::Invalid(err))) => {
 				log::debug!(target: "txpool", "[{:?}]: Revalidation: invalid {:?}", ext_hash, err);
 				invalid_hashes.push(ext_hash);
-			},
+			}
 			Ok(Err(TransactionValidityError::Unknown(err))) => {
 				// skipping unknown, they might be pushed by valid or invalid transaction
 				// when latter resubmitted.
 				log::trace!(target: "txpool", "[{:?}]: Unknown during revalidation: {:?}", ext_hash, err);
-			},
+			}
 			Ok(Ok(validity)) => {
 				revalidated.insert(
 					ext_hash.clone(),
@@ -105,7 +105,7 @@ async fn batch_revalidate<Api: ChainApi>(
 						validity,
 					),
 				);
-			},
+			}
 			Err(validation_err) => {
 				log::debug!(
 					target: "txpool",
@@ -114,7 +114,7 @@ async fn batch_revalidate<Api: ChainApi>(
 					validation_err
 				);
 				invalid_hashes.push(ext_hash);
-			},
+			}
 		}
 	}
 
@@ -191,7 +191,7 @@ impl<Api: ChainApi> RevalidationWorker<Api> {
 					ext_hash,
 				);
 
-				continue
+				continue;
 			}
 
 			self.block_ordered

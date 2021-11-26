@@ -43,8 +43,8 @@ pub(super) fn calculate_primary_threshold(
 
 	let c = c.0 as f64 / c.1 as f64;
 
-	let theta = authorities[authority_index].1 as f64 /
-		authorities.iter().map(|(_, weight)| weight).sum::<u64>() as f64;
+	let theta = authorities[authority_index].1 as f64
+		/ authorities.iter().map(|(_, weight)| weight).sum::<u64>() as f64;
 
 	assert!(theta > 0.0, "authority with weight 0.");
 
@@ -101,7 +101,7 @@ pub(super) fn secondary_slot_author(
 	randomness: [u8; 32],
 ) -> Option<&AuthorityId> {
 	if authorities.is_empty() {
-		return None
+		return None;
 	}
 
 	let rand = U256::from((randomness, slot).using_encoded(blake2_256));
@@ -130,7 +130,7 @@ fn claim_secondary_slot(
 	let Epoch { authorities, randomness, epoch_index, .. } = epoch;
 
 	if authorities.is_empty() {
-		return None
+		return None;
 	}
 
 	let expected_author = secondary_slot_author(slot, authorities, *randomness)?;
@@ -168,7 +168,7 @@ fn claim_secondary_slot(
 			};
 
 			if let Some(pre_digest) = pre_digest {
-				return Some((pre_digest, authority_id.clone()))
+				return Some((pre_digest, authority_id.clone()));
 			}
 		}
 	}
@@ -203,8 +203,8 @@ pub fn claim_slot_using_keys(
 	keys: &[(AuthorityId, usize)],
 ) -> Option<(PreDigest, AuthorityId)> {
 	claim_primary_slot(slot, epoch, epoch.config.c, keystore, &keys).or_else(|| {
-		if epoch.config.allowed_slots.is_secondary_plain_slots_allowed() ||
-			epoch.config.allowed_slots.is_secondary_vrf_slots_allowed()
+		if epoch.config.allowed_slots.is_secondary_plain_slots_allowed()
+			|| epoch.config.allowed_slots.is_secondary_vrf_slots_allowed()
 		{
 			claim_secondary_slot(
 				slot,
@@ -261,7 +261,7 @@ fn claim_primary_slot(
 					authority_index: *authority_index as u32,
 				});
 
-				return Some((pre_digest, authority_id.clone()))
+				return Some((pre_digest, authority_id.clone()));
 			}
 		}
 	}

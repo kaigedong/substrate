@@ -569,7 +569,7 @@ impl TraitPair for Pair {
 			(DeriveJunction::Hard(cc), maybe_seed) => {
 				let seed = derive_hard_junction(&acc, &cc);
 				(seed.expand(ExpansionMode::Ed25519), maybe_seed.map(|_| seed))
-			},
+			}
 		});
 		Ok((Self(result.into()), seed.map(|s| MiniSecretKey::to_bytes(&s))))
 	}

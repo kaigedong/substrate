@@ -164,23 +164,23 @@ where
 						target: "pow",
 						"Unable to import mined block: seal is invalid",
 					);
-					return false
-				},
+					return false;
+				}
 				Err(err) => {
 					warn!(
 						target: "pow",
 						"Unable to import mined block: {:?}",
 						err,
 					);
-					return false
-				},
+					return false;
+				}
 			}
 		} else {
 			warn!(
 				target: "pow",
 				"Unable to import mined block: metadata does not exist",
 			);
-			return false
+			return false;
 		}
 
 		let build = if let Some(build) = {
@@ -197,7 +197,7 @@ where
 				target: "pow",
 				"Unable to import mined block: build does not exist",
 			);
-			return false
+			return false;
 		};
 
 		let seal = DigestItem::Seal(POW_ENGINE_ID, seal);
@@ -234,7 +234,7 @@ where
 					build.metadata.best_hash
 				);
 				true
-			},
+			}
 			Err(err) => {
 				warn!(
 					target: "pow",
@@ -242,7 +242,7 @@ where
 					err,
 				);
 				false
-			},
+			}
 		}
 	}
 }
@@ -290,7 +290,7 @@ impl<Block: BlockT> Stream for UntilImportedOrTimeout<Block> {
 				Poll::Pending => break,
 				Poll::Ready(Some(_)) => {
 					fire = true;
-				},
+				}
 				Poll::Ready(None) => return Poll::Ready(None),
 			}
 		}
@@ -302,7 +302,7 @@ impl<Block: BlockT> Stream for UntilImportedOrTimeout<Block> {
 			Poll::Pending => (),
 			Poll::Ready(()) => {
 				fire = true;
-			},
+			}
 		}
 
 		if fire {

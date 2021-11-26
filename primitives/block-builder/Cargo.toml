@@ -20,11 +20,5 @@ codec = { package = "parity-scale-codec", version = "2.0.0", default-features = 
 sp-inherents = { version = "4.0.0-dev", default-features = false, path = "../inherents" }
 
 [features]
-default = [ "std" ]
-std = [
-	"sp-runtime/std",
-	"codec/std",
-	"sp-inherents/std",
-	"sp-api/std",
-	"sp-std/std",
-]
+default = ["std"]
+std = ["sp-runtime/std", "codec/std", "sp-inherents/std", "sp-api/std", "sp-std/std"]

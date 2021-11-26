@@ -64,7 +64,7 @@ where
 {
 	// We don't check equivocations for old headers out of our capacity.
 	if slot_now.saturating_sub(*slot) > Slot::from(MAX_SLOT_CAPACITY) {
-		return Ok(None)
+		return Ok(None);
 	}
 
 	// Key for this slot.
@@ -81,7 +81,7 @@ where
 
 	if slot_now < first_saved_slot {
 		// The code below assumes that slots will be visited sequentially.
-		return Ok(None)
+		return Ok(None);
 	}
 
 	for (prev_header, prev_signer) in headers_with_sig.iter() {
@@ -95,12 +95,12 @@ where
 					offender: signer.clone(),
 					first_header: prev_header.clone(),
 					second_header: header.clone(),
-				}))
+				}));
 			} else {
 				// We don't need to continue in case of duplicated header,
 				// since it's already saved and a possible equivocation
 				// would have been detected before.
-				return Ok(None)
+				return Ok(None);
 			}
 		}
 	}

@@ -63,7 +63,6 @@ It's also possible to have a set of parameters that is allowed to change
 with block numbers (i.e. is forkable), and another set that is not subject to changes.
 This is also possible by declaring an extension that contains `Forks` within it.
 
-
 ```rust
 use serde::{Serialize, Deserialize};
 use sc_chain_spec::{Forks, GenericChainSpec, ChainSpecGroup, ChainSpecExtension};

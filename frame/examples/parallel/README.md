@@ -1,4 +1,5 @@
 <!-- markdown-link-check-disable -->
+
 # Parallel Tasks Example Pallet
 
 This example pallet demonstrates parallelizing validation of the enlisted participants (see

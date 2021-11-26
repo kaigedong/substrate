@@ -91,11 +91,11 @@ pub fn generate_runtime_interface_include() -> TokenStream {
 				#[doc(hidden)]
 				extern crate #crate_name as proc_macro_runtime_interface;
 			)
-		},
+		}
 		Err(e) => {
 			let err = Error::new(Span::call_site(), e).to_compile_error();
 			quote!( #err )
-		},
+		}
 	}
 }
 
@@ -211,14 +211,15 @@ fn parse_version_attribute(version: &Attribute) -> Result<u32> {
 	));
 
 	match meta {
-		Meta::List(list) =>
+		Meta::List(list) => {
 			if list.nested.len() != 1 {
 				err
 			} else if let Some(NestedMeta::Lit(Lit::Int(i))) = list.nested.first() {
 				i.base10_parse()
 			} else {
 				err
-			},
+			}
+		}
 		_ => err,
 	}
 }
@@ -243,7 +244,7 @@ pub fn get_runtime_interface<'a>(trait_def: &'a ItemTrait) -> Result<RuntimeInte
 		match functions.entry(name.clone()) {
 			Entry::Vacant(entry) => {
 				entry.insert(RuntimeInterfaceFunction::new(version, item));
-			},
+			}
 			Entry::Occupied(mut entry) => {
 				if let Some(existing_item) = entry.get().versions.get(&version) {
 					let mut err = Error::new(item.span(), "Duplicated version attribute");
@@ -252,7 +253,7 @@ pub fn get_runtime_interface<'a>(trait_def: &'a ItemTrait) -> Result<RuntimeInte
 						"Previous version with the same number defined here",
 					));
 
-					return Err(err)
+					return Err(err);
 				}
 
 				let interface_item = entry.get_mut();
@@ -260,7 +261,7 @@ pub fn get_runtime_interface<'a>(trait_def: &'a ItemTrait) -> Result<RuntimeInte
 					interface_item.latest_version = version;
 				}
 				interface_item.versions.insert(version, item);
-			},
+			}
 		}
 	}
 
@@ -274,7 +275,7 @@ pub fn get_runtime_interface<'a>(trait_def: &'a ItemTrait) -> Result<RuntimeInte
 						"Unexpected version attribute: missing version '{}' for this function",
 						next_expected
 					),
-				))
+				));
 			}
 			next_expected += 1;
 		}

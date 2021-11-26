@@ -322,12 +322,12 @@ impl<B: BlockT, N: Network<B>> NetworkBridge<B, N> {
 					Err(ref e) => {
 						debug!(target: "afg", "Skipping malformed message {:?}: {}", notification, e);
 						future::ready(None)
-					},
+					}
 					Ok(GossipMessage::Vote(msg)) => {
 						// check signature.
 						if !voters.contains(&msg.message.id) {
 							debug!(target: "afg", "Skipping message from unknown voter {}", msg.message.id);
-							return future::ready(None)
+							return future::ready(None);
 						}
 
 						if voters.len().get() <= TELEMETRY_VOTERS_LIMIT {
@@ -341,7 +341,7 @@ impl<B: BlockT, N: Network<B>> NetworkBridge<B, N> {
 										"target_number" => ?propose.target_number,
 										"target_hash" => ?propose.target_hash,
 									);
-								},
+								}
 								Prevote(prevote) => {
 									telemetry!(
 										telemetry;
@@ -351,7 +351,7 @@ impl<B: BlockT, N: Network<B>> NetworkBridge<B, N> {
 										"target_number" => ?prevote.target_number,
 										"target_hash" => ?prevote.target_hash,
 									);
-								},
+								}
 								Precommit(precommit) => {
 									telemetry!(
 										telemetry;
@@ -361,16 +361,16 @@ impl<B: BlockT, N: Network<B>> NetworkBridge<B, N> {
 										"target_number" => ?precommit.target_number,
 										"target_hash" => ?precommit.target_hash,
 									);
-								},
+								}
 							};
 						}
 
 						future::ready(Some(msg.message))
-					},
+					}
 					_ => {
 						debug!(target: "afg", "Skipping unknown message type");
 						future::ready(None)
-					},
+					}
 				}
 			});
 
@@ -460,11 +460,12 @@ impl<B: BlockT, N: Network<B>> Future for NetworkBridge<B, N> {
 			match self.neighbor_packet_worker.lock().poll_next_unpin(cx) {
 				Poll::Ready(Some((to, packet))) => {
 					self.gossip_engine.lock().send_message(to, packet.encode());
-				},
-				Poll::Ready(None) =>
+				}
+				Poll::Ready(None) => {
 					return Poll::Ready(Err(Error::Network(
 						"Neighbor packet worker stream closed.".into(),
-					))),
+					)))
+				}
 				Poll::Pending => break,
 			}
 		}
@@ -473,19 +474,21 @@ impl<B: BlockT, N: Network<B>> Future for NetworkBridge<B, N> {
 			match self.gossip_validator_report_stream.lock().poll_next_unpin(cx) {
 				Poll::Ready(Some(PeerReport { who, cost_benefit })) => {
 					self.gossip_engine.lock().report(who, cost_benefit);
-				},
-				Poll::Ready(None) =>
+				}
+				Poll::Ready(None) => {
 					return Poll::Ready(Err(Error::Network(
 						"Gossip validator report stream closed.".into(),
-					))),
+					)))
+				}
 				Poll::Pending => break,
 			}
 		}
 
 		match self.gossip_engine.lock().poll_unpin(cx) {
-			Poll::Ready(()) =>
-				return Poll::Ready(Err(Error::Network("Gossip engine future finished.".into()))),
-			Poll::Pending => {},
+			Poll::Ready(()) => {
+				return Poll::Ready(Err(Error::Network("Gossip engine future finished.".into())))
+			}
+			Poll::Pending => {}
 		}
 
 		Poll::Pending
@@ -532,7 +535,7 @@ fn incoming_global<B: BlockT>(
 					gossip_engine.lock().report(who, cost);
 				}
 
-				return None
+				return None;
 			}
 
 			let round = msg.round;
@@ -555,13 +558,13 @@ fn incoming_global<B: BlockT>(
 					);
 
 					gossip_engine.lock().gossip_message(topic, notification.message.clone(), false);
-				},
+				}
 				voter::CommitProcessingOutcome::Bad(_) => {
 					// report peer and do not gossip.
 					if let Some(who) = notification.sender.take() {
 						gossip_engine.lock().report(who, cost::INVALID_COMMIT);
 					}
-				},
+				}
 			};
 
 			let cb = voter::Callback::Work(Box::new(cb));
@@ -584,7 +587,7 @@ fn incoming_global<B: BlockT>(
 				gossip_engine.lock().report(who, cost);
 			}
 
-			return None
+			return None;
 		}
 
 		let cb = move |outcome| {
@@ -617,14 +620,16 @@ fn incoming_global<B: BlockT>(
 		})
 		.filter_map(move |(notification, msg)| {
 			future::ready(match msg {
-				GossipMessage::Commit(msg) =>
-					process_commit(msg, notification, &gossip_engine, &gossip_validator, &*voters),
-				GossipMessage::CatchUp(msg) =>
-					process_catch_up(msg, notification, &gossip_engine, &gossip_validator, &*voters),
+				GossipMessage::Commit(msg) => {
+					process_commit(msg, notification, &gossip_engine, &gossip_validator, &*voters)
+				}
+				GossipMessage::CatchUp(msg) => {
+					process_catch_up(msg, notification, &gossip_engine, &gossip_validator, &*voters)
+				}
 				_ => {
 					debug!(target: "afg", "Skipping unknown message type");
 					None
-				},
+				}
 			})
 		})
 }
@@ -688,17 +693,17 @@ impl<Block: BlockT> Sink<Message<Block>> for OutgoingMessages<Block> {
 				if let Some(propose) = self.has_voted.propose() {
 					*vote = propose.clone();
 				}
-			},
+			}
 			finality_grandpa::Message::Prevote(ref mut vote) => {
 				if let Some(prevote) = self.has_voted.prevote() {
 					*vote = prevote.clone();
 				}
-			},
+			}
 			finality_grandpa::Message::Precommit(ref mut vote) => {
 				if let Some(precommit) = self.has_voted.precommit() {
 					*vote = precommit.clone();
 				}
-			},
+			}
 		}
 
 		// when locals exist, sign messages on import
@@ -749,7 +754,7 @@ impl<Block: BlockT> Sink<Message<Block>> for OutgoingMessages<Block> {
 			// forward the message to the inner sender.
 			return self.sender.start_send(signed).map_err(|e| {
 				Error::Network(format!("Failed to start_send on channel sender: {:?}", e))
-			})
+			});
 		};
 
 		Ok(())
@@ -787,16 +792,16 @@ fn check_compact_commit<Block: BlockT>(
 		if let Some(weight) = voters.get(id).map(|info| info.weight()) {
 			total_weight += weight.get();
 			if total_weight > full_threshold {
-				return Err(cost::MALFORMED_COMMIT)
+				return Err(cost::MALFORMED_COMMIT);
 			}
 		} else {
 			debug!(target: "afg", "Skipping commit containing unknown voter {}", id);
-			return Err(cost::MALFORMED_COMMIT)
+			return Err(cost::MALFORMED_COMMIT);
 		}
 	}
 
 	if total_weight < voters.threshold().get() {
-		return Err(cost::MALFORMED_COMMIT)
+		return Err(cost::MALFORMED_COMMIT);
 	}
 
 	// check signatures on all contained precommits.
@@ -829,7 +834,7 @@ fn check_compact_commit<Block: BlockT>(
 			}
 			.cost();
 
-			return Err(cost)
+			return Err(cost);
 		}
 	}
 
@@ -860,16 +865,16 @@ fn check_catch_up<Block: BlockT>(
 			if let Some(weight) = voters.get(&id).map(|info| info.weight()) {
 				total_weight += weight.get();
 				if total_weight > full_threshold {
-					return Err(cost::MALFORMED_CATCH_UP)
+					return Err(cost::MALFORMED_CATCH_UP);
 				}
 			} else {
 				debug!(target: "afg", "Skipping catch up message containing unknown voter {}", id);
-				return Err(cost::MALFORMED_CATCH_UP)
+				return Err(cost::MALFORMED_CATCH_UP);
 			}
 		}
 
 		if total_weight < voters.threshold().get() {
-			return Err(cost::MALFORMED_CATCH_UP)
+			return Err(cost::MALFORMED_CATCH_UP);
 		}
 
 		Ok(())
@@ -912,7 +917,7 @@ fn check_catch_up<Block: BlockT>(
 				}
 				.cost();
 
-				return Err(cost)
+				return Err(cost);
 			}
 		}
 
@@ -995,7 +1000,7 @@ impl<Block: BlockT> Sink<(RoundNumber, Commit<Block>)> for CommitsOut<Block> {
 		input: (RoundNumber, Commit<Block>),
 	) -> Result<(), Self::Error> {
 		if !self.is_voter {
-			return Ok(())
+			return Ok(());
 		}
 
 		let (round, commit) = input;

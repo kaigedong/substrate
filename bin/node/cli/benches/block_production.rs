@@ -163,7 +163,7 @@ fn prepare_benchmark(client: &FullClient) -> (usize, Vec<OpaqueExtrinsic>) {
 		.into();
 
 		match block_builder.push(extrinsic.clone()) {
-			Ok(_) => {},
+			Ok(_) => {}
 			Err(ApplyExtrinsicFailed(Validity(TransactionValidityError::Invalid(
 				InvalidTransaction::ExhaustsResources,
 			)))) => break,

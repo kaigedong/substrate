@@ -89,7 +89,7 @@ impl<Client, Block> FullChainApi<Client, Block> {
 					err,
 				);
 				None
-			},
+			}
 			Ok(api) => Some(Arc::new(api)),
 		});
 

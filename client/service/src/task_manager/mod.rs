@@ -146,14 +146,14 @@ impl SpawnTaskHandle {
 					Either::Right((Err(payload), _)) => {
 						metrics.tasks_ended.with_label_values(&[name, "panic", group]).inc();
 						panic::resume_unwind(payload)
-					},
+					}
 					Either::Right((Ok(()), _)) => {
 						metrics.tasks_ended.with_label_values(&[name, "finished", group]).inc();
-					},
+					}
 					Either::Left(((), _)) => {
 						// The `on_exit` has triggered.
 						metrics.tasks_ended.with_label_values(&[name, "interrupted", group]).inc();
-					},
+					}
 				}
 			} else {
 				futures::pin_mut!(task);
@@ -165,13 +165,13 @@ impl SpawnTaskHandle {
 		match task_type {
 			TaskType::Async => {
 				self.tokio_handle.spawn(future);
-			},
+			}
 			TaskType::Blocking => {
 				let handle = self.tokio_handle.clone();
 				self.tokio_handle.spawn_blocking(move || {
 					handle.block_on(future);
 				});
-			},
+			}
 		}
 	}
 }

@@ -27,5 +27,4 @@ let block = futures::executor::block_on(future).unwrap();
 println!("Generated block: {:?}", block.block);
 ```
 
-
 License: GPL-3.0-or-later WITH Classpath-exception-2.0

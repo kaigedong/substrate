@@ -223,7 +223,7 @@ impl WasmInstance for WasmtimeInstance {
 				instance_wrapper.decommit();
 
 				result
-			},
+			}
 			Strategy::RecreateInstance(ref mut instance_creator) => {
 				let mut instance_wrapper = instance_creator.instantiate()?;
 				let heap_base = instance_wrapper.extract_heap_base()?;
@@ -231,16 +231,18 @@ impl WasmInstance for WasmtimeInstance {
 
 				let allocator = FreeingBumpHeapAllocator::new(heap_base);
 				perform_call(data, &mut instance_wrapper, entrypoint, allocator)
-			},
+			}
 		}
 	}
 
 	fn get_global_const(&mut self, name: &str) -> Result<Option<Value>> {
 		match &mut self.strategy {
-			Strategy::FastInstanceReuse { instance_wrapper, .. } =>
-				instance_wrapper.get_global_val(name),
-			Strategy::RecreateInstance(ref mut instance_creator) =>
-				instance_creator.instantiate()?.get_global_val(name),
+			Strategy::FastInstanceReuse { instance_wrapper, .. } => {
+				instance_wrapper.get_global_val(name)
+			}
+			Strategy::RecreateInstance(ref mut instance_creator) => {
+				instance_creator.instantiate()?.get_global_val(name)
+			}
 		}
 	}
 
@@ -250,9 +252,10 @@ impl WasmInstance for WasmtimeInstance {
 				// We do not keep the wasm instance around, therefore there is no linear memory
 				// associated with it.
 				None
-			},
-			Strategy::FastInstanceReuse { instance_wrapper, .. } =>
-				Some(instance_wrapper.base_ptr()),
+			}
+			Strategy::FastInstanceReuse { instance_wrapper, .. } => {
+				Some(instance_wrapper.base_ptr())
+			}
 		}
 	}
 }
@@ -311,7 +314,7 @@ fn common_config(semantics: &Semantics) -> std::result::Result<wasmtime::Config,
 				log::warn!("WASMTIME_PROFILING_STRATEGY is set to unknown value, ignored.");
 			}
 			wasmtime::ProfilingStrategy::None
-		},
+		}
 	};
 	config
 		.profiler(profiler)
@@ -555,7 +558,7 @@ unsafe fn do_create_runtime(
 					.map_err(|e| WasmError::Other(format!("cannot create module: {}", e)))?;
 				(module, None)
 			}
-		},
+		}
 		CodeSupplyMode::Artifact { compiled_artifact } => {
 			// SAFETY: The unsafity of `deserialize` is covered by this function. The
 			//         responsibilities to maintain the invariants are passed to the caller.
@@ -563,7 +566,7 @@ unsafe fn do_create_runtime(
 				.map_err(|e| WasmError::Other(format!("cannot deserialize module: {}", e)))?;
 
 			(module, None)
-		},
+		}
 	};
 
 	Ok(WasmtimeRuntime { module: Arc::new(module), snapshot_data, config, host_functions })

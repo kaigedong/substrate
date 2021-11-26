@@ -130,8 +130,9 @@ pub mod pallet {
 		/// The limit on the number of batched calls.
 		fn batched_calls_limit() -> u32 {
 			let allocator_limit = sp_core::MAX_POSSIBLE_ALLOCATION;
-			let call_size = ((sp_std::mem::size_of::<<T as Config>::Call>() as u32 + CALL_ALIGN -
-				1) / CALL_ALIGN) * CALL_ALIGN;
+			let call_size = ((sp_std::mem::size_of::<<T as Config>::Call>() as u32 + CALL_ALIGN
+				- 1) / CALL_ALIGN)
+				* CALL_ALIGN;
 			// The margin to take into account vec doubling capacity.
 			let margin_factor = 3;
 
@@ -224,7 +225,7 @@ pub mod pallet {
 					// Take the weight of this function itself into account.
 					let base_weight = T::WeightInfo::batch(index.saturating_add(1) as u32);
 					// Return the actual used weight + base_weight of this call.
-					return Ok(Some(base_weight + weight).into())
+					return Ok(Some(base_weight + weight).into());
 				}
 				Self::deposit_event(Event::ItemCompleted);
 			}

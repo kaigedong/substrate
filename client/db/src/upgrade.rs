@@ -69,17 +69,17 @@ impl fmt::Display for UpgradeError {
 		match self {
 			UpgradeError::UnknownDatabaseVersion => {
 				write!(f, "Database version cannot be read from exisiting db_version file")
-			},
+			}
 			UpgradeError::MissingDatabaseVersionFile => write!(f, "Missing database version file"),
 			UpgradeError::UnsupportedVersion(version) => {
 				write!(f, "Database version no longer supported: {}", version)
-			},
+			}
 			UpgradeError::FutureDatabaseVersion(version) => {
 				write!(f, "Database version comes from future version of the client: {}", version)
-			},
+			}
 			UpgradeError::DecodingJustificationBlock => {
 				write!(f, "Decodoning justification block failed")
-			},
+			}
 			UpgradeError::Io(err) => write!(f, "Io error: {}", err),
 		}
 	}
@@ -93,7 +93,7 @@ pub fn upgrade_db<Block: BlockT>(db_path: &Path, db_type: DatabaseType) -> Upgra
 		1 => {
 			migrate_1_to_2::<Block>(db_path, db_type)?;
 			migrate_2_to_3::<Block>(db_path, db_type)?
-		},
+		}
 		2 => migrate_2_to_3::<Block>(db_path, db_type)?,
 		CURRENT_VERSION => (),
 		_ => return Err(UpgradeError::FutureDatabaseVersion(db_version)),
@@ -143,14 +143,15 @@ fn migrate_2_to_3<Block: BlockT>(db_path: &Path, _db_type: DatabaseType) -> Upgr
 /// If the file does not exist returns 0.
 fn current_version(path: &Path) -> UpgradeResult<u32> {
 	match fs::File::open(version_file_path(path)) {
-		Err(ref err) if err.kind() == ErrorKind::NotFound =>
-			Err(UpgradeError::MissingDatabaseVersionFile),
+		Err(ref err) if err.kind() == ErrorKind::NotFound => {
+			Err(UpgradeError::MissingDatabaseVersionFile)
+		}
 		Err(_) => Err(UpgradeError::UnknownDatabaseVersion),
 		Ok(mut file) => {
 			let mut s = String::new();
 			file.read_to_string(&mut s).map_err(|_| UpgradeError::UnknownDatabaseVersion)?;
 			u32::from_str_radix(&s, 10).map_err(|_| UpgradeError::UnknownDatabaseVersion)
-		},
+		}
 	}
 }
 

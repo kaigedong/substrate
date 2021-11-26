@@ -183,7 +183,7 @@ where
 				Err(e) => {
 					error!(target: LOG_TARGET, "Failed to register metrics: {:?}", e);
 					None
-				},
+				}
 			},
 			None => None,
 		};
@@ -258,11 +258,11 @@ where
 				let _ = sender.send(
 					self.addr_cache.get_addresses_by_authority_id(&authority).map(Clone::clone),
 				);
-			},
+			}
 			ServicetoWorkerMsg::GetAuthorityIdsByPeerId(peer_id, sender) => {
 				let _ = sender
 					.send(self.addr_cache.get_authority_ids_by_peer_id(&peer_id).map(Clone::clone));
-			},
+			}
 		}
 	}
 
@@ -274,7 +274,7 @@ where
 			.into_iter()
 			.filter(move |a| {
 				if publish_non_global_ips {
-					return true
+					return true;
 				}
 
 				a.iter().all(|p| match p {
@@ -310,7 +310,7 @@ where
 		).await?.into_iter().map(Into::into).collect::<HashSet<_>>();
 
 		if only_if_changed && keys == self.latest_published_keys {
-			return Ok(())
+			return Ok(());
 		}
 
 		let addresses = self.addresses_to_publish().map(|a| a.to_vec()).collect::<Vec<_>>();
@@ -432,7 +432,7 @@ where
 
 					debug!(target: LOG_TARGET, "Failed to handle Dht value found event: {:?}", e);
 				}
-			},
+			}
 			DhtEvent::ValueNotFound(hash) => {
 				if let Some(metrics) = &self.metrics {
 					metrics.dht_event_received.with_label_values(&["value_not_found"]).inc();
@@ -446,7 +446,7 @@ where
 						"Received 'ValueNotFound' for unexpected hash '{:?}'.", hash
 					)
 				}
-			},
+			}
 			DhtEvent::ValuePut(hash) => {
 				// Fast forward the exponentially increasing interval to the configured maximum. In
 				// case this was the first successful address publishing there is no need for a
@@ -458,14 +458,14 @@ where
 				}
 
 				debug!(target: LOG_TARGET, "Successfully put hash '{:?}' on Dht.", hash)
-			},
+			}
 			DhtEvent::ValuePutFailed(hash) => {
 				if let Some(metrics) = &self.metrics {
 					metrics.dht_event_received.with_label_values(&["value_put_failed"]).inc();
 				}
 
 				debug!(target: LOG_TARGET, "Failed to put hash '{:?}' on Dht.", hash)
-			},
+			}
 		}
 	}
 
@@ -478,8 +478,9 @@ where
 			.iter()
 			.fold(Ok(None), |acc, (key, _)| match acc {
 				Ok(None) => Ok(Some(key.clone())),
-				Ok(Some(ref prev_key)) if prev_key != key =>
-					Err(Error::ReceivingDhtValueFoundEventWithDifferentKeys),
+				Ok(Some(ref prev_key)) if prev_key != key => {
+					Err(Error::ReceivingDhtValueFoundEventWithDifferentKeys)
+				}
 				x @ Ok(_) => x,
 				Err(e) => Err(e),
 			})?
@@ -503,7 +504,7 @@ where
 					.map_err(Error::EncodingDecodingScale)?;
 
 				if !AuthorityPair::verify(&signature, &addresses, &authority_id) {
-					return Err(Error::VerifyingDhtPayload)
+					return Err(Error::VerifyingDhtPayload);
 				}
 
 				let addresses = schema::AuthorityAddresses::decode(addresses.as_slice())
@@ -534,7 +535,7 @@ where
 						};
 
 						// Discard if equal to local peer id, keep if it differs.
-						return !(peer_id == local_peer_id)
+						return !(peer_id == local_peer_id);
 					}
 
 					false // `protocol` is not a [`Protocol::P2p`], let's keep looking.

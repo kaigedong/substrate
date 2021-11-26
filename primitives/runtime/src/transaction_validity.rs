@@ -102,12 +102,15 @@ impl From<InvalidTransaction> for &'static str {
 			InvalidTransaction::BadProof => "Transaction has a bad signature",
 			InvalidTransaction::AncientBirthBlock => "Transaction has an ancient birth block",
 			InvalidTransaction::ExhaustsResources => "Transaction would exhaust the block limits",
-			InvalidTransaction::Payment =>
-				"Inability to pay some fees (e.g. account balance too low)",
-			InvalidTransaction::BadMandatory =>
-				"A call was labelled as mandatory, but resulted in an Error.",
-			InvalidTransaction::MandatoryDispatch =>
-				"Transaction dispatch is mandatory; transactions may not have mandatory dispatches.",
+			InvalidTransaction::Payment => {
+				"Inability to pay some fees (e.g. account balance too low)"
+			}
+			InvalidTransaction::BadMandatory => {
+				"A call was labelled as mandatory, but resulted in an Error."
+			}
+			InvalidTransaction::MandatoryDispatch => {
+				"Transaction dispatch is mandatory; transactions may not have mandatory dispatches."
+			}
 			InvalidTransaction::Custom(_) => "InvalidTransaction custom error",
 		}
 	}
@@ -128,10 +131,12 @@ pub enum UnknownTransaction {
 impl From<UnknownTransaction> for &'static str {
 	fn from(unknown: UnknownTransaction) -> &'static str {
 		match unknown {
-			UnknownTransaction::CannotLookup =>
-				"Could not lookup information required to validate the transaction",
-			UnknownTransaction::NoUnsignedValidator =>
-				"Could not find an unsigned validator for the unsigned transaction",
+			UnknownTransaction::CannotLookup => {
+				"Could not lookup information required to validate the transaction"
+			}
+			UnknownTransaction::NoUnsignedValidator => {
+				"Could not find an unsigned validator for the unsigned transaction"
+			}
 			UnknownTransaction::Custom(_) => "UnknownTransaction custom error",
 		}
 	}

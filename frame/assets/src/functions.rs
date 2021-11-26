@@ -85,21 +85,21 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 			None => return DepositConsequence::UnknownAsset,
 		};
 		if details.supply.checked_add(&amount).is_none() {
-			return DepositConsequence::Overflow
+			return DepositConsequence::Overflow;
 		}
 		let account = Account::<T, I>::get(id, who);
 		if account.balance.checked_add(&amount).is_none() {
-			return DepositConsequence::Overflow
+			return DepositConsequence::Overflow;
 		}
 		if account.balance.is_zero() {
 			if amount < details.min_balance {
-				return DepositConsequence::BelowMinimum
+				return DepositConsequence::BelowMinimum;
 			}
 			if !details.is_sufficient && frame_system::Pallet::<T>::providers(who) == 0 {
-				return DepositConsequence::CannotCreate
+				return DepositConsequence::CannotCreate;
 			}
 			if details.is_sufficient && details.sufficients.checked_add(1).is_none() {
-				return DepositConsequence::Overflow
+				return DepositConsequence::Overflow;
 			}
 		}
 
@@ -119,21 +119,21 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 			None => return UnknownAsset,
 		};
 		if details.supply.checked_sub(&amount).is_none() {
-			return Underflow
+			return Underflow;
 		}
 		if details.is_frozen {
-			return Frozen
+			return Frozen;
 		}
 		let account = Account::<T, I>::get(id, who);
 		if account.is_frozen {
-			return Frozen
+			return Frozen;
 		}
 		if let Some(rest) = account.balance.checked_sub(&amount) {
 			if let Some(frozen) = T::Freezer::frozen_balance(id, who) {
 				match frozen.checked_add(&details.min_balance) {
 					Some(required) if rest < required => return Frozen,
 					None => return Overflow,
-					_ => {},
+					_ => {}
 				}
 			}
 
@@ -216,8 +216,8 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 			Ok(dust) => actual.saturating_add(dust), //< guaranteed by reducible_balance
 			Err(e) => {
 				debug_assert!(false, "passed from reducible_balance; qed");
-				return Err(e.into())
-			},
+				return Err(e.into());
+			}
 		};
 
 		Ok(actual)
@@ -298,7 +298,7 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 		) -> DispatchResult,
 	) -> DispatchResult {
 		if amount.is_zero() {
-			return Ok(())
+			return Ok(());
 		}
 
 		Self::can_increase(id, beneficiary, amount).into_result()?;
@@ -369,7 +369,7 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 		) -> DispatchResult,
 	) -> Result<T::Balance, DispatchError> {
 		if amount.is_zero() {
-			return Ok(amount)
+			return Ok(amount);
 		}
 
 		let actual = Self::prep_debit(id, target, amount, f)?;
@@ -425,7 +425,7 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 				to: dest.clone(),
 				amount,
 			});
-			return Ok(amount)
+			return Ok(amount);
 		}
 
 		// Figure out the debit and credit, together with side-effects.
@@ -444,7 +444,7 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 
 			// Skip if source == dest
 			if source == dest {
-				return Ok(())
+				return Ok(());
 			}
 
 			// Burn any dust if needed.
@@ -600,7 +600,7 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 					None => {
 						d.approvals.saturating_inc();
 						Default::default()
-					},
+					}
 				};
 				let deposit_required = T::ApprovalDeposit::get();
 				if approved.deposit < deposit_required {

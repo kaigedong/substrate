@@ -8,7 +8,7 @@ as [Grafana](https://grafana.com/) and [Alertmanager](https://prometheus.io/docs
 Metrics will be served under `/metrics` on TCP port 9615 by default.
 
 ## Quick Start
- 
+
 1. From the root of the repository start Substrate `cargo run --release`.
 
 2. In another terminal run `curl localhost:9615/metrics` to retrieve the metrics.

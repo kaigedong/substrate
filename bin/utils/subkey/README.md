@@ -16,7 +16,7 @@ If you save any output of `subkey` into a file, make sure to apply proper permis
 
 ## Usage
 
-The following guide explains *some* of the `subkey` commands. For the full list and the most up to date documentation, make sure to check the integrated help with `subkey --help`.
+The following guide explains _some_ of the `subkey` commands. For the full list and the most up to date documentation, make sure to check the integrated help with `subkey --help`.
 
 ### Install with Cargo
 
@@ -57,6 +57,7 @@ Secret phrase `hotel forest jar hover kite book view eight stuff angle legend de
 ```
 
 ---
+
 ☠️ DO NT RE-USE ANY OF THE SEEDS AND SECRETS FROM THIS PAGE ☠️.
 
 You can read more about security and risks in [SECURITY.md](./SECURITY.md) and in the [Polkadot Wiki](https://wiki.polkadot.network/docs/learn-account-generation).
@@ -78,7 +79,7 @@ For instance, considering the previous seed `0xa05c75731970cc7868a2fb7cb577353cd
 
 ### Json output
 
-`subkey` can calso generate the output as *json*. This is useful for automation.
+`subkey` can calso generate the output as _json_. This is useful for automation.
 
 command:
 
@@ -146,7 +147,7 @@ This time, we properly recovered `5He5pZpc7AJ8evPuab37vJF6KkFDqq9uDq2WXh877Qw6ia
 
 ### Inspecting a key
 
-If you have *some data* about a key, `subkey inpsect` will help you discover more information about it.
+If you have _some data_ about a key, `subkey inpsect` will help you discover more information about it.
 
 If you have **secrets** that you would like to verify for instance, you can use:
 

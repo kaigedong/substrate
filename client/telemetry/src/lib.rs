@@ -194,10 +194,10 @@ impl TelemetryWorker {
 						obj.insert("id".to_string(), id.into());
 						obj.insert("payload".to_string(), value.into());
 						Some(obj)
-					},
+					}
 					Ok(_) => {
 						unreachable!("ConnectionMessage always serialize to an object; qed")
-					},
+					}
 					Err(err) => {
 						log::error!(
 							target: "telemetry",
@@ -205,7 +205,7 @@ impl TelemetryWorker {
 							err,
 						);
 						None
-					},
+					}
 				};
 
 				for (addr, verbosity) in endpoints {
@@ -231,7 +231,7 @@ impl TelemetryWorker {
 						}
 					});
 				}
-			},
+			}
 			Register::Notifier { addresses, connection_notifier } => {
 				for addr in addresses {
 					// If the Node has been initialized, we directly push the connection_notifier.
@@ -244,7 +244,7 @@ impl TelemetryWorker {
 						pending_connection_notifications.push((addr, connection_notifier.clone()));
 					}
 				}
-			},
+			}
 		}
 	}
 
@@ -278,12 +278,12 @@ impl TelemetryWorker {
 						message,
 					)),
 			);
-			return
+			return;
 		};
 
 		for (node_max_verbosity, addr) in nodes {
 			if verbosity > *node_max_verbosity {
-				continue
+				continue;
 			}
 
 			if let Some(node) = node_pool.get_mut(&addr) {
@@ -385,7 +385,7 @@ impl TelemetryHandle {
 	/// Send telemetry messages.
 	pub fn send_telemetry(&self, verbosity: VerbosityLevel, payload: TelemetryPayload) {
 		match self.message_sender.lock().try_send((self.id, verbosity, payload)) {
-			Ok(()) => {},
+			Ok(()) => {}
 			Err(err) if err.is_full() => log::trace!(
 				target: "telemetry",
 				"Telemetry channel full.",

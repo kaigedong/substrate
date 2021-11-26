@@ -242,7 +242,7 @@ where
 					// new input: schedule wait of any parts which require
 					// blocks to be known.
 					match M::needs_waiting(input, &this.status_check)? {
-						DiscardWaitOrReady::Discard => {},
+						DiscardWaitOrReady::Discard => {}
 						DiscardWaitOrReady::Wait(items) => {
 							for (target_hash, target_number, wait) in items {
 								this.pending
@@ -251,14 +251,14 @@ where
 									.2
 									.push(wait)
 							}
-						},
+						}
 						DiscardWaitOrReady::Ready(item) => this.ready.push_back(item),
 					}
 
 					if let Some(metrics) = &mut this.metrics {
 						metrics.waiting_messages_inc();
 					}
-				},
+				}
 				Poll::Pending => break,
 			}
 		}
@@ -275,7 +275,7 @@ where
 
 						this.ready.extend(ready_messages);
 					}
-				},
+				}
 				Poll::Pending => break,
 			}
 		}
@@ -333,7 +333,7 @@ where
 			if let Some(metrics) = &mut this.metrics {
 				metrics.waiting_messages_dec();
 			}
-			return Poll::Ready(Some(Ok(ready)))
+			return Poll::Ready(Some(Ok(ready)));
 		}
 
 		if this.import_notifications.is_done() && this.incoming_messages.is_done() {
@@ -366,9 +366,9 @@ impl<Block: BlockT> BlockUntilImported<Block> for SignedMessage<Block> {
 		if let Some(number) = status_check.block_number(target_hash)? {
 			if number != target_number {
 				warn_authority_wrong_target(target_hash, msg.id);
-				return Ok(DiscardWaitOrReady::Discard)
+				return Ok(DiscardWaitOrReady::Discard);
 			} else {
-				return Ok(DiscardWaitOrReady::Ready(msg))
+				return Ok(DiscardWaitOrReady::Ready(msg));
 			}
 		}
 
@@ -447,14 +447,14 @@ impl<Block: BlockT> BlockUntilImported<Block> for BlockGlobalMessage<Block> {
 							entry.insert(KnownOrUnknown::Unknown(perceived_number));
 							perceived_number
 						}
-					},
+					}
 				};
 
 				if canon_number != perceived_number {
 					// invalid global message: messages targeting wrong number
 					// or at least different from other vote in same global
 					// message.
-					return Ok(false)
+					return Ok(false);
 				}
 
 				Ok(true)
@@ -468,10 +468,10 @@ impl<Block: BlockT> BlockUntilImported<Block> for BlockGlobalMessage<Block> {
 
 					for (target_number, target_hash) in precommit_targets {
 						if !query_known(target_hash, target_number)? {
-							return Ok(DiscardWaitOrReady::Discard)
+							return Ok(DiscardWaitOrReady::Discard);
 						}
 					}
-				},
+				}
 				voter::CommunicationIn::CatchUp(ref catch_up, ..) => {
 					// add known hashes from all prevotes and precommits.
 					let prevote_targets = catch_up
@@ -488,10 +488,10 @@ impl<Block: BlockT> BlockUntilImported<Block> for BlockGlobalMessage<Block> {
 
 					for (target_number, target_hash) in targets {
 						if !query_known(target_hash, target_number)? {
-							return Ok(DiscardWaitOrReady::Discard)
+							return Ok(DiscardWaitOrReady::Discard);
 						}
 					}
-				},
+				}
 			};
 		}
 
@@ -506,7 +506,7 @@ impl<Block: BlockT> BlockUntilImported<Block> for BlockGlobalMessage<Block> {
 		if unknown_hashes.is_empty() {
 			// none of the hashes in the global message were unknown.
 			// we can just return the message directly.
-			return Ok(DiscardWaitOrReady::Ready(input))
+			return Ok(DiscardWaitOrReady::Ready(input));
 		}
 
 		let locked_global = Arc::new(Mutex::new(Some(input)));
@@ -533,7 +533,7 @@ impl<Block: BlockT> BlockUntilImported<Block> for BlockGlobalMessage<Block> {
 			// Delete the inner message so it won't ever be forwarded. Future calls to
 			// `wait_completed` on the same `inner` will ignore it.
 			*self.inner.lock() = None;
-			return None
+			return None;
 		}
 
 		match Arc::try_unwrap(self.inner) {
@@ -727,7 +727,7 @@ mod tests {
 						enact_dependencies(&inner_chain_state);
 
 						until_imported
-					},
+					}
 				});
 
 		futures::executor::block_on(work).0.unwrap().unwrap()
@@ -933,10 +933,10 @@ mod tests {
 			let block_sync_requests = block_sync_requester.requests.lock();
 
 			// we request blocks targeted by the precommits that aren't imported
-			if block_sync_requests.contains(&(h2.hash(), *h2.number())) &&
-				block_sync_requests.contains(&(h3.hash(), *h3.number()))
+			if block_sync_requests.contains(&(h2.hash(), *h2.number()))
+				&& block_sync_requests.contains(&(h3.hash(), *h3.number()))
 			{
-				return Poll::Ready(())
+				return Poll::Ready(());
 			}
 
 			// NOTE: nothing in this function is future-aware (i.e nothing gets registered to wake
@@ -952,7 +952,7 @@ mod tests {
 		let timeout = Delay::new(Duration::from_secs(60));
 		let test = future::select(assert, timeout)
 			.map(|res| match res {
-				Either::Left(_) => {},
+				Either::Left(_) => {}
 				Either::Right(_) => panic!("timed out waiting for block sync request"),
 			})
 			.map(drop);

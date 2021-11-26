@@ -154,17 +154,17 @@ impl<B: BlockT> StateRequestHandler<B> {
 		let mut reputation_changes = Vec::new();
 
 		match self.seen_requests.get_mut(&key) {
-			Some(SeenRequestsValue::First) => {},
+			Some(SeenRequestsValue::First) => {}
 			Some(SeenRequestsValue::Fulfilled(ref mut requests)) => {
 				*requests = requests.saturating_add(1);
 
 				if *requests > MAX_NUMBER_OF_SAME_REQUESTS_PER_PEER {
 					reputation_changes.push(rep::SAME_REQUEST);
 				}
-			},
+			}
 			None => {
 				self.seen_requests.put(key.clone(), SeenRequestsValue::First);
-			},
+			}
 		}
 
 		trace!(

@@ -50,7 +50,7 @@ pub fn lowest_common_ancestor<Block: BlockT, T: HeaderMetadata<Block> + ?Sized>(
 		if ancestor_one.number >= header_two.number {
 			header_one = ancestor_one;
 		} else {
-			break
+			break;
 		}
 	}
 
@@ -60,7 +60,7 @@ pub fn lowest_common_ancestor<Block: BlockT, T: HeaderMetadata<Block> + ?Sized>(
 		if ancestor_two.number >= header_one.number {
 			header_two = ancestor_two;
 		} else {
-			break
+			break;
 		}
 	}
 

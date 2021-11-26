@@ -73,7 +73,7 @@ where
 		return Err(error::Error::SignatureInvalidLength {
 			read: sig_data.len(),
 			expected: signature.as_ref().len(),
-		})
+		});
 	}
 	signature.as_mut().copy_from_slice(&sig_data);
 
@@ -86,7 +86,7 @@ where
 	if Pair::verify(&signature, &message, &pubkey) {
 		println!("Signature verifies correctly.");
 	} else {
-		return Err(error::Error::SignatureInvalid)
+		return Err(error::Error::SignatureInvalid);
 	}
 
 	Ok(())

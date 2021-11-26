@@ -213,8 +213,8 @@ pub(crate) async fn import_single_block_metered<
 			} else {
 				debug!(target: "sync", "Header {} was not provided ", block.hash);
 			}
-			return Err(BlockImportError::IncompleteHeader(peer))
-		},
+			return Err(BlockImportError::IncompleteHeader(peer));
+		}
 	};
 
 	trace!(target: "sync", "Header {} has {:?} logs", block.hash, header.digest().logs().len());
@@ -227,27 +227,28 @@ pub(crate) async fn import_single_block_metered<
 		Ok(ImportResult::AlreadyInChain) => {
 			trace!(target: "sync", "Block already in chain {}: {:?}", number, hash);
 			Ok(BlockImportStatus::ImportedKnown(number, peer.clone()))
-		},
-		Ok(ImportResult::Imported(aux)) =>
-			Ok(BlockImportStatus::ImportedUnknown(number, aux, peer.clone())),
+		}
+		Ok(ImportResult::Imported(aux)) => {
+			Ok(BlockImportStatus::ImportedUnknown(number, aux, peer.clone()))
+		}
 		Ok(ImportResult::MissingState) => {
 			debug!(target: "sync", "Parent state is missing for {}: {:?}, parent: {:?}",
 					number, hash, parent_hash);
 			Err(BlockImportError::MissingState)
-		},
+		}
 		Ok(ImportResult::UnknownParent) => {
 			debug!(target: "sync", "Block with unknown parent {}: {:?}, parent: {:?}",
 					number, hash, parent_hash);
 			Err(BlockImportError::UnknownParent)
-		},
+		}
 		Ok(ImportResult::KnownBad) => {
 			debug!(target: "sync", "Peer gave us a bad block {}: {:?}", number, hash);
 			Err(BlockImportError::BadBlock(peer.clone()))
-		},
+		}
 		Err(e) => {
 			debug!(target: "sync", "Error importing block {}: {:?}: {:?}", number, hash, e);
 			Err(BlockImportError::Other(e))
-		},
+		}
 	};
 
 	match import_handler(

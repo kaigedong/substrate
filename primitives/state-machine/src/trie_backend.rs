@@ -160,7 +160,7 @@ where
 			Err(e) => {
 				debug!(target: "trie", "Error extracting trie values: {}", e);
 				Vec::new()
-			},
+			}
 		}
 	}
 
@@ -226,7 +226,7 @@ where
 			Err(e) => {
 				warn!(target: "trie", "Failed to read child storage root: {}", e);
 				default_root.clone()
-			},
+			}
 		};
 
 		{

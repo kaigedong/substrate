@@ -179,7 +179,7 @@ pub async fn run_manual_seal<B, BI, CB, E, C, TP, SC, CS, CIDP>(
 					create_inherent_data_providers: &create_inherent_data_providers,
 				})
 				.await;
-			},
+			}
 			EngineCommand::FinalizeBlock { hash, sender, justification } => {
 				let justification = justification.map(|j| (MANUAL_SEAL_ENGINE_ID, j));
 				finalize_block(FinalizeBlockParams {
@@ -190,7 +190,7 @@ pub async fn run_manual_seal<B, BI, CB, E, C, TP, SC, CS, CIDP>(
 					_phantom: PhantomData,
 				})
 				.await
-			},
+			}
 		}
 	}
 }

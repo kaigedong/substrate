@@ -173,7 +173,7 @@ where
 
 			elected_candidates.push((winner.who.clone(), winner.approval_stake as ExtendedBalance));
 		} else {
-			break
+			break;
 		}
 	}
 
@@ -218,7 +218,7 @@ pub(crate) fn equalize_float<A, FS>(
 		}
 
 		if max_diff < tolerance {
-			break
+			break;
 		}
 	}
 }
@@ -235,7 +235,7 @@ where
 {
 	let budget = budget_balance as f64;
 	if elected_edges.is_empty() {
-		return 0.0
+		return 0.0;
 	}
 
 	let stake_used = elected_edges.iter().fold(0.0, |s, e| s + e.1);
@@ -263,7 +263,7 @@ where
 		difference = max_stake - min_stake;
 		difference = difference + budget - stake_used;
 		if difference < tolerance {
-			return difference
+			return difference;
 		}
 	} else {
 		difference = budget;
@@ -294,7 +294,7 @@ where
 			let stake_sub = stake_mul - cumulative_stake;
 			if stake_sub > budget {
 				last_index = idx.checked_sub(1).unwrap_or(0);
-				return
+				return;
 			}
 			cumulative_stake = cumulative_stake + stake;
 		}
@@ -481,7 +481,7 @@ pub fn generate_random_votes(
 
 		// distribute the available stake randomly
 		let stake_distribution = if num_chosen_winners == 0 {
-			continue
+			continue;
 		} else {
 			let mut available_stake = 1000;
 			let mut stake_distribution = Vec::with_capacity(num_chosen_winners);

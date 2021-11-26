@@ -131,7 +131,7 @@ pub trait Backend<Block: BlockT>:
 		if let Some(max_number) = maybe_max_number {
 			// target outside search range
 			if target_header.number() > &max_number {
-				return Ok(None)
+				return Ok(None);
 			}
 		}
 
@@ -152,12 +152,12 @@ pub trait Backend<Block: BlockT>:
 				// provided, we continue to search from all leaves below.
 				if let Some(max_number) = maybe_max_number {
 					if let Some(header) = self.hash(max_number)? {
-						return Ok(Some(header))
+						return Ok(Some(header));
 					}
 				}
 			} else if info.finalized_number >= *target_header.number() {
 				// header is on a dead fork.
-				return Ok(None)
+				return Ok(None);
 			}
 
 			self.leaves()?
@@ -181,7 +181,7 @@ pub trait Backend<Block: BlockT>:
 
 					if current_header.number() <= &max_number {
 						best_hash = current_header.hash();
-						break
+						break;
 					}
 
 					current_hash = *current_header.parent_hash();
@@ -192,7 +192,7 @@ pub trait Backend<Block: BlockT>:
 			loop {
 				// until we find target
 				if current_hash == target_hash {
-					return Ok(Some(best_hash))
+					return Ok(Some(best_hash));
 				}
 
 				let current_header = self
@@ -201,7 +201,7 @@ pub trait Backend<Block: BlockT>:
 
 				// stop search in this chain once we go below the target's block number
 				if current_header.number() < target_header.number() {
-					break
+					break;
 				}
 
 				current_hash = *current_header.parent_hash();

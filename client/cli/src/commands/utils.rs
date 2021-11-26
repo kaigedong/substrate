@@ -91,7 +91,7 @@ pub fn print_from_uri<Pair>(
 					"{}",
 					serde_json::to_string_pretty(&json).expect("Json pretty print failed")
 				);
-			},
+			}
 			OutputType::Text => {
 				println!(
 					"Secret phrase:       {}\n  \
@@ -107,7 +107,7 @@ pub fn print_from_uri<Pair>(
 					public_key.to_ss58check_with_version(network_override),
 					pair.public().into().into_account().to_ss58check_with_version(network_override),
 				);
-			},
+			}
 		}
 	} else if let Ok((pair, seed)) = Pair::from_string_with_seed(uri, password.clone()) {
 		let public_key = pair.public();
@@ -127,7 +127,7 @@ pub fn print_from_uri<Pair>(
 					"{}",
 					serde_json::to_string_pretty(&json).expect("Json pretty print failed")
 				);
-			},
+			}
 			OutputType::Text => {
 				println!(
 					"Secret Key URI `{}` is account:\n  \
@@ -143,7 +143,7 @@ pub fn print_from_uri<Pair>(
 					public_key.to_ss58check_with_version(network_override),
 					pair.public().into().into_account().to_ss58check_with_version(network_override),
 				);
-			},
+			}
 		}
 	} else if let Ok((public_key, network)) = Pair::Public::from_string_with_version(uri) {
 		let network_override = network_override.unwrap_or(network);
@@ -163,7 +163,7 @@ pub fn print_from_uri<Pair>(
 					"{}",
 					serde_json::to_string_pretty(&json).expect("Json pretty print failed")
 				);
-			},
+			}
 			OutputType::Text => {
 				println!(
 					"Public Key URI `{}` is account:\n  \
@@ -179,7 +179,7 @@ pub fn print_from_uri<Pair>(
 					public_key.to_ss58check_with_version(network_override),
 					public_key.to_ss58check_with_version(network_override),
 				);
-			},
+			}
 		}
 	} else {
 		println!("Invalid phrase/URI given");
@@ -214,7 +214,7 @@ where
 			});
 
 			println!("{}", serde_json::to_string_pretty(&json).expect("Json pretty print failed"));
-		},
+		}
 		OutputType::Text => {
 			println!(
 				"Network ID/version: {}\n  \
@@ -228,7 +228,7 @@ where
 				public_key.to_ss58check_with_version(network_override),
 				public_key.to_ss58check_with_version(network_override),
 			);
-		},
+		}
 	}
 
 	Ok(())
@@ -281,13 +281,13 @@ pub fn read_message(msg: Option<&String>, should_decode: bool) -> Result<Vec<u8>
 	match msg {
 		Some(m) => {
 			message = decode_hex(m)?;
-		},
+		}
 		None => {
 			std::io::stdin().lock().read_to_end(&mut message)?;
 			if should_decode {
 				message = decode_hex(&message)?;
 			}
-		},
+		}
 	}
 	Ok(message)
 }

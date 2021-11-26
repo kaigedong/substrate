@@ -529,7 +529,7 @@ impl TraitPair for Pair {
 	fn verify_weak<P: AsRef<[u8]>, M: AsRef<[u8]>>(sig: &[u8], message: M, pubkey: P) -> bool {
 		let message = libsecp256k1::Message::parse(&blake2_256(message.as_ref()));
 		if sig.len() != 65 {
-			return false
+			return false;
 		}
 		let (sig, ri) = match parse_signature_standard(&sig) {
 			Ok(sigri) => sigri,

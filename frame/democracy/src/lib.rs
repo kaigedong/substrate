@@ -1081,8 +1081,9 @@ pub mod pallet {
 
 			let (provider, deposit, since, expiry) = <Preimages<T>>::get(&proposal_hash)
 				.and_then(|m| match m {
-					PreimageStatus::Available { provider, deposit, since, expiry, .. } =>
-						Some((provider, deposit, since, expiry)),
+					PreimageStatus::Available { provider, deposit, since, expiry, .. } => {
+						Some((provider, deposit, since, expiry))
+					}
 					_ => None,
 				})
 				.ok_or(Error::<T>::PreimageMissing)?;
@@ -1369,14 +1370,14 @@ impl<T: Config> Pallet<T> {
 							status.tally.reduce(approve, *delegations);
 						}
 						votes[i].1 = vote;
-					},
+					}
 					Err(i) => {
 						ensure!(
 							votes.len() as u32 <= T::MaxVotes::get(),
 							Error::<T>::MaxVotesReached
 						);
 						votes.insert(i, (ref_index, vote));
-					},
+					}
 				}
 				// Shouldn't be possible to fail, but we handle it gracefully.
 				status.tally.add(vote).ok_or(ArithmeticError::Overflow)?;
@@ -1421,7 +1422,7 @@ impl<T: Config> Pallet<T> {
 							status.tally.reduce(approve, *delegations);
 						}
 						ReferendumInfoOf::<T>::insert(ref_index, ReferendumInfo::Ongoing(status));
-					},
+					}
 					Some(ReferendumInfo::Finished { end, approved }) => {
 						if let Some((lock_periods, balance)) = votes[i].1.locked_if(approved) {
 							let unlock_at = end + T::VoteLockingPeriod::get() * lock_periods.into();
@@ -1434,8 +1435,8 @@ impl<T: Config> Pallet<T> {
 								prior.accumulate(unlock_at, balance)
 							}
 						}
-					},
-					None => {}, // Referendum was cancelled.
+					}
+					None => {} // Referendum was cancelled.
 				}
 				votes.remove(i);
 			}
@@ -1451,7 +1452,7 @@ impl<T: Config> Pallet<T> {
 				// We don't support second level delegating, so we don't need to do anything more.
 				*delegations = delegations.saturating_add(amount);
 				1
-			},
+			}
 			Voting::Direct { votes, delegations, .. } => {
 				*delegations = delegations.saturating_add(amount);
 				for &(ref_index, account_vote) in votes.iter() {
@@ -1464,7 +1465,7 @@ impl<T: Config> Pallet<T> {
 					}
 				}
 				votes.len() as u32
-			},
+			}
 		})
 	}
 
@@ -1475,7 +1476,7 @@ impl<T: Config> Pallet<T> {
 				// We don't support second level delegating, so we don't need to do anything more.
 				*delegations = delegations.saturating_sub(amount);
 				1
-			},
+			}
 			Voting::Direct { votes, delegations, .. } => {
 				*delegations = delegations.saturating_sub(amount);
 				for &(ref_index, account_vote) in votes.iter() {
@@ -1488,7 +1489,7 @@ impl<T: Config> Pallet<T> {
 					}
 				}
 				votes.len() as u32
-			},
+			}
 		})
 	}
 
@@ -1517,12 +1518,12 @@ impl<T: Config> Pallet<T> {
 					// remove any delegation votes to our current target.
 					Self::reduce_upstream_delegation(&target, conviction.votes(balance));
 					voting.set_common(delegations, prior);
-				},
+				}
 				Voting::Direct { votes, delegations, prior } => {
 					// here we just ensure that we're currently idling with no votes recorded.
 					ensure!(votes.is_empty(), Error::<T>::VotesExist);
 					voting.set_common(delegations, prior);
-				},
+				}
 			}
 			let votes = Self::increase_upstream_delegation(&target, conviction.votes(balance));
 			// Extend the lock to `balance` (rather than setting it) since we don't know what other
@@ -1552,7 +1553,7 @@ impl<T: Config> Pallet<T> {
 					voting.set_common(delegations, prior);
 
 					Ok(votes)
-				},
+				}
 				Voting::Direct { .. } => Err(Error::<T>::NotDelegating.into()),
 			}
 		})?;
@@ -1698,8 +1699,9 @@ impl<T: Config> Pallet<T> {
 				Preimages::<T>::mutate_exists(
 					&status.proposal_hash,
 					|maybe_pre| match *maybe_pre {
-						Some(PreimageStatus::Available { ref mut expiry, .. }) =>
-							*expiry = Some(when),
+						Some(PreimageStatus::Available { ref mut expiry, .. }) => {
+							*expiry = Some(when)
+						}
 						ref mut a => *a = Some(PreimageStatus::Missing(when)),
 					},
 				);
@@ -1774,8 +1776,8 @@ impl<T: Config> Pallet<T> {
 		//   of unbaked referendum is bounded by this number. In case those number have changed in a
 		//   runtime upgrade the formula should be adjusted but the bound should still be sensible.
 		<LowestUnbaked<T>>::mutate(|ref_index| {
-			while *ref_index < last &&
-				Self::referendum_info(*ref_index)
+			while *ref_index < last
+				&& Self::referendum_info(*ref_index)
 					.map_or(true, |info| matches!(info, ReferendumInfo::Finished { .. }))
 			{
 				*ref_index += 1
@@ -1813,7 +1815,7 @@ impl<T: Config> Pallet<T> {
 			_ => {
 				sp_runtime::print("Failed to decode `PreimageStatus` variant");
 				Err(Error::<T>::NotImminent.into())
-			},
+			}
 		}
 	}
 
@@ -1841,8 +1843,8 @@ impl<T: Config> Pallet<T> {
 			Ok(0) => return Err(Error::<T>::PreimageMissing.into()),
 			_ => {
 				sp_runtime::print("Failed to decode `PreimageStatus` variant");
-				return Err(Error::<T>::PreimageMissing.into())
-			},
+				return Err(Error::<T>::PreimageMissing.into());
+			}
 		}
 
 		// Decode the length of the vector.
@@ -1920,6 +1922,6 @@ fn decode_compact_u32_at(key: &[u8]) -> Option<u32> {
 			sp_runtime::print("Failed to decode compact u32 at:");
 			sp_runtime::print(key);
 			None
-		},
+		}
 	}
 }

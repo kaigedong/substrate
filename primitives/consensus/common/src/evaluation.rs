@@ -55,14 +55,14 @@ pub fn evaluate_initial<Block: BlockT>(
 		return Err(Error::WrongParentHash {
 			expected: format!("{:?}", *parent_hash),
 			got: format!("{:?}", proposal.header().parent_hash()),
-		})
+		});
 	}
 
 	if parent_number + One::one() != *proposal.header().number() {
 		return Err(Error::WrongNumber {
 			expected: parent_number.checked_into::<u128>().map(|x| x + 1),
 			got: (*proposal.header().number()).checked_into::<u128>(),
-		})
+		});
 	}
 
 	Ok(())

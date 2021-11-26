@@ -67,10 +67,12 @@ impl EntryPoint {
 		}
 
 		match self.call_type {
-			EntryPointType::Direct { ref entrypoint } =>
-				entrypoint.call(ctx, (data_ptr, data_len)).map_err(handle_trap),
-			EntryPointType::Wrapped { func, ref dispatcher } =>
-				dispatcher.call(ctx, (func, data_ptr, data_len)).map_err(handle_trap),
+			EntryPointType::Direct { ref entrypoint } => {
+				entrypoint.call(ctx, (data_ptr, data_len)).map_err(handle_trap)
+			}
+			EntryPointType::Wrapped { func, ref dispatcher } => {
+				dispatcher.call(ctx, (func, data_ptr, data_len)).map_err(handle_trap)
+			}
 		}
 	}
 
@@ -179,10 +181,10 @@ impl InstanceWrapper {
 			None => {
 				let memory = get_linear_memory(&instance, &mut store)?;
 				if !memory.grow(&mut store, heap_pages).is_ok() {
-					return Err("failed top increase the linear memory size".into())
+					return Err("failed top increase the linear memory size".into());
 				}
 				memory
-			},
+			}
 		};
 
 		let table = get_table(&instance, &mut store);
@@ -211,7 +213,7 @@ impl InstanceWrapper {
 				EntryPoint::direct(func, &self.store).map_err(|_| {
 					Error::from(format!("Exported function '{}' has invalid signature.", method))
 				})?
-			},
+			}
 			InvokeMethod::Table(func_ref) => {
 				let table = self
 					.instance
@@ -232,7 +234,7 @@ impl InstanceWrapper {
 						func_ref,
 					))
 				})?
-			},
+			}
 			InvokeMethod::TableWithWrapper { dispatcher_ref, func } => {
 				let table = self
 					.instance
@@ -253,7 +255,7 @@ impl InstanceWrapper {
 						dispatcher_ref,
 					))
 				})?
-			},
+			}
 		})
 	}
 
@@ -335,7 +337,7 @@ impl InstanceWrapper {
 	/// as a side-effect.
 	pub fn decommit(&mut self) {
 		if self.memory.data_size(&self.store) == 0 {
-			return
+			return;
 		}
 
 		cfg_if::cfg_if! {

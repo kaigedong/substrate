@@ -884,14 +884,14 @@ where
 		let mut highest = None;
 		for peer in self.peers().iter() {
 			if peer.is_major_syncing() || peer.network.num_queued_blocks() != 0 {
-				return Poll::Pending
+				return Poll::Pending;
 			}
 			if peer.network.num_sync_requests() != 0 {
-				return Poll::Pending
+				return Poll::Pending;
 			}
 			match (highest, peer.client.info().best_hash) {
 				(None, b) => highest = Some(b),
-				(Some(ref a), ref b) if a == b => {},
+				(Some(ref a), ref b) if a == b => {}
 				(Some(_), _) => return Poll::Pending,
 			}
 		}
@@ -906,10 +906,10 @@ where
 
 		for peer in self.peers().iter() {
 			if peer.is_major_syncing() || peer.network.num_queued_blocks() != 0 {
-				return Poll::Pending
+				return Poll::Pending;
 			}
 			if peer.network.num_sync_requests() != 0 {
-				return Poll::Pending
+				return Poll::Pending;
 			}
 		}
 		Poll::Ready(())
@@ -923,7 +923,7 @@ where
 
 		let num_peers = self.peers().len();
 		if self.peers().iter().all(|p| p.num_peers() == num_peers - 1) {
-			return Poll::Ready(())
+			return Poll::Ready(());
 		}
 
 		Poll::Pending

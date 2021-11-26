@@ -271,7 +271,7 @@ impl<B: BlockT + DeserializeOwned> Builder<B> {
 
 			if page_len < PAGE as usize {
 				log::debug!(target: LOG_TARGET, "last page received: {}", page_len);
-				break all_keys
+				break all_keys;
 			} else {
 				let new_last_key =
 					all_keys.last().expect("all_keys is populated; has .last(); qed");
@@ -445,7 +445,7 @@ impl<B: BlockT + DeserializeOwned> Builder<B> {
 					self.save_state_snapshot(&kp, &c.path)?;
 				}
 				kp
-			},
+			}
 			Mode::OfflineOrElseOnline(offline_config, online_config) => {
 				if let Ok(kv) = self.load_state_snapshot(&offline_config.state_snapshot.path) {
 					kv
@@ -457,7 +457,7 @@ impl<B: BlockT + DeserializeOwned> Builder<B> {
 					}
 					kp
 				}
-			},
+			}
 		};
 
 		// inject manual key values.

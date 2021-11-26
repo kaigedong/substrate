@@ -247,7 +247,7 @@ where
 		block: Option<Block::Hash>,
 	) -> FutureResult<Vec<(StorageKey, StorageData)>> {
 		if let Err(err) = self.deny_unsafe.check_if_safe() {
-			return async move { Err(err.into()) }.boxed()
+			return async move { Err(err.into()) }.boxed();
 		}
 
 		self.backend.storage_pairs(block, key_prefix)
@@ -264,7 +264,7 @@ where
 			return async move {
 				Err(Error::InvalidCount { value: count, max: STORAGE_KEYS_PAGED_MAX_COUNT })
 			}
-			.boxed()
+			.boxed();
 		}
 		self.backend.storage_keys_paged(block, prefix, count, start_key)
 	}
@@ -304,7 +304,7 @@ where
 		to: Option<Block::Hash>,
 	) -> FutureResult<Vec<StorageChangeSet<Block::Hash>>> {
 		if let Err(err) = self.deny_unsafe.check_if_safe() {
-			return async move { Err(err.into()) }.boxed()
+			return async move { Err(err.into()) }.boxed();
 		}
 
 		self.backend.query_storage(from, to, keys)
@@ -376,7 +376,7 @@ where
 		methods: Option<String>,
 	) -> FutureResult<sp_rpc::tracing::TraceBlockResponse> {
 		if let Err(err) = self.deny_unsafe.check_if_safe() {
-			return async move { Err(err.into()) }.boxed()
+			return async move { Err(err.into()) }.boxed();
 		}
 
 		self.backend.trace_block(block, targets, storage_keys, methods)

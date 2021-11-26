@@ -32,9 +32,9 @@ Instantiation of a sandbox module consists of the following steps:
 2. Performing validation of the wasm code,
 3. Setting up the environment which will be used to instantiate the module,
 4. Performing the standard wasm instantiation process, which includes (but is not limited to):
-    1. Allocating of memory requested by the instance,
-    2. Copying static data from the module to newly allocated memory,
-    3. Executing the `start` function.
+   1. Allocating of memory requested by the instance,
+   2. Copying static data from the module to newly allocated memory,
+   3. Executing the `start` function.
 
 **Note** that the `start` function can be viewed as a normal function and can do anything that a normal function can do, including allocation of more memory or calling the host environment. The complexity of running the `start` function should be considered separately.
 
@@ -128,7 +128,7 @@ Calls `contract_exists` and if it doesn't exist, do not modify the local `Map` s
 In this function, all values modified in the current transactions are committed to the parent
 transaction.
 
-This will trigger `N` inserts into parent transaction  (`O(log M)` complexity) or into the storage, where `N` is the size of the current transaction and `M` is the size of the parent transaction. Consider adjusting the price of modifying the
+This will trigger `N` inserts into parent transaction (`O(log M)` complexity) or into the storage, where `N` is the size of the current transaction and `M` is the size of the parent transaction. Consider adjusting the price of modifying the
 current transaction to account for this (since pricing for the count of entries in `commit` will make the price of commit way less predictable). No additional memory is required.
 
 Note that in case of storage modification we need to construct a key in the underlying storage. In order to do that we need:
@@ -162,7 +162,7 @@ This function performs the following steps:
 
 In the course of the execution this function can perform up to 2 DB reads to `get_balance` of source and destination accounts. It can also induce up to 2 DB writes via `set_balance` if flushed to the storage.
 
-Moreover, if the source balance goes below `existential_deposit`  then the transfer is denied and
+Moreover, if the source balance goes below `existential_deposit` then the transfer is denied and
 returns with an error.
 
 Assuming marshaled size of a balance value is of the constant size we can neglect its effect on the performance.

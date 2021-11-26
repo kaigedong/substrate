@@ -216,7 +216,7 @@ impl NetworkBehaviour for PeerInfoBehaviour {
 		match self.nodes_info.entry(*peer_id) {
 			Entry::Vacant(e) => {
 				e.insert(NodeInfo::new(endpoint.clone()));
-			},
+			}
 			Entry::Occupied(e) => {
 				let e = e.into_mut();
 				if e.info_expire.as_ref().map(|exp| *exp < Instant::now()).unwrap_or(false) {
@@ -225,7 +225,7 @@ impl NetworkBehaviour for PeerInfoBehaviour {
 				}
 				e.info_expire = None;
 				e.endpoints.push(endpoint.clone());
-			},
+			}
 		}
 	}
 
@@ -343,12 +343,12 @@ impl NetworkBehaviour for PeerInfoBehaviour {
 					if let PingEvent { peer, result: Ok(PingSuccess::Ping { rtt }) } = ev {
 						self.handle_ping_report(&peer, rtt)
 					}
-				},
+				}
 				Poll::Ready(NetworkBehaviourAction::DialAddress { address, handler }) => {
 					let handler =
 						IntoProtocolsHandler::select(handler, self.identify.new_handler());
-					return Poll::Ready(NetworkBehaviourAction::DialAddress { address, handler })
-				},
+					return Poll::Ready(NetworkBehaviourAction::DialAddress { address, handler });
+				}
 				Poll::Ready(NetworkBehaviourAction::DialPeer { peer_id, condition, handler }) => {
 					let handler =
 						IntoProtocolsHandler::select(handler, self.identify.new_handler());
@@ -356,24 +356,27 @@ impl NetworkBehaviour for PeerInfoBehaviour {
 						peer_id,
 						condition,
 						handler,
-					})
-				},
-				Poll::Ready(NetworkBehaviourAction::NotifyHandler { peer_id, handler, event }) =>
+					});
+				}
+				Poll::Ready(NetworkBehaviourAction::NotifyHandler { peer_id, handler, event }) => {
 					return Poll::Ready(NetworkBehaviourAction::NotifyHandler {
 						peer_id,
 						handler,
 						event: EitherOutput::First(event),
-					}),
-				Poll::Ready(NetworkBehaviourAction::ReportObservedAddr { address, score }) =>
+					})
+				}
+				Poll::Ready(NetworkBehaviourAction::ReportObservedAddr { address, score }) => {
 					return Poll::Ready(NetworkBehaviourAction::ReportObservedAddr {
 						address,
 						score,
-					}),
-				Poll::Ready(NetworkBehaviourAction::CloseConnection { peer_id, connection }) =>
+					})
+				}
+				Poll::Ready(NetworkBehaviourAction::CloseConnection { peer_id, connection }) => {
 					return Poll::Ready(NetworkBehaviourAction::CloseConnection {
 						peer_id,
 						connection,
-					}),
+					})
+				}
 			}
 		}
 
@@ -384,42 +387,45 @@ impl NetworkBehaviour for PeerInfoBehaviour {
 					IdentifyEvent::Received { peer_id, info, .. } => {
 						self.handle_identify_report(&peer_id, &info);
 						let event = PeerInfoEvent::Identified { peer_id, info };
-						return Poll::Ready(NetworkBehaviourAction::GenerateEvent(event))
-					},
+						return Poll::Ready(NetworkBehaviourAction::GenerateEvent(event));
+					}
 					IdentifyEvent::Error { peer_id, error } => {
 						debug!(target: "sub-libp2p", "Identification with peer {:?} failed => {}", peer_id, error)
-					},
-					IdentifyEvent::Pushed { .. } => {},
-					IdentifyEvent::Sent { .. } => {},
+					}
+					IdentifyEvent::Pushed { .. } => {}
+					IdentifyEvent::Sent { .. } => {}
 				},
 				Poll::Ready(NetworkBehaviourAction::DialAddress { address, handler }) => {
 					let handler = IntoProtocolsHandler::select(self.ping.new_handler(), handler);
-					return Poll::Ready(NetworkBehaviourAction::DialAddress { address, handler })
-				},
+					return Poll::Ready(NetworkBehaviourAction::DialAddress { address, handler });
+				}
 				Poll::Ready(NetworkBehaviourAction::DialPeer { peer_id, condition, handler }) => {
 					let handler = IntoProtocolsHandler::select(self.ping.new_handler(), handler);
 					return Poll::Ready(NetworkBehaviourAction::DialPeer {
 						peer_id,
 						condition,
 						handler,
-					})
-				},
-				Poll::Ready(NetworkBehaviourAction::NotifyHandler { peer_id, handler, event }) =>
+					});
+				}
+				Poll::Ready(NetworkBehaviourAction::NotifyHandler { peer_id, handler, event }) => {
 					return Poll::Ready(NetworkBehaviourAction::NotifyHandler {
 						peer_id,
 						handler,
 						event: EitherOutput::Second(event),
-					}),
-				Poll::Ready(NetworkBehaviourAction::ReportObservedAddr { address, score }) =>
+					})
+				}
+				Poll::Ready(NetworkBehaviourAction::ReportObservedAddr { address, score }) => {
 					return Poll::Ready(NetworkBehaviourAction::ReportObservedAddr {
 						address,
 						score,
-					}),
-				Poll::Ready(NetworkBehaviourAction::CloseConnection { peer_id, connection }) =>
+					})
+				}
+				Poll::Ready(NetworkBehaviourAction::CloseConnection { peer_id, connection }) => {
 					return Poll::Ready(NetworkBehaviourAction::CloseConnection {
 						peer_id,
 						connection,
-					}),
+					})
+				}
 			}
 		}
 

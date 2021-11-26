@@ -36,5 +36,5 @@ harness = false
 
 # We only need this to generate the correct code.
 [features]
-default = [ "std" ]
+default = ["std"]
 std = []

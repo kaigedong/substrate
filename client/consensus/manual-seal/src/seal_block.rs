@@ -94,7 +94,7 @@ pub async fn seal_block<B, BI, SC, C, E, TP, CIDP>(
 {
 	let future = async {
 		if pool.status().ready == 0 && !create_empty {
-			return Err(Error::EmptyTransactionPool)
+			return Err(Error::EmptyTransactionPool);
 		}
 
 		// get the header to build this new block on.
@@ -137,7 +137,7 @@ pub async fn seal_block<B, BI, SC, C, E, TP, CIDP>(
 			.await?;
 
 		if proposal.block.extrinsics().len() == inherents_len && !create_empty {
-			return Err(Error::EmptyTransactionPool)
+			return Err(Error::EmptyTransactionPool);
 		}
 
 		let (header, body) = proposal.block.deconstruct();
@@ -154,8 +154,9 @@ pub async fn seal_block<B, BI, SC, C, E, TP, CIDP>(
 		}
 
 		match block_import.import_block(params, HashMap::new()).await? {
-			ImportResult::Imported(aux) =>
-				Ok(CreatedBlock { hash: <B as BlockT>::Header::hash(&header), aux }),
+			ImportResult::Imported(aux) => {
+				Ok(CreatedBlock { hash: <B as BlockT>::Header::hash(&header), aux })
+			}
 			other => Err(other.into()),
 		}
 	};

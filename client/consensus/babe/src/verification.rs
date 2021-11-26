@@ -83,7 +83,7 @@ pub(super) fn check_header<B: BlockT + Sized>(
 
 	if pre_digest.slot() > slot_now {
 		header.digest_mut().push(seal);
-		return Ok(CheckedHeader::Deferred(header, pre_digest.slot()))
+		return Ok(CheckedHeader::Deferred(header, pre_digest.slot()));
 	}
 
 	let author = match authorities.get(pre_digest.authority_index() as usize) {
@@ -100,7 +100,7 @@ pub(super) fn check_header<B: BlockT + Sized>(
 			);
 
 			check_primary_header::<B>(pre_hash, primary, sig, &epoch, epoch.config.c)?;
-		},
+		}
 		PreDigest::SecondaryPlain(secondary)
 			if epoch.config.allowed_slots.is_secondary_plain_slots_allowed() =>
 		{
@@ -111,7 +111,7 @@ pub(super) fn check_header<B: BlockT + Sized>(
 			);
 
 			check_secondary_plain_header::<B>(pre_hash, secondary, sig, &epoch)?;
-		},
+		}
 		PreDigest::SecondaryVRF(secondary)
 			if epoch.config.allowed_slots.is_secondary_vrf_slots_allowed() =>
 		{
@@ -122,7 +122,7 @@ pub(super) fn check_header<B: BlockT + Sized>(
 			);
 
 			check_secondary_vrf_header::<B>(pre_hash, secondary, sig, &epoch)?;
-		},
+		}
 		_ => return Err(babe_err(Error::SecondarySlotAssignmentsDisabled)),
 	}
 
@@ -168,7 +168,7 @@ fn check_primary_header<B: BlockT + Sized>(
 			calculate_primary_threshold(c, &epoch.authorities, pre_digest.authority_index as usize);
 
 		if !check_primary_threshold(&inout, threshold) {
-			return Err(babe_err(Error::VRFVerificationOfBlockFailed(author.clone(), threshold)))
+			return Err(babe_err(Error::VRFVerificationOfBlockFailed(author.clone(), threshold)));
 		}
 
 		Ok(())
@@ -196,7 +196,7 @@ fn check_secondary_plain_header<B: BlockT>(
 	let author = &epoch.authorities[pre_digest.authority_index as usize].0;
 
 	if expected_author != author {
-		return Err(Error::InvalidAuthor(expected_author.clone(), author.clone()))
+		return Err(Error::InvalidAuthor(expected_author.clone(), author.clone()));
 	}
 
 	if AuthorityPair::verify(&signature, pre_hash.as_ref(), author) {
@@ -222,7 +222,7 @@ fn check_secondary_vrf_header<B: BlockT>(
 	let author = &epoch.authorities[pre_digest.authority_index as usize].0;
 
 	if expected_author != author {
-		return Err(Error::InvalidAuthor(expected_author.clone(), author.clone()))
+		return Err(Error::InvalidAuthor(expected_author.clone(), author.clone()));
 	}
 
 	if AuthorityPair::verify(&signature, pre_hash.as_ref(), author) {

@@ -64,12 +64,12 @@ impl<G: RuntimeGenesis> GenesisSource<G> {
 				let genesis: GenesisContainer<G> = json::from_reader(file)
 					.map_err(|e| format!("Error parsing spec file: {}", e))?;
 				Ok(genesis.genesis)
-			},
+			}
 			Self::Binary(buf) => {
 				let genesis: GenesisContainer<G> = json::from_reader(buf.as_ref())
 					.map_err(|e| format!("Error parsing embedded file: {}", e))?;
 				Ok(genesis.genesis)
-			},
+			}
 			Self::Factory(f) => Ok(Genesis::Runtime(f())),
 			Self::Storage(storage) => {
 				let top = storage
@@ -94,7 +94,7 @@ impl<G: RuntimeGenesis> GenesisSource<G> {
 					.collect();
 
 				Ok(Genesis::Raw(RawGenesis { top, children_default }))
-			},
+			}
 		}
 	}
 }
@@ -342,7 +342,7 @@ impl<G: RuntimeGenesis, E: serde::Serialize + Clone + 'static> ChainSpec<G, E> {
 					.collect();
 
 				Genesis::Raw(RawGenesis { top, children_default })
-			},
+			}
 			(_, genesis) => genesis,
 		};
 		Ok(JsonContainer { client_spec: self.client_spec.clone(), genesis })

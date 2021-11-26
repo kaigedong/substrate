@@ -308,15 +308,15 @@ impl Decode for DigestItem {
 			DigestItemType::PreRuntime => {
 				let vals: (ConsensusEngineId, Vec<u8>) = Decode::decode(input)?;
 				Ok(Self::PreRuntime(vals.0, vals.1))
-			},
+			}
 			DigestItemType::Consensus => {
 				let vals: (ConsensusEngineId, Vec<u8>) = Decode::decode(input)?;
 				Ok(Self::Consensus(vals.0, vals.1))
-			},
+			}
 			DigestItemType::Seal => {
 				let vals: (ConsensusEngineId, Vec<u8>) = Decode::decode(input)?;
 				Ok(Self::Seal(vals.0, vals.1))
-			},
+			}
 			DigestItemType::Other => Ok(Self::Other(Decode::decode(input)?)),
 			DigestItemType::RuntimeEnvironmentUpdated => Ok(Self::RuntimeEnvironmentUpdated),
 		}
@@ -360,11 +360,13 @@ impl<'a> DigestItemRef<'a> {
 	/// return the opaque data it contains.
 	pub fn try_as_raw(&self, id: OpaqueDigestItemId) -> Option<&'a [u8]> {
 		match (id, self) {
-			(OpaqueDigestItemId::Consensus(w), &Self::Consensus(v, s)) |
-			(OpaqueDigestItemId::Seal(w), &Self::Seal(v, s)) |
-			(OpaqueDigestItemId::PreRuntime(w), &Self::PreRuntime(v, s))
+			(OpaqueDigestItemId::Consensus(w), &Self::Consensus(v, s))
+			| (OpaqueDigestItemId::Seal(w), &Self::Seal(v, s))
+			| (OpaqueDigestItemId::PreRuntime(w), &Self::PreRuntime(v, s))
 				if v == w =>
-				Some(&s[..]),
+			{
+				Some(&s[..])
+			}
 			(OpaqueDigestItemId::Other, &Self::Other(s)) => Some(&s[..]),
 			_ => None,
 		}
@@ -417,22 +419,22 @@ impl<'a> Encode for DigestItemRef<'a> {
 			Self::Consensus(val, data) => {
 				DigestItemType::Consensus.encode_to(&mut v);
 				(val, data).encode_to(&mut v);
-			},
+			}
 			Self::Seal(val, sig) => {
 				DigestItemType::Seal.encode_to(&mut v);
 				(val, sig).encode_to(&mut v);
-			},
+			}
 			Self::PreRuntime(val, data) => {
 				DigestItemType::PreRuntime.encode_to(&mut v);
 				(val, data).encode_to(&mut v);
-			},
+			}
 			Self::Other(val) => {
 				DigestItemType::Other.encode_to(&mut v);
 				val.encode_to(&mut v);
-			},
+			}
 			Self::RuntimeEnvironmentUpdated => {
 				DigestItemType::RuntimeEnvironmentUpdated.encode_to(&mut v);
-			},
+			}
 		}
 
 		v
@@ -470,14 +472,18 @@ mod tests {
 		let check = |digest_item_type: DigestItemType| {
 			let (variant_name, digest_item) = match digest_item_type {
 				DigestItemType::Other => ("Other", DigestItem::Other(Default::default())),
-				DigestItemType::Consensus =>
-					("Consensus", DigestItem::Consensus(Default::default(), Default::default())),
-				DigestItemType::Seal =>
-					("Seal", DigestItem::Seal(Default::default(), Default::default())),
-				DigestItemType::PreRuntime =>
-					("PreRuntime", DigestItem::PreRuntime(Default::default(), Default::default())),
-				DigestItemType::RuntimeEnvironmentUpdated =>
-					("RuntimeEnvironmentUpdated", DigestItem::RuntimeEnvironmentUpdated),
+				DigestItemType::Consensus => {
+					("Consensus", DigestItem::Consensus(Default::default(), Default::default()))
+				}
+				DigestItemType::Seal => {
+					("Seal", DigestItem::Seal(Default::default(), Default::default()))
+				}
+				DigestItemType::PreRuntime => {
+					("PreRuntime", DigestItem::PreRuntime(Default::default(), Default::default()))
+				}
+				DigestItemType::RuntimeEnvironmentUpdated => {
+					("RuntimeEnvironmentUpdated", DigestItem::RuntimeEnvironmentUpdated)
+				}
 			};
 			let encoded = digest_item.encode();
 			let variant = variants

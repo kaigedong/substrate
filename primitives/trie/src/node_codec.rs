@@ -43,7 +43,7 @@ impl<'a> ByteSliceInput<'a> {
 
 	fn take(&mut self, count: usize) -> Result<Range<usize>, codec::Error> {
 		if self.offset + count > self.data.len() {
-			return Err("out of data".into())
+			return Err("out of data".into());
 		}
 
 		let range = self.offset..(self.offset + count);
@@ -67,7 +67,7 @@ impl<'a> Input for ByteSliceInput<'a> {
 
 	fn read_byte(&mut self) -> Result<u8, codec::Error> {
 		if self.offset + 1 > self.data.len() {
-			return Err("out of data".into())
+			return Err("out of data".into());
 		}
 
 		let byte = self.data[self.offset];
@@ -96,11 +96,11 @@ impl<H: Hasher> NodeCodecT for NodeCodec<H> {
 				let padding = nibble_count % nibble_ops::NIBBLE_PER_BYTE != 0;
 				// check that the padding is valid (if any)
 				if padding && nibble_ops::pad_left(data[input.offset]) != 0 {
-					return Err(Error::BadFormat)
+					return Err(Error::BadFormat);
 				}
 				let partial = input.take(
-					(nibble_count + (nibble_ops::NIBBLE_PER_BYTE - 1)) /
-						nibble_ops::NIBBLE_PER_BYTE,
+					(nibble_count + (nibble_ops::NIBBLE_PER_BYTE - 1))
+						/ nibble_ops::NIBBLE_PER_BYTE,
 				)?;
 				let partial_padding = nibble_ops::number_padding(nibble_count);
 				let bitmap_range = input.take(BITMAP_LENGTH)?;
@@ -131,16 +131,16 @@ impl<H: Hasher> NodeCodecT for NodeCodec<H> {
 					value,
 					children,
 				})
-			},
+			}
 			NodeHeader::Leaf(nibble_count) => {
 				let padding = nibble_count % nibble_ops::NIBBLE_PER_BYTE != 0;
 				// check that the padding is valid (if any)
 				if padding && nibble_ops::pad_left(data[input.offset]) != 0 {
-					return Err(Error::BadFormat)
+					return Err(Error::BadFormat);
 				}
 				let partial = input.take(
-					(nibble_count + (nibble_ops::NIBBLE_PER_BYTE - 1)) /
-						nibble_ops::NIBBLE_PER_BYTE,
+					(nibble_count + (nibble_ops::NIBBLE_PER_BYTE - 1))
+						/ nibble_ops::NIBBLE_PER_BYTE,
 				)?;
 				let partial_padding = nibble_ops::number_padding(nibble_count);
 				let count = <Compact<u32>>::decode(&mut input)?.0 as usize;
@@ -148,7 +148,7 @@ impl<H: Hasher> NodeCodecT for NodeCodec<H> {
 					partial: NibbleSlicePlan::new(partial, partial_padding),
 					value: input.take(count)?,
 				})
-			},
+			}
 		}
 	}
 
@@ -203,11 +203,11 @@ impl<H: Hasher> NodeCodecT for NodeCodec<H> {
 				Some(ChildReference::Hash(h)) => {
 					h.as_ref().encode_to(&mut output);
 					true
-				},
+				}
 				&Some(ChildReference::Inline(inline_data, len)) => {
 					inline_data.as_ref()[..len].encode_to(&mut output);
 					true
-				},
+				}
 				None => false,
 			}),
 			bitmap.as_mut(),

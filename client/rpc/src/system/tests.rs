@@ -56,17 +56,17 @@ fn api<T: Into<Option<Status>>>(sync: T) -> System<Block> {
 						is_syncing: status.is_syncing,
 						should_have_peers,
 					});
-				},
+				}
 				Request::LocalPeerId(sender) => {
 					let _ =
 						sender.send("QmSk5HQbn6LhUwDiNMseVUjuRYhEtYj4aUZ6WfWoGURpdV".to_string());
-				},
+				}
 				Request::LocalListenAddresses(sender) => {
 					let _ = sender.send(vec![
 						"/ip4/198.51.100.19/tcp/30333/p2p/QmSk5HQbn6LhUwDiNMseVUjuRYhEtYj4aUZ6WfWoGURpdV".to_string(),
 						"/ip4/127.0.0.1/tcp/30334/ws/p2p/QmSk5HQbn6LhUwDiNMseVUjuRYhEtYj4aUZ6WfWoGURpdV".to_string(),
 					]);
-				},
+				}
 				Request::Peers(sender) => {
 					let mut peers = vec![];
 					for _peer in 0..status.peers {
@@ -78,7 +78,7 @@ fn api<T: Into<Option<Status>>>(sync: T) -> System<Block> {
 						});
 					}
 					let _ = sender.send(peers);
-				},
+				}
 				Request::NetworkState(sender) => {
 					let _ = sender.send(
 						serde_json::to_value(&sc_network::network_state::NetworkState {
@@ -91,35 +91,37 @@ fn api<T: Into<Option<Status>>>(sync: T) -> System<Block> {
 						})
 						.unwrap(),
 					);
-				},
+				}
 				Request::NetworkAddReservedPeer(peer, sender) => {
 					let _ = match sc_network::config::parse_str_addr(&peer) {
 						Ok(_) => sender.send(Ok(())),
-						Err(s) =>
-							sender.send(Err(error::Error::MalformattedPeerArg(s.to_string()))),
+						Err(s) => {
+							sender.send(Err(error::Error::MalformattedPeerArg(s.to_string())))
+						}
 					};
-				},
+				}
 				Request::NetworkRemoveReservedPeer(peer, sender) => {
 					let _ = match peer.parse::<PeerId>() {
 						Ok(_) => sender.send(Ok(())),
-						Err(s) =>
-							sender.send(Err(error::Error::MalformattedPeerArg(s.to_string()))),
+						Err(s) => {
+							sender.send(Err(error::Error::MalformattedPeerArg(s.to_string())))
+						}
 					};
-				},
+				}
 				Request::NetworkReservedPeers(sender) => {
 					let _ = sender
 						.send(vec!["QmSk5HQbn6LhUwDiNMseVUjuRYhEtYj4aUZ6WfWoGURpdV".to_string()]);
-				},
+				}
 				Request::NodeRoles(sender) => {
 					let _ = sender.send(vec![NodeRole::Authority]);
-				},
+				}
 				Request::SyncState(sender) => {
 					let _ = sender.send(SyncState {
 						starting_block: 1,
 						current_block: 2,
 						highest_block: Some(3),
 					});
-				},
+				}
 			};
 
 			future::ready(())
@@ -325,7 +327,7 @@ fn test_add_reset_log_filter() {
 			} else if line.contains("reset") {
 				api(None).system_reset_log_filter().expect("`system_reset_log_filter` failed");
 			} else if line.contains("exit") {
-				return
+				return;
 			}
 			log::trace!(target: "test_before_add", "{}", EXPECTED_WITH_TRACE);
 			log::debug!(target: "test_before_add", "{}", EXPECTED_BEFORE_ADD);

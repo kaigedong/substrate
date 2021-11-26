@@ -87,8 +87,8 @@ impl ImportResult {
 				if aux.needs_justification {
 					justification_sync_link.request_justification(hash, number);
 				}
-			},
-			_ => {},
+			}
+			_ => {}
 		}
 	}
 }
@@ -258,8 +258,9 @@ impl<Block: BlockT, Transaction> BlockImportParams<Block, Transaction> {
 	) -> BlockImportParams<Block, Transaction2> {
 		// Preserve imported state.
 		let state_action = match self.state_action {
-			StateAction::ApplyChanges(StorageChanges::Import(state)) =>
-				StateAction::ApplyChanges(StorageChanges::Import(state)),
+			StateAction::ApplyChanges(StorageChanges::Import(state)) => {
+				StateAction::ApplyChanges(StorageChanges::Import(state))
+			}
 			StateAction::ApplyChanges(StorageChanges::Changes(_)) => StateAction::Skip,
 			StateAction::Execute => StateAction::Execute,
 			StateAction::ExecuteIfPossible => StateAction::ExecuteIfPossible,

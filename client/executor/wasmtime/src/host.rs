@@ -154,7 +154,7 @@ impl<'a, 'b> Sandbox for HostContext<'a, 'b> {
 		};
 
 		if util::write_memory_from(&mut self.caller, buf_ptr, &buffer).is_err() {
-			return Ok(sandbox_primitives::ERR_OUT_OF_BOUNDS)
+			return Ok(sandbox_primitives::ERR_OUT_OF_BOUNDS);
 		}
 
 		Ok(sandbox_primitives::ERR_OK)
@@ -177,7 +177,7 @@ impl<'a, 'b> Sandbox for HostContext<'a, 'b> {
 		};
 
 		if sandboxed_memory.write_from(Pointer::new(offset as u32), &buffer).is_err() {
-			return Ok(sandbox_primitives::ERR_OUT_OF_BOUNDS)
+			return Ok(sandbox_primitives::ERR_OUT_OF_BOUNDS);
 		}
 
 		Ok(sandbox_primitives::ERR_OK)
@@ -233,7 +233,7 @@ impl<'a, 'b> Sandbox for HostContext<'a, 'b> {
 						.map_err(|_| "can't write return value")?;
 					Ok(sandbox_primitives::ERR_OK)
 				})
-			},
+			}
 			Err(_) => Ok(sandbox_primitives::ERR_EXECUTION),
 		}
 	}
@@ -346,12 +346,13 @@ impl<'a, 'b, 'c> sandbox::SandboxContext for SandboxContext<'a, 'b, 'c> {
 		);
 
 		match result {
-			Ok(()) =>
+			Ok(()) => {
 				if let Some(ret_val) = ret_vals[0].i64() {
 					Ok(ret_val)
 				} else {
-					return Err("Supervisor function returned unexpected result!".into())
-				},
+					return Err("Supervisor function returned unexpected result!".into());
+				}
+			}
 			Err(err) => Err(err.to_string().into()),
 		}
 	}

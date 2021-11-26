@@ -131,7 +131,7 @@ where
 		#[cfg(feature = "std")]
 		{
 			if let Some(result) = self.cache.read().child_root.get(child_info.storage_key()) {
-				return Ok(result.clone())
+				return Ok(result.clone());
 			}
 		}
 
@@ -163,7 +163,7 @@ where
 		let mut hash = H::Out::default();
 
 		if child_root.len() != hash.as_ref().len() {
-			return Err(format!("Invalid child storage hash at {:?}", child_info.storage_key()))
+			return Err(format!("Invalid child storage hash at {:?}", child_info.storage_key()));
 		}
 		// note: child_root and hash must be same size, panics otherwise.
 		hash.as_mut().copy_from_slice(&child_root[..]);
@@ -259,7 +259,7 @@ where
 
 				&child_root
 			} else {
-				return Ok(true)
+				return Ok(true);
 			}
 		} else {
 			&self.root
@@ -282,8 +282,8 @@ where
 				Ok(v) => v.unwrap_or_else(|| empty_child_trie_root::<Layout<H>>().encode()),
 				Err(e) => {
 					debug!(target: "trie", "Error while iterating child storage: {}", e);
-					return
-				},
+					return;
+				}
 			};
 			child_root.as_mut().copy_from_slice(&root_vec);
 			&child_root
@@ -315,8 +315,8 @@ where
 			Ok(v) => v.unwrap_or_else(|| empty_child_trie_root::<Layout<H>>().encode()),
 			Err(e) => {
 				debug!(target: "trie", "Error while iterating child storage: {}", e);
-				return
-			},
+				return;
+			}
 		};
 		let mut root = H::Out::default();
 		root.as_mut().copy_from_slice(&root_vec);
@@ -372,7 +372,7 @@ where
 				debug_assert!(key.starts_with(prefix));
 
 				if !f(key, value) {
-					return Ok(false)
+					return Ok(false);
 				}
 			}
 
@@ -387,8 +387,9 @@ where
 		};
 		match result {
 			Ok(completed) => Ok(completed),
-			Err(e) if matches!(*e, TrieError::IncompleteDatabase(_)) && allow_missing_nodes =>
-				Ok(false),
+			Err(e) if matches!(*e, TrieError::IncompleteDatabase(_)) && allow_missing_nodes => {
+				Ok(false)
+			}
 			Err(e) => Err(format!("TrieDB iteration error: {}", e)),
 		}
 	}
@@ -443,7 +444,7 @@ impl<'a, S: 'a + TrieBackendStorage<H>, H: Hasher> hash_db::HashDB<H, DBValue>
 				Err(e) => {
 					warn!(target: "trie", "Failed to read from DB: {}", e);
 					None
-				},
+				}
 			}
 		}
 	}
@@ -526,14 +527,14 @@ impl<S: TrieBackendStorage<H>, H: Hasher> hash_db::AsHashDB<H, DBValue>
 impl<S: TrieBackendStorage<H>, H: Hasher> hash_db::HashDB<H, DBValue> for TrieBackendEssence<S, H> {
 	fn get(&self, key: &H::Out, prefix: Prefix) -> Option<DBValue> {
 		if *key == self.empty {
-			return Some([0u8].to_vec())
+			return Some([0u8].to_vec());
 		}
 		match self.storage.get(&key, prefix) {
 			Ok(x) => x,
 			Err(e) => {
 				warn!(target: "trie", "Failed to read from DB: {}", e);
 				None
-			},
+			}
 		}
 	}
 

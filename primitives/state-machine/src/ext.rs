@@ -319,11 +319,11 @@ where
 
 					// If `backend_key` is less than the `overlay_key`, we found out next key.
 					if cmp == Some(Ordering::Less) {
-						return next_backend_key
+						return next_backend_key;
 					} else if overlay_key.1.value().is_some() {
 						// If there exists a value for the `overlay_key` in the overlay
 						// (aka the key is still valid), it means we have found our next key.
-						return Some(overlay_key.0.to_vec())
+						return Some(overlay_key.0.to_vec());
 					} else if cmp == Some(Ordering::Equal) {
 						// If the `backend_key` and `overlay_key` are equal, it means that we need
 						// to search for the next backend key, because the overlay has overwritten
@@ -336,11 +336,11 @@ where
 				}
 
 				next_backend_key
-			},
+			}
 			(None, Some(_)) => {
 				// Find the next overlay key that has a value attached.
 				overlay_changes.find_map(|k| k.1.value().as_ref().map(|_| k.0.to_vec()))
-			},
+			}
 		}
 	}
 
@@ -360,11 +360,11 @@ where
 
 					// If `backend_key` is less than the `overlay_key`, we found out next key.
 					if cmp == Some(Ordering::Less) {
-						return next_backend_key
+						return next_backend_key;
 					} else if overlay_key.1.value().is_some() {
 						// If there exists a value for the `overlay_key` in the overlay
 						// (aka the key is still valid), it means we have found our next key.
-						return Some(overlay_key.0.to_vec())
+						return Some(overlay_key.0.to_vec());
 					} else if cmp == Some(Ordering::Equal) {
 						// If the `backend_key` and `overlay_key` are equal, it means that we need
 						// to search for the next backend key, because the overlay has overwritten
@@ -377,11 +377,11 @@ where
 				}
 
 				next_backend_key
-			},
+			}
 			(None, Some(_)) => {
 				// Find the next overlay key that has a value attached.
 				overlay_changes.find_map(|k| k.1.value().as_ref().map(|_| k.0.to_vec()))
-			},
+			}
 		}
 	}
 
@@ -389,7 +389,7 @@ where
 		let _guard = guard();
 		if is_child_storage_key(&key) {
 			warn!(target: "trie", "Refuse to directly set child storage key");
-			return
+			return;
 		}
 
 		// NOTE: be careful about touching the key names – used outside substrate!
@@ -458,7 +458,7 @@ where
 				target: "trie",
 				"Refuse to directly clear prefix that is part or contains of child storage key",
 			);
-			return (false, 0)
+			return (false, 0);
 		}
 
 		self.mark_dirty();
@@ -515,7 +515,7 @@ where
 				storage_root = %HexDisplay::from(&root.as_ref()),
 				cached = true,
 			);
-			return root.encode()
+			return root.encode();
 		}
 
 		let root = self.overlay.storage_root(self.backend, self.storage_transaction_cache);
@@ -723,13 +723,13 @@ where
 			self.backend.apply_to_keys_while(child_info, prefix, |key| {
 				if num_deleted == limit {
 					all_deleted = false;
-					return false
+					return false;
 				}
 				if let Some(num) = num_deleted.checked_add(1) {
 					num_deleted = num;
 				} else {
 					all_deleted = false;
-					return false
+					return false;
 				}
 				if let Some(child_info) = child_info {
 					self.overlay.set_child_storage(child_info, key.to_vec(), None);
@@ -788,7 +788,7 @@ impl<'a> StorageAppend<'a> {
 					"Failed to append value, resetting storage item to `[value]`.",
 				);
 				value.encode()
-			},
+			}
 		};
 	}
 }

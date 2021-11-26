@@ -148,12 +148,12 @@ where
 				let signed = lookup.lookup(signed)?;
 				let raw_payload = SignedPayload::new(self.function, extra)?;
 				if !raw_payload.using_encoded(|payload| signature.verify(payload, &signed)) {
-					return Err(InvalidTransaction::BadProof.into())
+					return Err(InvalidTransaction::BadProof.into());
 				}
 
 				let (function, extra, _) = raw_payload.deconstruct();
 				CheckedExtrinsic { signed: Some((signed, extra)), function }
-			},
+			}
 			None => CheckedExtrinsic { signed: None, function: self.function },
 		})
 	}
@@ -245,7 +245,7 @@ where
 		let is_signed = version & 0b1000_0000 != 0;
 		let version = version & 0b0111_1111;
 		if version != EXTRINSIC_VERSION {
-			return Err("Invalid transaction version".into())
+			return Err("Invalid transaction version".into());
 		}
 
 		Ok(Self {
@@ -270,10 +270,10 @@ where
 			Some(s) => {
 				tmp.push(EXTRINSIC_VERSION | 0b1000_0000);
 				s.encode_to(&mut tmp);
-			},
+			}
 			None => {
 				tmp.push(EXTRINSIC_VERSION & 0b0111_1111);
-			},
+			}
 		}
 		self.function.encode_to(&mut tmp);
 

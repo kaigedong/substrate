@@ -1,4 +1,5 @@
 # Proxy Module
+
 A module allowing accounts to give permission to other accounts to dispatch types of calls from
 their signed origin.
 
@@ -15,7 +16,7 @@ reject the announcement and in doing so, veto the execution.
 
 ### Dispatchable Functions
 
-[`Call`]: ./enum.Call.html
-[`Config`]: ./trait.Config.html
+[`call`]: ./enum.Call.html
+[`config`]: ./trait.Config.html
 
 License: Apache-2.0

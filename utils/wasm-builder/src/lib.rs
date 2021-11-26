@@ -203,7 +203,7 @@ fn get_rustup_nightly(selected: Option<String>) -> Option<CargoCommand> {
 			}
 
 			latest_nightly?.trim_end_matches(&host).into()
-		},
+		}
 	};
 
 	Some(CargoCommand::new_with_args("rustup", &["run", &version, "cargo"]))
@@ -240,8 +240,9 @@ impl CargoCommand {
 		// variable is set, we can assume that whatever rust compiler we have, it is a nightly
 		// compiler. For "more" information, see:
 		// https://github.com/rust-lang/rust/blob/fa0f7d0080d8e7e9eb20aa9cbf8013f96c81287f/src/libsyntax/feature_gate/check.rs#L891
-		env::var("RUSTC_BOOTSTRAP").is_ok() ||
-			self.command()
+		env::var("RUSTC_BOOTSTRAP").is_ok()
+			|| self
+				.command()
 				.arg("--version")
 				.output()
 				.map_err(|_| ())

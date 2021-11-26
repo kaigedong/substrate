@@ -1,4 +1,5 @@
 <!-- markdown-link-check-disable -->
+
 # Security Policy
 
 Parity Technologies is committed to resolving security vulnerabilities in our software quickly and carefully. We take the necessary steps to minimize risk, provide timely information, and deliver vulnerability fixes and mitigations required to address security issues.
@@ -38,11 +39,6 @@ Responsible investigation and reporting includes, but isn't limited to, the foll
 ## Bug Bounty Program
 
 Our Bug Bounty Program allows us to recognize and reward members of the Parity community for helping us find and address significant bugs, in accordance with the terms of the Parity Bug Bounty Program. A detailed description on eligibility, rewards, legal information and terms & conditions for contributors can be found on [our website](https://paritytech.io/bug-bounty.html).
-
-
-
-
-
 
 ## Plaintext PGP Key
 

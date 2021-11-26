@@ -506,7 +506,7 @@ impl<AccountId, Balance: HasCompact + Copy + Saturating + AtLeast32BitUnsigned>
 			}
 
 			if unlocking_balance >= value {
-				break
+				break;
 			}
 		}
 

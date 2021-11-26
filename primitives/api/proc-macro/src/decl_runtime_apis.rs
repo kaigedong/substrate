@@ -101,7 +101,7 @@ fn remove_supported_attributes(attrs: &mut Vec<Attribute>) -> HashMap<&'static s
 		Some(attribute) => {
 			result.insert(*attribute, v.clone());
 			false
-		},
+		}
 		None => true,
 	});
 
@@ -252,7 +252,7 @@ fn generate_native_call_generators(decl: &ItemTrait) -> Result<TokenStream> {
 						r.lifetime = Some(parse_quote!( 'a ));
 					}
 					FnArg::Typed(arg)
-				},
+				}
 				r => r,
 			});
 
@@ -265,7 +265,7 @@ fn generate_native_call_generators(decl: &ItemTrait) -> Result<TokenStream> {
 					let mut ty = ty.clone();
 					ty.bounds.push(parse_quote!( 'a ));
 					GenericParam::Type(ty)
-				},
+				}
 				// We should not see anything different than type params here.
 				r => r.clone(),
 			}
@@ -306,7 +306,7 @@ fn parse_renamed_attribute(renamed: &Attribute) -> Result<(String, u32)> {
 	);
 
 	match meta {
-		Meta::List(list) =>
+		Meta::List(list) => {
 			if list.nested.len() > 2 && list.nested.is_empty() {
 				err
 			} else {
@@ -322,7 +322,8 @@ fn parse_renamed_attribute(renamed: &Attribute) -> Result<(String, u32)> {
 				};
 
 				Ok((old_name, version))
-			},
+			}
+		}
 		_ => err,
 	}
 }
@@ -352,12 +353,12 @@ fn generate_call_api_at_calls(decl: &ItemTrait) -> Result<TokenStream> {
 					"`{}` and `{}` are not supported at once.",
 					RENAMED_ATTRIBUTE, CHANGED_IN_ATTRIBUTE
 				),
-			))
+			));
 		}
 
 		// We do not need to generate this function for a method that signature was changed.
 		if attrs.contains_key(CHANGED_IN_ATTRIBUTE) {
-			continue
+			continue;
 		}
 
 		// Parse the renamed attributes.
@@ -472,7 +473,7 @@ fn generate_runtime_decls(decls: &[ItemTrait]) -> Result<TokenStream> {
 						replace_wild_card_parameter_names(&mut method.sig);
 						Some(TraitItem::Method(method.clone()))
 					}
-				},
+				}
 				r => Some(r.clone()),
 			})
 			.collect();
@@ -525,7 +526,7 @@ impl<'a> ToClientSideDecl<'a> {
 				if let Some(fn_impl) = fn_impl {
 					result.push(fn_impl.into());
 				}
-			},
+			}
 			r => result.push(r),
 		});
 
@@ -563,7 +564,7 @@ impl<'a> ToClientSideDecl<'a> {
 		mut method: TraitItemMethod,
 	) -> Option<TraitItemMethod> {
 		if remove_supported_attributes(&mut method.attrs).contains_key(CHANGED_IN_ATTRIBUTE) {
-			return None
+			return None;
 		}
 
 		let fn_sig = &method.sig;
@@ -584,7 +585,7 @@ impl<'a> ToClientSideDecl<'a> {
 				Err(e) => {
 					self.errors.push(e.to_compile_error());
 					Vec::new()
-				},
+				}
 			};
 		let name = generate_method_runtime_api_impl_name(&self.trait_, &method.sig.ident);
 		let block_id = self.block_id;
@@ -618,7 +619,7 @@ impl<'a> ToClientSideDecl<'a> {
 			Err(e) => {
 				self.errors.push(e.to_compile_error());
 				Vec::new()
-			},
+			}
 		};
 		let params2 = params.clone();
 		let ret_type = return_type_extract_type(&method.sig.output);
@@ -654,12 +655,12 @@ impl<'a> ToClientSideDecl<'a> {
 				let panic =
 					format!("Calling `{}` should not return a native value!", method.sig.ident);
 				(quote!(panic!(#panic)), quote!(None))
-			},
+			}
 			Ok(None) => (quote!(Ok(n)), quote!( Some(( #( #params2 ),* )) )),
 			Err(e) => {
 				self.errors.push(e.to_compile_error());
 				(quote!(unimplemented!()), quote!(None))
-			},
+			}
 		};
 
 		let function_name = method.sig.ident.to_string();
@@ -737,14 +738,15 @@ fn parse_runtime_api_version(version: &Attribute) -> Result<u64> {
 	));
 
 	match meta {
-		Meta::List(list) =>
+		Meta::List(list) => {
 			if list.nested.len() != 1 {
 				err
 			} else if let Some(NestedMeta::Lit(Lit::Int(i))) = list.nested.first() {
 				i.base10_parse()
 			} else {
 				err
-			},
+			}
+		}
 		_ => err,
 	}
 }
@@ -878,8 +880,8 @@ impl CheckTraitDecl {
 				Ok(r) => r,
 				Err(e) => {
 					self.errors.push(e);
-					return
-				},
+					return;
+				}
 			};
 
 			method_to_signature_changed
@@ -920,13 +922,14 @@ impl<'ast> Visit<'ast> for CheckTraitDecl {
 
 	fn visit_generic_param(&mut self, input: &'ast GenericParam) {
 		match input {
-			GenericParam::Type(ty) if ty.ident == BLOCK_GENERIC_IDENT =>
+			GenericParam::Type(ty) if ty.ident == BLOCK_GENERIC_IDENT => {
 				self.errors.push(Error::new(
 					input.span(),
 					"`Block: BlockT` generic parameter will be added automatically by the \
 						`decl_runtime_apis!` macro!",
-				)),
-			_ => {},
+				))
+			}
+			_ => {}
 		}
 
 		visit::visit_generic_param(self, input);

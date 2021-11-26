@@ -58,7 +58,7 @@ impl<Block: BlockT> sp_state_machine::Storage<HashFor<Block>> for StorageDb<Bloc
 		let prefixed_key = prefixed_key::<HashFor<Block>>(key, prefix);
 		if let Some(recorder) = &self.proof_recorder {
 			if let Some(v) = recorder.get(&key) {
-				return Ok(v.clone())
+				return Ok(v.clone());
 			}
 			let backend_value = self
 				.db
@@ -191,7 +191,7 @@ impl<B: BlockT> BenchmarkingState<B> {
 	// Childtrie is identified by its storage key (i.e. `ChildInfo::storage_key`)
 	fn add_read_key(&self, childtrie: Option<&[u8]>, key: &[u8]) {
 		if !self.enable_tracking {
-			return
+			return;
 		}
 
 		let mut child_key_tracker = self.child_key_tracker.borrow_mut();
@@ -211,12 +211,12 @@ impl<B: BlockT> BenchmarkingState<B> {
 				has_been_read.add_read();
 				key_tracker.insert(key.to_vec(), has_been_read);
 				true
-			},
+			}
 			Some(tracker) => {
 				let should_log = !tracker.has_been_read();
 				tracker.add_read();
 				should_log
-			},
+			}
 		};
 
 		if should_log {
@@ -234,7 +234,7 @@ impl<B: BlockT> BenchmarkingState<B> {
 	// Childtrie is identified by its storage key (i.e. `ChildInfo::storage_key`)
 	fn add_write_key(&self, childtrie: Option<&[u8]>, key: &[u8]) {
 		if !self.enable_tracking {
-			return
+			return;
 		}
 
 		let mut child_key_tracker = self.child_key_tracker.borrow_mut();
@@ -255,12 +255,12 @@ impl<B: BlockT> BenchmarkingState<B> {
 				has_been_written.add_write();
 				key_tracker.insert(key.to_vec(), has_been_written);
 				true
-			},
+			}
 			Some(tracker) => {
 				let should_log = !tracker.has_been_written();
 				tracker.add_write();
 				should_log
-			},
+			}
 		};
 
 		if should_log {
@@ -491,7 +491,7 @@ impl<B: BlockT> StateBackend<HashFor<B>> for BenchmarkingState<B> {
 				})
 			});
 		} else {
-			return Err("Trying to commit to a closed db".into())
+			return Err("Trying to commit to a closed db".into());
 		}
 		self.reopen()
 	}

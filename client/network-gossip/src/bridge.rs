@@ -175,22 +175,22 @@ impl<B: BlockT> Future for GossipEngine<B> {
 						Poll::Ready(Some(event)) => match event {
 							Event::SyncConnected { remote } => {
 								this.network.add_set_reserved(remote, this.protocol.clone());
-							},
+							}
 							Event::SyncDisconnected { remote } => {
 								this.network.remove_set_reserved(remote, this.protocol.clone());
-							},
+							}
 							Event::NotificationStreamOpened { remote, protocol, role, .. } => {
 								if protocol != this.protocol {
-									continue
+									continue;
 								}
 								this.state_machine.new_peer(&mut *this.network, remote, role);
-							},
+							}
 							Event::NotificationStreamClosed { remote, protocol } => {
 								if protocol != this.protocol {
-									continue
+									continue;
 								}
 								this.state_machine.peer_disconnected(&mut *this.network, remote);
-							},
+							}
 							Event::NotificationsReceived { remote, messages } => {
 								let messages = messages
 									.into_iter()
@@ -210,21 +210,21 @@ impl<B: BlockT> Future for GossipEngine<B> {
 								);
 
 								this.forwarding_state = ForwardingState::Busy(to_forward.into());
-							},
-							Event::Dht(_) => {},
+							}
+							Event::Dht(_) => {}
 						},
 						// The network event stream closed. Do the same for [`GossipValidator`].
 						Poll::Ready(None) => return Poll::Ready(()),
 						Poll::Pending => break,
 					}
-				},
+				}
 				ForwardingState::Busy(to_forward) => {
 					let (topic, notification) = match to_forward.pop_front() {
 						Some(n) => n,
 						None => {
 							this.forwarding_state = ForwardingState::Idle;
-							continue
-						},
+							continue;
+						}
 					};
 
 					let sinks = match this.message_sinks.get_mut(&topic) {
@@ -235,14 +235,14 @@ impl<B: BlockT> Future for GossipEngine<B> {
 					// Make sure all sinks for the given topic are ready.
 					for sink in sinks.iter_mut() {
 						match sink.poll_ready(cx) {
-							Poll::Ready(Ok(())) => {},
+							Poll::Ready(Ok(())) => {}
 							// Receiver has been dropped. Ignore for now, filtered out in (1).
-							Poll::Ready(Err(_)) => {},
+							Poll::Ready(Err(_)) => {}
 							Poll::Pending => {
 								// Push back onto queue for later.
 								to_forward.push_front((topic, notification));
-								break 'outer
-							},
+								break 'outer;
+							}
 						}
 					}
 
@@ -251,7 +251,7 @@ impl<B: BlockT> Future for GossipEngine<B> {
 
 					if sinks.is_empty() {
 						this.message_sinks.remove(&topic);
-						continue
+						continue;
 					}
 
 					trace!(
@@ -262,15 +262,15 @@ impl<B: BlockT> Future for GossipEngine<B> {
 					// Send the notification on each sink.
 					for sink in sinks {
 						match sink.start_send(notification.clone()) {
-							Ok(()) => {},
+							Ok(()) => {}
 							Err(e) if e.is_full() => {
 								unreachable!("Previously ensured that all sinks are ready; qed.")
-							},
+							}
 							// Receiver got dropped. Will be removed in next iteration (See (1)).
-							Err(_) => {},
+							Err(_) => {}
 						}
 					}
-				},
+				}
 			}
 		}
 
@@ -558,7 +558,7 @@ mod tests {
 					Some(entry) => entry.push(tx),
 					None => {
 						gossip_engine.message_sinks.insert(topic, vec![tx]);
-					},
+					}
 				}
 			}
 
@@ -623,16 +623,16 @@ mod tests {
 									.entry(*topic)
 									.and_modify(|e| *e += 1)
 									.or_insert(1);
-							},
+							}
 							Poll::Ready(None) => {
 								unreachable!("Sender side of channel is never dropped")
-							},
-							Poll::Pending => {},
+							}
+							Poll::Pending => {}
 						}
 					}
 
 					if !progress {
-						break
+						break;
 					}
 				}
 				Poll::Ready(())

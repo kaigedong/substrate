@@ -39,6 +39,7 @@ payout is pending, resulting in the slash of the curator's deposit.
 ### Dispatchable Functions
 
 Bounty protocol:
+
 - `propose_bounty` - Propose a specific treasury amount to be earmarked for a predefined set of
   tasks and stake the required deposit.
 - `approve_bounty` - Accept a specific treasury amount to be earmarked for a predefined body of

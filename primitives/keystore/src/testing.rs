@@ -204,7 +204,7 @@ impl SyncCryptoStore for KeyStore {
 					.or_default()
 					.insert(pair.public().to_raw_vec(), seed.into());
 				Ok(pair.public())
-			},
+			}
 			None => {
 				let (pair, phrase, _) = sr25519::Pair::generate_with_phrase(None);
 				self.keys
@@ -213,7 +213,7 @@ impl SyncCryptoStore for KeyStore {
 					.or_default()
 					.insert(pair.public().to_raw_vec(), phrase);
 				Ok(pair.public())
-			},
+			}
 		}
 	}
 
@@ -248,7 +248,7 @@ impl SyncCryptoStore for KeyStore {
 					.or_default()
 					.insert(pair.public().to_raw_vec(), seed.into());
 				Ok(pair.public())
-			},
+			}
 			None => {
 				let (pair, phrase, _) = ed25519::Pair::generate_with_phrase(None);
 				self.keys
@@ -257,7 +257,7 @@ impl SyncCryptoStore for KeyStore {
 					.or_default()
 					.insert(pair.public().to_raw_vec(), phrase);
 				Ok(pair.public())
-			},
+			}
 		}
 	}
 
@@ -291,7 +291,7 @@ impl SyncCryptoStore for KeyStore {
 					.or_default()
 					.insert(pair.public().to_raw_vec(), seed.into());
 				Ok(pair.public())
-			},
+			}
 			None => {
 				let (pair, phrase, _) = ecdsa::Pair::generate_with_phrase(None);
 				self.keys
@@ -300,7 +300,7 @@ impl SyncCryptoStore for KeyStore {
 					.or_default()
 					.insert(pair.public().to_raw_vec(), phrase);
 				Ok(pair.public())
-			},
+			}
 		}
 	}
 
@@ -344,19 +344,19 @@ impl SyncCryptoStore for KeyStore {
 					self.ed25519_key_pair(id, &ed25519::Public::from_slice(key.1.as_slice()));
 
 				key_pair.map(|k| k.sign(msg).encode()).map(Ok).transpose()
-			},
+			}
 			sr25519::CRYPTO_ID => {
 				let key_pair =
 					self.sr25519_key_pair(id, &sr25519::Public::from_slice(key.1.as_slice()));
 
 				key_pair.map(|k| k.sign(msg).encode()).map(Ok).transpose()
-			},
+			}
 			ecdsa::CRYPTO_ID => {
 				let key_pair =
 					self.ecdsa_key_pair(id, &ecdsa::Public::from_slice(key.1.as_slice()));
 
 				key_pair.map(|k| k.sign(msg).encode()).map(Ok).transpose()
-			},
+			}
 			_ => Err(Error::KeyNotSupported(id)),
 		}
 	}
@@ -368,8 +368,11 @@ impl SyncCryptoStore for KeyStore {
 		transcript_data: VRFTranscriptData,
 	) -> Result<Option<VRFSignature>, Error> {
 		let transcript = make_transcript(transcript_data);
-		let pair =
-			if let Some(k) = self.sr25519_key_pair(key_type, public) { k } else { return Ok(None) };
+		let pair = if let Some(k) = self.sr25519_key_pair(key_type, public) {
+			k
+		} else {
+			return Ok(None);
+		};
 
 		let (inout, proof, _) = pair.as_ref().vrf_sign(transcript);
 		Ok(Some(VRFSignature { output: inout.to_output(), proof }))

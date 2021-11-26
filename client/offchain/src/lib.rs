@@ -157,7 +157,7 @@ where
 					help
 				);
 				0
-			},
+			}
 		};
 		tracing::debug!(
 			target: LOG_TARGET,

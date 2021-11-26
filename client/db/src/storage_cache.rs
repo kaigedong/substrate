@@ -118,11 +118,11 @@ impl<K: EstimateSize + Eq + StdHash, V: EstimateSize> LRUMap<K, V> {
 				// it would require to remove first
 				*storage_used_size -= entry.get().estimate_size();
 				entry.insert(v);
-			},
+			}
 			Entry::Vacant(entry) => {
 				*storage_used_size += klen;
 				entry.insert(v);
-			},
+			}
 		};
 
 		while *storage_used_size > limit {
@@ -132,7 +132,7 @@ impl<K: EstimateSize + Eq + StdHash, V: EstimateSize> LRUMap<K, V> {
 			} else {
 				// can happen fairly often as we get value from multiple lru
 				// and only remove from a single lru
-				break
+				break;
 			}
 		}
 	}
@@ -477,8 +477,8 @@ impl<S: StateBackend<HashFor<B>>, B: BlockT> CachingState<S, B> {
 					"Cache lookup skipped for {:?}: no parent hash",
 					key.as_ref().map(HexDisplay::from)
 				);
-				return false
-			},
+				return false;
+			}
 			Some(ref parent) => parent,
 		};
 		// Ignore all storage entries modified in later blocks.
@@ -489,7 +489,7 @@ impl<S: StateBackend<HashFor<B>>, B: BlockT> CachingState<S, B> {
 		for m in modifications {
 			if &m.hash == parent {
 				if m.is_canon {
-					return true
+					return true;
 				}
 				parent = &m.parent;
 			}
@@ -499,13 +499,13 @@ impl<S: StateBackend<HashFor<B>>, B: BlockT> CachingState<S, B> {
 						"Cache lookup skipped for {:?}: modified in a later block",
 						HexDisplay::from(&key)
 					);
-					return false
+					return false;
 				}
 			}
 			if let Some(child_key) = child_key {
 				if m.child_storage.contains(child_key) {
 					trace!("Cache lookup skipped for {:?}: modified in a later block", child_key);
-					return false
+					return false;
 				}
 			}
 		}
@@ -529,7 +529,7 @@ impl<S: StateBackend<HashFor<B>>, B: BlockT> StateBackend<HashFor<B>> for Cachin
 			trace!("Found in local cache: {:?}", HexDisplay::from(&key));
 			self.usage.tally_key_read(key, entry.as_ref(), true);
 
-			return Ok(entry)
+			return Ok(entry);
 		}
 		{
 			let cache = self.cache.shared_cache.upgradable_read();
@@ -538,7 +538,7 @@ impl<S: StateBackend<HashFor<B>>, B: BlockT> StateBackend<HashFor<B>> for Cachin
 				if let Some(entry) = cache.lru_storage.get(key).map(|a| a.clone()) {
 					trace!("Found in shared cache: {:?}", HexDisplay::from(&key));
 					self.usage.tally_key_read(key, entry.as_ref(), true);
-					return Ok(entry)
+					return Ok(entry);
 				}
 			}
 		}
@@ -555,7 +555,7 @@ impl<S: StateBackend<HashFor<B>>, B: BlockT> StateBackend<HashFor<B>> for Cachin
 		let local_cache = self.cache.local_cache.upgradable_read();
 		if let Some(entry) = local_cache.hashes.get(key).cloned() {
 			trace!("Found hash in local cache: {:?}", HexDisplay::from(&key));
-			return Ok(entry)
+			return Ok(entry);
 		}
 		{
 			let cache = self.cache.shared_cache.upgradable_read();
@@ -563,7 +563,7 @@ impl<S: StateBackend<HashFor<B>>, B: BlockT> StateBackend<HashFor<B>> for Cachin
 				let mut cache = RwLockUpgradableReadGuard::upgrade(cache);
 				if let Some(entry) = cache.lru_hashes.get(key).map(|a| a.0.clone()) {
 					trace!("Found hash in shared cache: {:?}", HexDisplay::from(&key));
-					return Ok(entry)
+					return Ok(entry);
 				}
 			}
 		}
@@ -584,7 +584,7 @@ impl<S: StateBackend<HashFor<B>>, B: BlockT> StateBackend<HashFor<B>> for Cachin
 		let local_cache = self.cache.local_cache.upgradable_read();
 		if let Some(entry) = local_cache.child_storage.get(&key).cloned() {
 			trace!("Found in local cache: {:?}", key);
-			return Ok(self.usage.tally_child_key_read(&key, entry, true))
+			return Ok(self.usage.tally_child_key_read(&key, entry, true));
 		}
 		{
 			let cache = self.cache.shared_cache.upgradable_read();
@@ -592,7 +592,7 @@ impl<S: StateBackend<HashFor<B>>, B: BlockT> StateBackend<HashFor<B>> for Cachin
 				let mut cache = RwLockUpgradableReadGuard::upgrade(cache);
 				if let Some(entry) = cache.lru_child_storage.get(&key).map(|a| a.clone()) {
 					trace!("Found in shared cache: {:?}", key);
-					return Ok(self.usage.tally_child_key_read(&key, entry, true))
+					return Ok(self.usage.tally_child_key_read(&key, entry, true));
 				}
 			}
 		}
@@ -920,7 +920,7 @@ impl<S: StateBackend<HashFor<B>>, B: BlockT> StateBackend<HashFor<B>>
 impl<S, B: BlockT> Drop for SyncingCachingState<S, B> {
 	fn drop(&mut self) {
 		if self.disable_syncing {
-			return
+			return;
 		}
 
 		if let Some(mut caching_state) = self.caching_state.take() {
@@ -1495,13 +1495,13 @@ mod qc {
 						hash: H256::from_slice(&buf[..]),
 						depth: ((u8::arbitrary(gen)) / 32) as usize, // 0-7
 					}
-				},
+				}
 				_ => {
 					Action::FinalizationReorg {
 						fork_depth: ((u8::arbitrary(gen)) / 32) as usize, // 0-7
 						depth: ((u8::arbitrary(gen)) / 64) as usize,      // 0-3
 					}
-				},
+				}
 			}
 		}
 	}
@@ -1540,7 +1540,7 @@ mod qc {
 		}
 
 		fn canon_len(&self) -> usize {
-			return self.canon.len()
+			return self.canon.len();
 		}
 
 		fn head_storage_ref(&self) -> &KeyMap {
@@ -1561,7 +1561,7 @@ mod qc {
 					if pos < 0 || self.canon.len() == 0 || pos >= (self.canon.len() - 1) as isize
 					// no fork on top also, thus len-1
 					{
-						return Err(())
+						return Err(());
 					}
 
 					let pos = pos as usize;
@@ -1582,13 +1582,13 @@ mod qc {
 							chain.push(node);
 
 							(pos + chain.len(), parent.hash)
-						},
+						}
 						Entry::Vacant(vacant) => {
 							let canon_parent = &self.canon[pos];
 							vacant.insert(vec![canon_parent.new_next(hash, changes.clone())]);
 
 							(pos + 1, fork_at)
-						},
+						}
 					};
 
 					let mut state = CachingState::new(
@@ -1608,13 +1608,13 @@ mod qc {
 					);
 
 					state
-				},
+				}
 				Action::Next { hash, changes } => {
 					let (next, parent_hash) = match self.canon.last() {
 						None => {
 							let parent_hash = H256::from(&[0u8; 32]);
 							(Node::new(hash, parent_hash, changes.clone()), parent_hash)
-						},
+						}
 						Some(parent) => (parent.new_next(hash, changes.clone()), parent.hash),
 					};
 
@@ -1647,11 +1647,11 @@ mod qc {
 					self.canon.push(next);
 
 					state
-				},
+				}
 				Action::ReorgWithImport { depth, hash } => {
 					let pos = self.canon.len() as isize - depth as isize;
 					if pos < 0 || pos + 1 >= self.canon.len() as isize {
-						return Err(())
+						return Err(());
 					}
 					let fork_at = self.canon[pos as usize].hash;
 					let pos = pos as usize;
@@ -1697,26 +1697,26 @@ mod qc {
 							);
 
 							state
-						},
+						}
 						None => {
-							return Err(()) // no reorg without a fork atm!
-						},
+							return Err(()); // no reorg without a fork atm!
+						}
 					}
-				},
+				}
 				Action::FinalizationReorg { fork_depth, depth } => {
 					let pos = self.canon.len() as isize - fork_depth as isize;
 					if pos < 0 || pos + 1 >= self.canon.len() as isize {
-						return Err(())
+						return Err(());
 					}
 					let fork_at = self.canon[pos as usize].hash;
 					let pos = pos as usize;
 
 					match self.forks.get_mut(&fork_at) {
 						Some(fork_chain) => {
-							let sync_pos = fork_chain.len() as isize -
-								fork_chain.len() as isize - depth as isize;
+							let sync_pos = fork_chain.len() as isize
+								- fork_chain.len() as isize - depth as isize;
 							if sync_pos < 0 || sync_pos >= fork_chain.len() as isize {
-								return Err(())
+								return Err(());
 							}
 							let sync_pos = sync_pos as usize;
 
@@ -1740,12 +1740,12 @@ mod qc {
 									.expect("wasn't forking to emptiness so there should be one!")
 									.hash,
 							)
-						},
+						}
 						None => {
-							return Err(()) // no reorg to nothing pls!
-						},
+							return Err(()); // no reorg to nothing pls!
+						}
 					}
-				},
+				}
 			};
 
 			Ok(state)
@@ -1798,18 +1798,19 @@ mod qc {
 
 		for key in Mutator::key_permutations() {
 			match (head_state.storage(&key).unwrap(), mutator.head_storage_ref().get(&key)) {
-				(Some(x), Some(y)) =>
+				(Some(x), Some(y)) => {
 					if Some(&x) != y.as_ref() {
 						eprintln!("{:?} != {:?}", x, y);
-						return false
-					},
+						return false;
+					}
+				}
 				(None, Some(_y)) => {
 					// TODO: cache miss is not tracked atm
-				},
+				}
 				(Some(x), None) => {
 					eprintln!("{:?} != <missing>", x);
-					return false
-				},
+					return false;
+				}
 				_ => continue,
 			}
 		}
@@ -1821,18 +1822,19 @@ mod qc {
 			let head_state = mutator.head_state(node.hash);
 			for key in Mutator::key_permutations() {
 				match (head_state.storage(&key).unwrap(), node.state.get(&key)) {
-					(Some(x), Some(y)) =>
+					(Some(x), Some(y)) => {
 						if Some(&x) != y.as_ref() {
 							eprintln!("at [{}]: {:?} != {:?}", node.hash, x, y);
-							return false
-						},
+							return false;
+						}
+					}
 					(None, Some(_y)) => {
 						// cache miss is not tracked atm
-					},
+					}
 					(Some(x), None) => {
 						eprintln!("at [{}]: {:?} != <missing>", node.hash, x);
-						return false
-					},
+						return false;
+					}
 					_ => continue,
 				}
 			}

@@ -48,7 +48,7 @@ impl NodesUtils {
 	/// Calculate maximal depth of the MMR.
 	pub fn depth(&self) -> u32 {
 		if self.no_of_leaves == 0 {
-			return 0
+			return 0;
 		}
 
 		64 - self.no_of_leaves.next_power_of_two().leading_zeros()

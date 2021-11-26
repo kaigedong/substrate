@@ -78,8 +78,8 @@ impl<Block: BlockT> WasmSubstitute<Block> {
 						self.block_hash,
 						e,
 					);
-					return false
-				},
+					return false;
+				}
 			};
 			*self.block_number.write() = Some(block_number);
 			block_number

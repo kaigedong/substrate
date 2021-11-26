@@ -215,7 +215,7 @@ impl<B: BlockT> Behaviour<B> {
 				let name = config.name.to_string();
 				request_response_protocols.push(config);
 				Some(name)
-			},
+			}
 			None => None,
 		};
 		request_response_protocols.push(block_request_protocol_config);
@@ -334,8 +334,9 @@ impl<B: BlockT> NetworkBehaviourEventProcess<void::Void> for Behaviour<B> {
 impl<B: BlockT> NetworkBehaviourEventProcess<CustomMessageOutcome<B>> for Behaviour<B> {
 	fn inject_event(&mut self, event: CustomMessageOutcome<B>) {
 		match event {
-			CustomMessageOutcome::BlockImport(origin, blocks) =>
-				self.events.push_back(BehaviourOut::BlockImport(origin, blocks)),
+			CustomMessageOutcome::BlockImport(origin, blocks) => {
+				self.events.push_back(BehaviourOut::BlockImport(origin, blocks))
+			}
 			CustomMessageOutcome::JustificationImport(origin, hash, nb, justification) => self
 				.events
 				.push_back(BehaviourOut::JustificationImport(origin, hash, nb, justification)),
@@ -347,7 +348,7 @@ impl<B: BlockT> NetworkBehaviourEventProcess<CustomMessageOutcome<B>> for Behavi
 						"Failed to encode block request {:?}: {:?}",
 						request, err
 					);
-					return
+					return;
 				}
 
 				self.request_responses.send_request(
@@ -357,7 +358,7 @@ impl<B: BlockT> NetworkBehaviourEventProcess<CustomMessageOutcome<B>> for Behavi
 					pending_response,
 					IfDisconnected::ImmediateError,
 				);
-			},
+			}
 			CustomMessageOutcome::StateRequest { target, request, pending_response } => {
 				let mut buf = Vec::with_capacity(request.encoded_len());
 				if let Err(err) = request.encode(&mut buf) {
@@ -366,7 +367,7 @@ impl<B: BlockT> NetworkBehaviourEventProcess<CustomMessageOutcome<B>> for Behavi
 						"Failed to encode state request {:?}: {:?}",
 						request, err
 					);
-					return
+					return;
 				}
 
 				self.request_responses.send_request(
@@ -376,8 +377,8 @@ impl<B: BlockT> NetworkBehaviourEventProcess<CustomMessageOutcome<B>> for Behavi
 					pending_response,
 					IfDisconnected::ImmediateError,
 				);
-			},
-			CustomMessageOutcome::WarpSyncRequest { target, request, pending_response } =>
+			}
+			CustomMessageOutcome::WarpSyncRequest { target, request, pending_response } => {
 				match &self.warp_sync_protocol_name {
 					Some(name) => self.request_responses.send_request(
 						&target,
@@ -392,9 +393,10 @@ impl<B: BlockT> NetworkBehaviourEventProcess<CustomMessageOutcome<B>> for Behavi
 							"Trying to send warp sync request when no protocol is configured {:?}",
 							request,
 						);
-						return
-					},
-				},
+						return;
+					}
+				}
+			}
 			CustomMessageOutcome::NotificationStreamOpened {
 				remote,
 				protocol,
@@ -409,7 +411,7 @@ impl<B: BlockT> NetworkBehaviourEventProcess<CustomMessageOutcome<B>> for Behavi
 					role: reported_roles_to_observed_role(roles),
 					notifications_sink: notifications_sink.clone(),
 				});
-			},
+			}
 			CustomMessageOutcome::NotificationStreamReplaced {
 				remote,
 				protocol,
@@ -424,13 +426,15 @@ impl<B: BlockT> NetworkBehaviourEventProcess<CustomMessageOutcome<B>> for Behavi
 				.push_back(BehaviourOut::NotificationStreamClosed { remote, protocol }),
 			CustomMessageOutcome::NotificationsReceived { remote, messages } => {
 				self.events.push_back(BehaviourOut::NotificationsReceived { remote, messages });
-			},
-			CustomMessageOutcome::PeerNewBest(_peer_id, _number) => {},
-			CustomMessageOutcome::SyncConnected(peer_id) =>
-				self.events.push_back(BehaviourOut::SyncConnected(peer_id)),
-			CustomMessageOutcome::SyncDisconnected(peer_id) =>
-				self.events.push_back(BehaviourOut::SyncDisconnected(peer_id)),
-			CustomMessageOutcome::None => {},
+			}
+			CustomMessageOutcome::PeerNewBest(_peer_id, _number) => {}
+			CustomMessageOutcome::SyncConnected(peer_id) => {
+				self.events.push_back(BehaviourOut::SyncConnected(peer_id))
+			}
+			CustomMessageOutcome::SyncDisconnected(peer_id) => {
+				self.events.push_back(BehaviourOut::SyncDisconnected(peer_id))
+			}
+			CustomMessageOutcome::None => {}
 		}
 	}
 }
@@ -440,7 +444,7 @@ impl<B: BlockT> NetworkBehaviourEventProcess<request_responses::Event> for Behav
 		match event {
 			request_responses::Event::InboundRequest { peer, protocol, result } => {
 				self.events.push_back(BehaviourOut::InboundRequest { peer, protocol, result });
-			},
+			}
 			request_responses::Event::RequestFinished { peer, protocol, duration, result } => {
 				self.events.push_back(BehaviourOut::RequestFinished {
 					peer,
@@ -448,11 +452,12 @@ impl<B: BlockT> NetworkBehaviourEventProcess<request_responses::Event> for Behav
 					duration,
 					result,
 				});
-			},
-			request_responses::Event::ReputationChanges { peer, changes } =>
+			}
+			request_responses::Event::ReputationChanges { peer, changes } => {
 				for change in changes {
 					self.substrate.report_peer(peer, change);
-				},
+				}
+			}
 		}
 	}
 }
@@ -488,28 +493,29 @@ impl<B: BlockT> NetworkBehaviourEventProcess<DiscoveryOut> for Behaviour<B> {
 				// to Kademlia is handled by the `Identify` protocol, part of the
 				// `PeerInfoBehaviour`. See the `NetworkBehaviourEventProcess`
 				// implementation for `PeerInfoEvent`.
-			},
+			}
 			DiscoveryOut::Discovered(peer_id) => {
 				self.substrate.add_default_set_discovered_nodes(iter::once(peer_id));
-			},
+			}
 			DiscoveryOut::ValueFound(results, duration) => {
 				self.events
 					.push_back(BehaviourOut::Dht(DhtEvent::ValueFound(results), duration));
-			},
+			}
 			DiscoveryOut::ValueNotFound(key, duration) => {
 				self.events.push_back(BehaviourOut::Dht(DhtEvent::ValueNotFound(key), duration));
-			},
+			}
 			DiscoveryOut::ValuePut(key, duration) => {
 				self.events.push_back(BehaviourOut::Dht(DhtEvent::ValuePut(key), duration));
-			},
+			}
 			DiscoveryOut::ValuePutFailed(key, duration) => {
 				self.events
 					.push_back(BehaviourOut::Dht(DhtEvent::ValuePutFailed(key), duration));
-			},
-			DiscoveryOut::RandomKademliaStarted(protocols) =>
+			}
+			DiscoveryOut::RandomKademliaStarted(protocols) => {
 				for protocol in protocols {
 					self.events.push_back(BehaviourOut::RandomKademliaStarted(protocol));
-				},
+				}
+			}
 		}
 	}
 }
@@ -522,7 +528,7 @@ impl<B: BlockT> Behaviour<B> {
 	) -> Poll<NetworkBehaviourAction<BehaviourOut<B>, <Self as NetworkBehaviour>::ProtocolsHandler>>
 	{
 		if let Some(event) = self.events.pop_front() {
-			return Poll::Ready(NetworkBehaviourAction::GenerateEvent(event))
+			return Poll::Ready(NetworkBehaviourAction::GenerateEvent(event));
 		}
 
 		Poll::Pending

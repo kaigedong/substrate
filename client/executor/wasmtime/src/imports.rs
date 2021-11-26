@@ -54,16 +54,17 @@ pub(crate) fn resolve_imports(
 				"host doesn't provide any imports from non-env module: {}:{}",
 				import_ty.module(),
 				name,
-			)))
+			)));
 		}
 
 		let resolved = match name {
 			"memory" => {
 				memory_import_index = Some(externs.len());
 				resolve_memory_import(store, &import_ty, heap_pages)?
-			},
-			_ =>
-				resolve_func_import(store, &import_ty, host_functions, allow_missing_func_imports)?,
+			}
+			_ => {
+				resolve_func_import(store, &import_ty, host_functions, allow_missing_func_imports)?
+			}
 		};
 		externs.push(resolved);
 	}
@@ -87,12 +88,13 @@ fn resolve_memory_import(
 ) -> Result<Extern, WasmError> {
 	let requested_memory_ty = match import_ty.ty() {
 		ExternType::Memory(memory_ty) => memory_ty,
-		_ =>
+		_ => {
 			return Err(WasmError::Other(format!(
 				"this import must be of memory type: {}:{}",
 				import_ty.module(),
 				import_name(&import_ty)?,
-			))),
+			)))
+		}
 	};
 
 	// Increment the min (a.k.a initial) number of pages by `heap_pages` and check if it exceeds the
@@ -105,7 +107,7 @@ fn resolve_memory_import(
 				by the runtime wasm module {}",
 				initial,
 				max,
-			)))
+			)));
 		}
 	}
 
@@ -149,31 +151,34 @@ fn resolve_func_import(
 
 	let func_ty = match import_ty.ty() {
 		ExternType::Func(func_ty) => func_ty,
-		_ =>
+		_ => {
 			return Err(WasmError::Other(format!(
 				"host doesn't provide any non function imports besides 'memory': {}:{}",
 				import_ty.module(),
 				name,
-			))),
+			)))
+		}
 	};
 
 	let host_func = match host_functions.iter().find(|host_func| host_func.name() == name) {
 		Some(host_func) => host_func,
-		None if allow_missing_func_imports =>
-			return Ok(MissingHostFuncHandler::new(import_ty)?.into_extern(store, &func_ty)),
-		None =>
+		None if allow_missing_func_imports => {
+			return Ok(MissingHostFuncHandler::new(import_ty)?.into_extern(store, &func_ty))
+		}
+		None => {
 			return Err(WasmError::Other(format!(
 				"host doesn't provide such function: {}:{}",
 				import_ty.module(),
 				name,
-			))),
+			)))
+		}
 	};
 	if &func_ty != &wasmtime_func_sig(*host_func) {
 		return Err(WasmError::Other(format!(
 			"signature mismatch for: {}:{}",
 			import_ty.module(),
 			name,
-		)))
+		)));
 	}
 
 	Ok(HostFuncHandler::new(*host_func).into_extern(store))
@@ -220,7 +225,7 @@ fn call_static<'a>(
 			);
 			wasmtime_results[0] = util::into_wasmtime_val(ret_val);
 			Ok(())
-		},
+		}
 		Ok(None) => {
 			debug_assert!(
 				wasmtime_results.len() == 0,
@@ -228,7 +233,7 @@ fn call_static<'a>(
 				correspond to the number of results returned by the host function",
 			);
 			Ok(())
-		},
+		}
 		Err(msg) => Err(Trap::new(msg)),
 	}
 }

@@ -105,9 +105,9 @@ where
 			self.authority_set.inner().pending_changes().cloned().collect();
 
 		for pending_change in pending_changes {
-			if pending_change.delay_kind == DelayKind::Finalized &&
-				pending_change.effective_number() > chain_info.finalized_number &&
-				pending_change.effective_number() <= chain_info.best_number
+			if pending_change.delay_kind == DelayKind::Finalized
+				&& pending_change.effective_number() > chain_info.finalized_number
+				&& pending_change.effective_number() <= chain_info.best_number
 			{
 				let effective_block_hash = if !pending_change.delay.is_zero() {
 					self.select_chain
@@ -243,7 +243,7 @@ where
 	) -> Option<PendingChange<Block::Hash, NumberFor<Block>>> {
 		// check for forced authority set hard forks
 		if let Some(change) = self.authority_set_hard_forks.get(&hash) {
-			return Some(change.clone())
+			return Some(change.clone());
 		}
 
 		// check for forced change.
@@ -254,7 +254,7 @@ where
 				canon_height: *header.number(),
 				canon_hash: hash,
 				delay_kind: DelayKind::Best { median_last_finalized },
-			})
+			});
 		}
 
 		// check normal scheduled change.
@@ -443,7 +443,7 @@ where
 					self.inner.storage(&id, &sc_client_api::StorageKey(k.to_vec()))
 				{
 					if let Ok(id) = SetId::decode(&mut id.0.as_ref()) {
-						return Ok(id)
+						return Ok(id);
 					}
 				}
 			}
@@ -502,7 +502,7 @@ where
 					.send_voter_commands
 					.unbounded_send(VoterCommand::ChangeAuthorities(new_set));
 				Ok(ImportResult::Imported(aux))
-			},
+			}
 			Ok(r) => Ok(r),
 			Err(e) => Err(ConsensusError::ClientImport(e.to_string())),
 		}
@@ -538,14 +538,14 @@ where
 			Ok(BlockStatus::InChain) => {
 				// Strip justifications when re-importing an existing block.
 				let _justifications = block.justifications.take();
-				return (&*self.inner).import_block(block, new_cache).await
-			},
-			Ok(BlockStatus::Unknown) => {},
+				return (&*self.inner).import_block(block, new_cache).await;
+			}
+			Ok(BlockStatus::Unknown) => {}
 			Err(e) => return Err(ConsensusError::ClientImport(e.to_string())),
 		}
 
 		if block.with_state() {
-			return self.import_state(block, new_cache).await
+			return self.import_state(block, new_cache).await;
 		}
 
 		if number <= self.inner.info().finalized_number {
@@ -556,7 +556,7 @@ where
 						"Justification required when importing \
 							an old block with authority set change."
 							.into(),
-					))
+					));
 				}
 				assert!(block.justifications.is_some());
 				let mut authority_set = self.authority_set.inner_locked();
@@ -571,7 +571,7 @@ where
 					},
 				);
 			}
-			return (&*self.inner).import_block(block, new_cache).await
+			return (&*self.inner).import_block(block, new_cache).await;
 		}
 
 		// on initial sync we will restrict logging under info to avoid spam.
@@ -593,8 +593,8 @@ where
 						r,
 					);
 					pending_changes.revert();
-					return Ok(r)
-				},
+					return Ok(r);
+				}
 				Err(e) => {
 					debug!(
 						target: "afg",
@@ -602,8 +602,8 @@ where
 						e,
 					);
 					pending_changes.revert();
-					return Err(ConsensusError::ClientImport(e.to_string()))
-				},
+					return Err(ConsensusError::ClientImport(e.to_string()));
+				}
 			}
 		};
 
@@ -637,15 +637,15 @@ where
 				// we must clear all pending justifications requests, presumably they won't be
 				// finalized hence why this forced changes was triggered
 				imported_aux.clear_justification_requests = true;
-			},
+			}
 			AppliedChanges::Standard(false) => {
 				// we can't apply this change yet since there are other dependent changes that we
 				// need to apply first, drop any justification that might have been provided with
 				// the block to make sure we request them from `sync` which will ensure they'll be
 				// applied in-order.
 				justifications.take();
-			},
-			_ => {},
+			}
+			_ => {}
 		}
 
 		let grandpa_justification =
@@ -669,8 +669,8 @@ where
 						imported_aux.needs_justification = true;
 					}
 				});
-			},
-			None =>
+			}
+			None => {
 				if needs_justification {
 					debug!(
 						target: "afg",
@@ -679,7 +679,8 @@ where
 					);
 
 					imported_aux.needs_justification = true;
-				},
+				}
+			}
 		}
 
 		Ok(ImportResult::Imported(imported_aux))
@@ -769,7 +770,7 @@ where
 			// justification import pipeline similar to what we do for `BlockImport`. In the
 			// meantime we'll just drop the justification, since this is only used for BEEFY which
 			// is still WIP.
-			return Ok(())
+			return Ok(());
 		}
 
 		let justification = GrandpaJustification::decode_and_verify_finalizes(
@@ -808,8 +809,8 @@ where
 
 				// send the command to the voter
 				let _ = self.send_voter_commands.unbounded_send(command);
-			},
-			Err(CommandOrError::Error(e)) =>
+			}
+			Err(CommandOrError::Error(e)) => {
 				return Err(match e {
 					Error::Grandpa(error) => ConsensusError::ClientImport(error.to_string()),
 					Error::Network(error) => ConsensusError::ClientImport(error),
@@ -819,13 +820,14 @@ where
 					Error::Signing(error) => ConsensusError::ClientImport(error),
 					Error::Timer(error) => ConsensusError::ClientImport(error.to_string()),
 					Error::RuntimeApi(error) => ConsensusError::ClientImport(error.to_string()),
-				}),
+				})
+			}
 			Ok(_) => {
 				assert!(
 					!enacts_change,
 					"returns Ok when no authority set change should be enacted; qed;"
 				);
-			},
+			}
 		}
 
 		Ok(())

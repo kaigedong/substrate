@@ -277,7 +277,7 @@ fn reconnect_after_disconnect() {
 								sc_peerset::SetId::from(0),
 							);
 						}
-					},
+					}
 					ServiceState::Disconnected => service1_state = ServiceState::ConnectedAgain,
 					ServiceState::FirstConnec | ServiceState::ConnectedAgain => panic!(),
 				},
@@ -285,9 +285,9 @@ fn reconnect_after_disconnect() {
 					NotificationsOut::CustomProtocolClosed { .. },
 				)) => match service1_state {
 					ServiceState::FirstConnec => service1_state = ServiceState::Disconnected,
-					ServiceState::ConnectedAgain |
-					ServiceState::NotConnected |
-					ServiceState::Disconnected => panic!(),
+					ServiceState::ConnectedAgain
+					| ServiceState::NotConnected
+					| ServiceState::Disconnected => panic!(),
 				},
 				future::Either::Right(SwarmEvent::Behaviour(
 					NotificationsOut::CustomProtocolOpen { .. },
@@ -300,7 +300,7 @@ fn reconnect_after_disconnect() {
 								sc_peerset::SetId::from(0),
 							);
 						}
-					},
+					}
 					ServiceState::Disconnected => service2_state = ServiceState::ConnectedAgain,
 					ServiceState::FirstConnec | ServiceState::ConnectedAgain => panic!(),
 				},
@@ -308,17 +308,17 @@ fn reconnect_after_disconnect() {
 					NotificationsOut::CustomProtocolClosed { .. },
 				)) => match service2_state {
 					ServiceState::FirstConnec => service2_state = ServiceState::Disconnected,
-					ServiceState::ConnectedAgain |
-					ServiceState::NotConnected |
-					ServiceState::Disconnected => panic!(),
+					ServiceState::ConnectedAgain
+					| ServiceState::NotConnected
+					| ServiceState::Disconnected => panic!(),
 				},
-				_ => {},
+				_ => {}
 			}
 
-			if service1_state == ServiceState::ConnectedAgain &&
-				service2_state == ServiceState::ConnectedAgain
+			if service1_state == ServiceState::ConnectedAgain
+				&& service2_state == ServiceState::ConnectedAgain
 			{
-				break
+				break;
 			}
 		}
 
@@ -340,9 +340,9 @@ fn reconnect_after_disconnect() {
 			};
 
 			match event {
-				SwarmEvent::Behaviour(NotificationsOut::CustomProtocolOpen { .. }) |
-				SwarmEvent::Behaviour(NotificationsOut::CustomProtocolClosed { .. }) => panic!(),
-				_ => {},
+				SwarmEvent::Behaviour(NotificationsOut::CustomProtocolOpen { .. })
+				| SwarmEvent::Behaviour(NotificationsOut::CustomProtocolClosed { .. }) => panic!(),
+				_ => {}
 			}
 		}
 	});

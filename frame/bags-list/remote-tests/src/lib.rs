@@ -63,8 +63,8 @@ pub fn display_and_check_bags<Runtime: RuntimeT>(currency_unit: u64, currency_na
 			Some(bag) => bag,
 			None => {
 				log::info!(target: LOG_TARGET, "{} NO VOTERS.", pretty_thresh);
-				continue
-			},
+				continue;
+			}
 		};
 
 		active_bags += 1;
@@ -92,8 +92,8 @@ pub fn display_and_check_bags<Runtime: RuntimeT>(currency_unit: u64, currency_na
 					"Account {:?} can be rebagged from {:?} to {:?}",
 					id,
 					vote_weight_thresh_as_unit,
-					pallet_bags_list::notional_bag_for::<Runtime>(vote_weight) as f64 /
-						currency_unit as f64
+					pallet_bags_list::notional_bag_for::<Runtime>(vote_weight) as f64
+						/ currency_unit as f64
 				);
 			}
 		}

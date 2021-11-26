@@ -160,7 +160,7 @@ impl Rational128 {
 	pub fn lcm(&self, other: &Self) -> Result<u128, &'static str> {
 		// this should be tested better: two large numbers that are almost the same.
 		if self.1 == other.1 {
-			return Ok(self.1)
+			return Ok(self.1);
 		}
 		let g = helpers_128bit::gcd(self.1, other.1);
 		helpers_128bit::multiply_by_rational(self.1, other.1, g)
@@ -284,7 +284,7 @@ mod tests {
 	fn mul_div(a: u128, b: u128, c: u128) -> u128 {
 		use primitive_types::U256;
 		if a.is_zero() {
-			return Zero::zero()
+			return Zero::zero();
 		}
 		let c = c.max(1);
 

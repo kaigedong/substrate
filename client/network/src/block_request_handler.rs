@@ -164,11 +164,11 @@ impl<B: BlockT> BlockRequestHandler<B> {
 			FromBlock::Hash(ref h) => {
 				let h = Decode::decode(&mut h.as_ref())?;
 				BlockId::<B>::Hash(h)
-			},
+			}
 			FromBlock::Number(ref n) => {
 				let n = Decode::decode(&mut n.as_ref())?;
 				BlockId::<B>::Number(n)
-			},
+			}
 		};
 
 		let max_blocks = if request.max_blocks == 0 {
@@ -196,17 +196,17 @@ impl<B: BlockT> BlockRequestHandler<B> {
 		let mut reputation_change = None;
 
 		match self.seen_requests.get_mut(&key) {
-			Some(SeenRequestsValue::First) => {},
+			Some(SeenRequestsValue::First) => {}
 			Some(SeenRequestsValue::Fulfilled(ref mut requests)) => {
 				*requests = requests.saturating_add(1);
 
 				if *requests > MAX_NUMBER_OF_SAME_REQUESTS_PER_PEER {
 					reputation_change = Some(rep::SAME_REQUEST);
 				}
-			},
+			}
 			None => {
 				self.seen_requests.put(key.clone(), SeenRequestsValue::First);
-			},
+			}
 		}
 
 		debug!(
@@ -315,12 +315,13 @@ impl<B: BlockT> BlockRequestHandler<B> {
 
 			let body = if get_body {
 				match self.client.block_body(&BlockId::Hash(hash))? {
-					Some(mut extrinsics) =>
-						extrinsics.iter_mut().map(|extrinsic| extrinsic.encode()).collect(),
+					Some(mut extrinsics) => {
+						extrinsics.iter_mut().map(|extrinsic| extrinsic.encode()).collect()
+					}
 					None => {
 						log::trace!(target: LOG_TARGET, "Missing data for block request.");
-						break
-					},
+						break;
+					}
 				}
 			} else {
 				Vec::new()
@@ -338,7 +339,7 @@ impl<B: BlockT> BlockRequestHandler<B> {
 						// Ideally `None` should distinguish a missing body from the empty body,
 						// but the current protobuf based protocol does not allow it.
 						Vec::new()
-					},
+					}
 				}
 			} else {
 				Vec::new()
@@ -361,17 +362,17 @@ impl<B: BlockT> BlockRequestHandler<B> {
 			blocks.push(block_data);
 
 			if blocks.len() >= max_blocks as usize || total_size > MAX_BODY_BYTES {
-				break
+				break;
 			}
 
 			match direction {
 				Direction::Ascending => block_id = BlockId::Number(number + One::one()),
 				Direction::Descending => {
 					if number.is_zero() {
-						break
+						break;
 					}
 					block_id = BlockId::Hash(parent_hash)
-				},
+				}
 			}
 		}
 

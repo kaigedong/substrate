@@ -155,7 +155,7 @@ impl<Block: BlockT> StorageNotifications<Block> {
 
 		// early exit if no listeners
 		if !has_wildcard && self.listeners.is_empty() && self.child_listeners.is_empty() {
-			return
+			return;
 		}
 
 		let mut subscribers = self.wildcard_listeners.clone();
@@ -201,7 +201,7 @@ impl<Block: BlockT> StorageNotifications<Block> {
 
 		// Don't send empty notifications
 		if changes.is_empty() && child_changes.is_empty() {
-			return
+			return;
 		}
 
 		let changes = Arc::new(changes);
@@ -251,21 +251,22 @@ impl<Block: BlockT> StorageNotifications<Block> {
 		match filters {
 			None => {
 				wildcards.remove(subscriber);
-			},
-			Some(filters) =>
+			}
+			Some(filters) => {
 				for key in filters.iter() {
 					let remove_key = match listeners.get_mut(key) {
 						Some(ref mut set) => {
 							set.remove(subscriber);
 							set.is_empty()
-						},
+						}
 						None => false,
 					};
 
 					if remove_key {
 						listeners.remove(key);
 					}
-				},
+				}
+			}
 		}
 	}
 
@@ -309,7 +310,7 @@ impl<Block: BlockT> StorageNotifications<Block> {
 			None => {
 				wildcards.insert(current_id);
 				None
-			},
+			}
 			Some(keys) => Some(
 				keys.as_ref()
 					.iter()

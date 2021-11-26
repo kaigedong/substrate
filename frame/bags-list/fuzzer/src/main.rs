@@ -68,18 +68,18 @@ fn main() {
 						BagsList::on_update(&id, vote_weight);
 					}
 					assert!(BagsList::contains(&id));
-				},
+				}
 				Action::Update => {
 					let already_contains = BagsList::contains(&id);
 					BagsList::on_update(&id, vote_weight);
 					if already_contains {
 						assert!(BagsList::contains(&id));
 					}
-				},
+				}
 				Action::Remove => {
 					BagsList::on_remove(&id);
 					assert!(!BagsList::contains(&id));
-				},
+				}
 			}
 
 			assert!(BagsList::sanity_check().is_ok());

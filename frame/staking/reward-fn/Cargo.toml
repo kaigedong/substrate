@@ -19,7 +19,4 @@ log = { version = "0.4.14", default-features = false }
 
 [features]
 default = ["std"]
-std = [
-	"sp-arithmetic/std",
-	"log/std",
-]
+std = ["sp-arithmetic/std", "log/std"]

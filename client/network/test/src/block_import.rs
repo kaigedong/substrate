@@ -76,7 +76,7 @@ fn import_single_good_block_works() {
 		&mut PassThroughVerifier::new(true),
 	)) {
 		Ok(BlockImportStatus::ImportedUnknown(ref num, ref aux, ref org))
-			if *num == number && *aux == expected_aux && *org == Some(peer_id) => {},
+			if *num == number && *aux == expected_aux && *org == Some(peer_id) => {}
 		r @ _ => panic!("{:?}", r),
 	}
 }
@@ -90,7 +90,7 @@ fn import_single_good_known_block_is_ignored() {
 		block,
 		&mut PassThroughVerifier::new(true),
 	)) {
-		Ok(BlockImportStatus::ImportedKnown(ref n, _)) if *n == number => {},
+		Ok(BlockImportStatus::ImportedKnown(ref n, _)) if *n == number => {}
 		_ => panic!(),
 	}
 }
@@ -105,7 +105,7 @@ fn import_single_good_block_without_header_fails() {
 		block,
 		&mut PassThroughVerifier::new(true),
 	)) {
-		Err(BlockImportError::IncompleteHeader(ref org)) if *org == Some(peer_id) => {},
+		Err(BlockImportError::IncompleteHeader(ref org)) if *org == Some(peer_id) => {}
 		_ => panic!(),
 	}
 }

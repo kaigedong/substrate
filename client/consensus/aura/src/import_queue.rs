@@ -164,7 +164,7 @@ where
 				e,
 			);
 
-			return Ok(())
+			return Ok(());
 		}
 
 		let inherent_res = self
@@ -285,8 +285,9 @@ where
 						))
 					})
 					.find_map(|l| match l {
-						ConsensusLog::AuthoritiesChange(a) =>
-							Some(vec![(well_known_cache_keys::AUTHORITIES, a.encode())]),
+						ConsensusLog::AuthoritiesChange(a) => {
+							Some(vec![(well_known_cache_keys::AUTHORITIES, a.encode())])
+						}
 						_ => None,
 					});
 
@@ -296,7 +297,7 @@ where
 				block.post_hash = Some(hash);
 
 				Ok((block, maybe_keys))
-			},
+			}
 			CheckedHeader::Deferred(a, b) => {
 				debug!(target: "aura", "Checking {:?} failed; {:?}, {:?}.", hash, a, b);
 				telemetry!(
@@ -308,7 +309,7 @@ where
 					"b" => ?b,
 				);
 				Err(format!("Header {:?} rejected: too far in the future", hash))
-			},
+			}
 		}
 	}
 }

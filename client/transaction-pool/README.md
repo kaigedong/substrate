@@ -32,13 +32,13 @@ Only valid transactions should be stored in the pool.
 Each imported block can affect validity of transactions already in the pool. Block
 authors expect from the pool to get most up to date information about transactions
 that can be included in the block that they are going to build on top of the just
-imported one. The process of ensuring this property is called *pruning*. During
+imported one. The process of ensuring this property is called _pruning_. During
 pruning the pool should remove transactions which are considered invalid by the
 runtime (queried at current best imported block).
 
 Since the blockchain is not always linear, forks need to be correctly handled by
-the transaction pool as well. In case of a fork, some blocks are *retracted*
-from the canonical chain, and some other blocks get *enacted* on top of some
+the transaction pool as well. In case of a fork, some blocks are _retracted_
+from the canonical chain, and some other blocks get _enacted_ on top of some
 common ancestor. The transactions from retrated blocks could simply be discarded,
 but it's desirable to make sure they are still considered for inclusion in case they
 are deemed valid by the runtime state at best, recently enacted block (fork the
@@ -84,7 +84,7 @@ express dependencies between transactions (that this transaction pool can take
 account of). By looking at these fields we can establish a transaction's readiness
 for block inclusion.
 
-The `provides` set contains properties that will be *satisfied* in case the transaction
+The `provides` set contains properties that will be _satisfied_ in case the transaction
 is successfully added to a block. Only a transaction in a block may provide a specific
 tag. `requires` contains properties that must be satisfied **before** the transaction
 can be included to a block.
@@ -93,8 +93,8 @@ Note that a transaction with empty `requires` set can be added to a block immedi
 there are no other transactions that it expects to be included before.
 
 For some given series of transactions the `provides` and `requires` fields will create
-a (simple) directed acyclic graph. The *sources* in such graph, if they don't have
-any extra `requires` tags (i.e. they have their all dependencies *satisfied*), should
+a (simple) directed acyclic graph. The _sources_ in such graph, if they don't have
+any extra `requires` tags (i.e. they have their all dependencies _satisfied_), should
 be considered for block inclusion first. Multiple transactions that are ready for
 block inclusion should be ordered by `priority` (see below).
 
@@ -184,7 +184,6 @@ runtime call.
 
 This can be used by runtime developers to quickly reject transactions that for
 instance are not expected to be gossiped in the network.
-
 
 ### `Invalid` transaction
 
@@ -291,7 +290,7 @@ feasible, so the actual implementation might need to take some shortcuts.
 
 1. Instead of maintaining a full pool with total ordering we attempt to maintain
    a set of next (couple of) blocks. We could introduce batch-validate runtime
-   api  method that pretty much attempts to simulate actual block inclusion of
+   api method that pretty much attempts to simulate actual block inclusion of
    a set of such transactions (without necessarily fully running/dispatching
    them). Importing a transaction would consist of figuring out which next block
    this transaction have a chance to be included in and then attempting to
@@ -302,9 +301,9 @@ feasible, so the actual implementation might need to take some shortcuts.
    reachability into account.
 
 1. It was discussed in the past to use set reconciliation strategies instead of
-simply broadcasting all/some transactions to all/selected peers. An Ethereum's
-[EIP-2464](https://github.com/ethereum/EIPs/blob/5b9685bb9c7ba0f5f921e4d3f23504f7ef08d5b1/EIPS/eip-2464.md)
-might be a good first approach to reduce transaction gossip.
+   simply broadcasting all/some transactions to all/selected peers. An Ethereum's
+   [EIP-2464](https://github.com/ethereum/EIPs/blob/5b9685bb9c7ba0f5f921e4d3f23504f7ef08d5b1/EIPS/eip-2464.md)
+   might be a good first approach to reduce transaction gossip.
 
 # Current implementation
 
@@ -342,7 +341,7 @@ to limit number of runtime verification calls.
 Each time a transaction is imported, we first verify it's validity and later
 find if the tags it `requires` can be satisfied by transactions already in
 `ready` pool. In case the transaction is imported to the `ready` pool we
-additionally *promote* transactions from `future` pool if the transaction
+additionally _promote_ transactions from `future` pool if the transaction
 happened to fulfill their requirements.
 Note we need to cater for cases where transaction might replace a already
 existing transaction in the pool. In such case we check the entire sub-tree of

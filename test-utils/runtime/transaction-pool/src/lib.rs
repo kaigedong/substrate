@@ -258,14 +258,15 @@ impl sc_transaction_pool::test_helpers::ChainApi for TestApi {
 					return ready(Ok(Err(TransactionValidityError::Invalid(
 						InvalidTransaction::Custom(1),
 					)
-					.into())))
+					.into())));
 				}
-			},
-			Ok(None) =>
+			}
+			Ok(None) => {
 				return ready(Ok(Err(TransactionValidityError::Invalid(
 					InvalidTransaction::Custom(2),
 				)
-				.into()))),
+				.into())))
+			}
 			Err(e) => return ready(Err(e)),
 		}
 
@@ -283,7 +284,7 @@ impl sc_transaction_pool::test_helpers::ChainApi for TestApi {
 		if self.chain.read().invalid_hashes.contains(&self.hash_and_length(&uxt).0) {
 			return ready(Ok(Err(
 				TransactionValidityError::Invalid(InvalidTransaction::Custom(0)).into()
-			)))
+			)));
 		}
 
 		let mut validity =
@@ -299,8 +300,9 @@ impl sc_transaction_pool::test_helpers::ChainApi for TestApi {
 		at: &BlockId<Self::Block>,
 	) -> Result<Option<sc_transaction_pool::test_helpers::NumberFor<Self>>, Error> {
 		Ok(match at {
-			generic::BlockId::Hash(x) =>
-				self.chain.read().block_by_hash.get(x).map(|b| *b.header.number()),
+			generic::BlockId::Hash(x) => {
+				self.chain.read().block_by_hash.get(x).map(|b| *b.header.number())
+			}
 			generic::BlockId::Number(num) => Some(*num),
 		})
 	}
@@ -311,10 +313,11 @@ impl sc_transaction_pool::test_helpers::ChainApi for TestApi {
 	) -> Result<Option<sc_transaction_pool::test_helpers::BlockHash<Self>>, Error> {
 		Ok(match at {
 			generic::BlockId::Hash(x) => Some(x.clone()),
-			generic::BlockId::Number(num) =>
+			generic::BlockId::Number(num) => {
 				self.chain.read().block_by_number.get(num).and_then(|blocks| {
 					blocks.iter().find(|b| b.1.is_best()).map(|b| b.0.header().hash())
-				}),
+				})
+			}
 		})
 	}
 
@@ -327,10 +330,12 @@ impl sc_transaction_pool::test_helpers::ChainApi for TestApi {
 
 	fn block_body(&self, id: &BlockId<Self::Block>) -> Self::BodyFuture {
 		futures::future::ready(Ok(match id {
-			BlockId::Number(num) =>
-				self.chain.read().block_by_number.get(num).map(|b| b[0].0.extrinsics().to_vec()),
-			BlockId::Hash(hash) =>
-				self.chain.read().block_by_hash.get(hash).map(|b| b.extrinsics().to_vec()),
+			BlockId::Number(num) => {
+				self.chain.read().block_by_number.get(num).map(|b| b[0].0.extrinsics().to_vec())
+			}
+			BlockId::Hash(hash) => {
+				self.chain.read().block_by_hash.get(hash).map(|b| b.extrinsics().to_vec())
+			}
 		}))
 	}
 
@@ -339,10 +344,12 @@ impl sc_transaction_pool::test_helpers::ChainApi for TestApi {
 		at: &BlockId<Self::Block>,
 	) -> Result<Option<<Self::Block as BlockT>::Header>, Self::Error> {
 		Ok(match at {
-			BlockId::Number(num) =>
-				self.chain.read().block_by_number.get(num).map(|b| b[0].0.header().clone()),
-			BlockId::Hash(hash) =>
-				self.chain.read().block_by_hash.get(hash).map(|b| b.header().clone()),
+			BlockId::Number(num) => {
+				self.chain.read().block_by_number.get(num).map(|b| b[0].0.header().clone())
+			}
+			BlockId::Hash(hash) => {
+				self.chain.read().block_by_hash.get(hash).map(|b| b.header().clone())
+			}
 		})
 	}
 }

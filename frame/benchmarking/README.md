@@ -21,13 +21,13 @@ import process running smoothly.
 
 To achieve this, we need to model how long it takes to run each function in the runtime by:
 
-* Creating custom benchmarking logic that executes a specific code path of a function.
-* Executing the benchmark in the Wasm execution environment, on a specific set of hardware, with a
+- Creating custom benchmarking logic that executes a specific code path of a function.
+- Executing the benchmark in the Wasm execution environment, on a specific set of hardware, with a
   custom runtime configuration, etc...
-* Executing the benchmark across controlled ranges of possible values that may affect the result of
+- Executing the benchmark across controlled ranges of possible values that may affect the result of
   the benchmark (called "components").
-* Executing the benchmark multiple times at each point in order to isolate and remove outliers.
-* Using the results of the benchmark to create a linear model of the function across its components.
+- Executing the benchmark multiple times at each point in order to isolate and remove outliers.
+- Using the results of the benchmark to create a linear model of the function across its components.
 
 With this linear model, we are able to estimate ahead of time how long it takes to execute some
 logic, and thus make informed decisions without actually spending any significant resources at
@@ -40,10 +40,10 @@ runtime state or input becomes too complex.
 
 The benchmarking framework comes with the following tools:
 
-* [A set of macros](./src/lib.rs) (`benchmarks!`, `add_benchmark!`, etc...) to make it easy to
+- [A set of macros](./src/lib.rs) (`benchmarks!`, `add_benchmark!`, etc...) to make it easy to
   write, test, and add runtime benchmarks.
-* [A set of linear regression analysis functions](./src/analysis.rs) for processing benchmark data.
-* [A CLI extension](../../utils/frame/benchmarking-cli/) to make it easy to execute benchmarks on your
+- [A set of linear regression analysis functions](./src/analysis.rs) for processing benchmark data.
+- [A CLI extension](../../utils/frame/benchmarking-cli/) to make it easy to execute benchmarks on your
   node.
 
 The end-to-end benchmarking pipeline is disabled by default when compiling a node. If you want to
@@ -102,7 +102,7 @@ fn test_benchmark_[benchmark_name]<T>::() -> Result<(), &'static str>
 Simply add these functions to a unit test and ensure that the result of the function is `Ok(())`.
 
 > **Note:** If your test runtime and production runtime have different configurations, you may get
-different results when testing your benchmark and actually running it.
+> different results when testing your benchmark and actually running it.
 
 In general, benchmarks returning `Ok(())` is all you need to check for since it signals the executed
 extrinsic has completed successfully. However, you can optionally include a `verify` block with your
@@ -120,9 +120,11 @@ cargo test -p pallet-balances --features runtime-benchmarks
 ```
 
 > NOTE: Substrate uses a virtual workspace which does not allow you to compile with feature flags.
+>
 > ```
 > error: --features is not allowed in the root of a virtual workspace`
 > ```
+>
 > To solve this, navigate to the folder of the node (`cd bin/node/cli`) or pallet (`cd frame/pallet`) and run the command there.
 
 ## Adding Benchmarks
@@ -192,10 +194,10 @@ default template used [here](../../utils/frame/benchmarking-cli/src/template.hbs
 
 There are some custom Handlebars helpers included with our output generation:
 
-* `underscore`: Add an underscore to every 3rd character from the right of a string. Primarily to be
-used for delimiting large numbers.
-* `join`: Join an array of strings into a space-separated string for the template. Primarily to be
-used for joining all the arguments passed to the CLI.
+- `underscore`: Add an underscore to every 3rd character from the right of a string. Primarily to be
+  used for delimiting large numbers.
+- `join`: Join an array of strings into a space-separated string for the template. Primarily to be
+  used for joining all the arguments passed to the CLI.
 
 To get a full list of available options when running benchmarks, run:
 

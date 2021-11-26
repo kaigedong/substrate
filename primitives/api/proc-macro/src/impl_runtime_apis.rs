@@ -641,7 +641,7 @@ fn generate_runtime_api_versions(impls: &[ItemImpl]) -> Result<TokenStream> {
 				"Two traits with the same name detected! \
 					The trait name is used to generate its ID. \
 					Please rename one trait at the declaration!",
-			))
+			));
 		}
 
 		let id: Path = parse_quote!( #path ID );

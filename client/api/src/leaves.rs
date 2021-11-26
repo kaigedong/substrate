@@ -94,8 +94,8 @@ where
 				for (number, hashes) in vals.into_iter() {
 					storage.insert(Reverse(number), hashes);
 				}
-			},
-			None => {},
+			}
+			None => {}
 		}
 		Ok(Self { storage, pending_added: Vec::new(), pending_removed: Vec::new() })
 	}
@@ -134,7 +134,7 @@ where
 	/// will be pruned soon afterwards anyway.
 	pub fn finalize_height(&mut self, number: N) -> FinalizationDisplaced<H, N> {
 		let boundary = if number == N::zero() {
-			return FinalizationDisplaced { leaves: BTreeMap::new() }
+			return FinalizationDisplaced { leaves: BTreeMap::new() };
 		} else {
 			number - N::one()
 		};

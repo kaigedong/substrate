@@ -105,7 +105,7 @@ impl<BlockHash: Hash, Key: Hash> RefWindow<BlockHash, Key> {
 						record.inserted.into_iter(),
 						record.deleted,
 					);
-				},
+				}
 				None => break,
 			}
 			block += 1;

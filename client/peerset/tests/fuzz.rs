@@ -97,18 +97,18 @@ fn test_once() {
 							incoming_nodes.remove(&id);
 						}
 						assert!(connected_nodes.insert(peer_id));
-					},
+					}
 					Poll::Ready(Some(Message::Drop { peer_id, .. })) => {
 						connected_nodes.remove(&peer_id);
-					},
+					}
 					Poll::Ready(Some(Message::Accept(n))) => {
 						assert!(connected_nodes.insert(incoming_nodes.remove(&n).unwrap()))
-					},
+					}
 					Poll::Ready(Some(Message::Reject(n))) => {
 						assert!(!connected_nodes.contains(&incoming_nodes.remove(&n).unwrap()))
-					},
+					}
 					Poll::Ready(None) => panic!(),
-					Poll::Pending => {},
+					Poll::Pending => {}
 				},
 
 				// If we generate 1, discover a new node.
@@ -116,29 +116,31 @@ fn test_once() {
 					let new_id = PeerId::random();
 					known_nodes.insert(new_id.clone());
 					peerset.add_to_peers_set(SetId::from(0), new_id);
-				},
+				}
 
 				// If we generate 2, adjust a random reputation.
-				2 =>
+				2 => {
 					if let Some(id) = known_nodes.iter().choose(&mut rng) {
 						let val = Uniform::new_inclusive(i32::MIN, i32::MAX).sample(&mut rng);
 						peerset_handle.report_peer(id.clone(), ReputationChange::new(val, ""));
-					},
+					}
+				}
 
 				// If we generate 3, disconnect from a random node.
-				3 =>
+				3 => {
 					if let Some(id) = connected_nodes.iter().choose(&mut rng).cloned() {
 						connected_nodes.remove(&id);
 						peerset.dropped(SetId::from(0), id, DropReason::Unknown);
-					},
+					}
+				}
 
 				// If we generate 4, connect to a random node.
 				4 => {
 					if let Some(id) = known_nodes
 						.iter()
 						.filter(|n| {
-							incoming_nodes.values().all(|m| m != *n) &&
-								!connected_nodes.contains(*n)
+							incoming_nodes.values().all(|m| m != *n)
+								&& !connected_nodes.contains(*n)
 						})
 						.choose(&mut rng)
 					{
@@ -146,7 +148,7 @@ fn test_once() {
 						incoming_nodes.insert(next_incoming_id.clone(), id.clone());
 						next_incoming_id.0 += 1;
 					}
-				},
+				}
 
 				// 5 and 6 are the reserved-only mode.
 				5 => peerset_handle.set_reserved_only(SetId::from(0), true),
@@ -160,12 +162,13 @@ fn test_once() {
 						peerset_handle.add_reserved_peer(SetId::from(0), id.clone());
 						reserved_nodes.insert(id.clone());
 					}
-				},
-				8 =>
+				}
+				8 => {
 					if let Some(id) = reserved_nodes.iter().choose(&mut rng).cloned() {
 						reserved_nodes.remove(&id);
 						peerset_handle.remove_reserved_peer(SetId::from(0), id);
-					},
+					}
+				}
 
 				_ => unreachable!(),
 			}

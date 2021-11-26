@@ -6,4 +6,3 @@ languages and execution engines with larger wasm modules.
 
 Files in this directory are used by `#[extra]` benchmarks in `src/benchmarking`. The json
 files are for informational purposes only and are not consumed by the benchmarks.
-

@@ -124,7 +124,7 @@ impl VersionedRuntime {
 				}
 
 				result
-			},
+			}
 			None => {
 				log::warn!(target: "wasm-runtime", "Ran out of free WASM instances");
 
@@ -132,7 +132,7 @@ impl VersionedRuntime {
 				let mut instance = self.module.new_instance()?;
 
 				f(&self.module, &mut *instance, self.version.as_ref(), ext)
-			},
+			}
 		}
 	}
 }
@@ -224,9 +224,9 @@ impl RuntimeCache {
 		let mut runtimes = self.runtimes.lock(); // this must be released prior to calling f
 		let pos = runtimes.iter().position(|r| {
 			r.as_ref().map_or(false, |r| {
-				r.wasm_method == wasm_method &&
-					r.code_hash == *code_hash &&
-					r.heap_pages == heap_pages
+				r.wasm_method == wasm_method
+					&& r.code_hash == *code_hash
+					&& r.heap_pages == heap_pages
 			})
 		});
 
@@ -259,29 +259,30 @@ impl RuntimeCache {
 							result.version,
 							time.elapsed().as_millis(),
 						);
-					},
+					}
 					Err(ref err) => {
 						log::warn!(target: "wasm-runtime", "Cannot create a runtime: {:?}", err);
-					},
+					}
 				}
 
 				Arc::new(result?)
-			},
+			}
 		};
 
 		// Rearrange runtimes by last recently used.
 		match pos {
-			Some(0) => {},
-			Some(n) =>
+			Some(0) => {}
+			Some(n) => {
 				for i in (1..n + 1).rev() {
 					runtimes.swap(i, i - 1);
-				},
+				}
+			}
 			None => {
 				runtimes[MAX_RUNTIMES - 1] = Some(runtime.clone());
 				for i in (1..MAX_RUNTIMES).rev() {
 					runtimes.swap(i, i - 1);
 				}
-			},
+			}
 		}
 		drop(runtimes);
 
@@ -313,7 +314,7 @@ pub fn create_wasm_runtime_with_code(
 				allow_missing_func_imports,
 			)
 			.map(|runtime| -> Arc<dyn WasmModule> { Arc::new(runtime) })
-		},
+		}
 		#[cfg(feature = "wasmtime")]
 		WasmExecutionMethod::Compiled => sc_executor_wasmtime::create_runtime(
 			blob,

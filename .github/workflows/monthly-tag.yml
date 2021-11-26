@@ -18,7 +18,7 @@ jobs:
       - name: Checkout branch "master"
         uses: actions/checkout@v2
         with:
-          ref: 'master'
+          ref: "master"
           fetch-depth: 0
       - name: Generate changelog
         id: changelog

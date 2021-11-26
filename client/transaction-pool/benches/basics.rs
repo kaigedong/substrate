@@ -70,7 +70,7 @@ impl ChainApi for TestApi {
 
 		match self.block_id_to_number(at) {
 			Ok(Some(num)) if num > 5 => return ready(Ok(Err(InvalidTransaction::Stale.into()))),
-			_ => {},
+			_ => {}
 		}
 
 		ready(Ok(Ok(ValidTransaction {

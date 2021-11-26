@@ -142,7 +142,7 @@ impl Order {
 	fn from_size(size: u32) -> Result<Self, Error> {
 		let clamped_size = if size > MAX_POSSIBLE_ALLOCATION {
 			log::warn!(target: LOG_TARGET, "going to fail due to allocating {:?}", size);
-			return Err(Error::RequestedAllocationTooLarge)
+			return Err(Error::RequestedAllocationTooLarge);
 		} else if size < MIN_POSSIBLE_ALLOCATION {
 			MIN_POSSIBLE_ALLOCATION
 		} else {
@@ -217,7 +217,7 @@ impl Link {
 /// |            0 | next element link |
 /// +--------------+-------------------+
 /// ```
-/// 
+///
 /// ## Occupied header
 /// ```ignore
 /// 64             32                  0
@@ -381,7 +381,7 @@ impl FreeingBumpHeapAllocator {
 		size: WordSize,
 	) -> Result<Pointer<u8>, Error> {
 		if self.poisoned {
-			return Err(error("the allocator has been poisoned"))
+			return Err(error("the allocator has been poisoned"));
 		}
 
 		let bomb = PoisonBomb { poisoned: &mut self.poisoned };
@@ -404,11 +404,11 @@ impl FreeingBumpHeapAllocator {
 				self.free_lists[order] = next_free;
 
 				header_ptr
-			},
+			}
 			Link::Nil => {
 				// Corresponding free list is empty. Allocate a new item.
 				Self::bump(&mut self.bumper, order.size() + HEADER_SIZE, mem.size())?
-			},
+			}
 		};
 
 		// Write the order in the occupied header.
@@ -452,7 +452,7 @@ impl FreeingBumpHeapAllocator {
 		ptr: Pointer<u8>,
 	) -> Result<(), Error> {
 		if self.poisoned {
-			return Err(error("the allocator has been poisoned"))
+			return Err(error("the allocator has been poisoned"));
 		}
 
 		let bomb = PoisonBomb { poisoned: &mut self.poisoned };
@@ -498,7 +498,7 @@ impl FreeingBumpHeapAllocator {
 				bumper,
 				heap_end
 			);
-			return Err(Error::AllocatorOutOfSpace)
+			return Err(Error::AllocatorOutOfSpace);
 		}
 
 		let res = *bumper;
@@ -511,7 +511,7 @@ impl FreeingBumpHeapAllocator {
 		mem: &mut M,
 	) -> Result<(), Error> {
 		if mem.size() < *last_observed_memory_size {
-			return Err(Error::MemoryShrinked)
+			return Err(Error::MemoryShrinked);
 		}
 		*last_observed_memory_size = mem.size();
 		Ok(())
@@ -731,7 +731,7 @@ mod tests {
 
 		// then
 		match ptr.unwrap_err() {
-			Error::AllocatorOutOfSpace => {},
+			Error::AllocatorOutOfSpace => {}
 			e => panic!("Expected allocator out of space error, got: {:?}", e),
 		}
 	}
@@ -750,7 +750,7 @@ mod tests {
 		// then
 		// there is no room for another half page incl. its 8 byte prefix
 		match ptr2.unwrap_err() {
-			Error::AllocatorOutOfSpace => {},
+			Error::AllocatorOutOfSpace => {}
 			e => panic!("Expected allocator out of space error, got: {:?}", e),
 		}
 	}
@@ -779,7 +779,7 @@ mod tests {
 
 		// then
 		match ptr.unwrap_err() {
-			Error::RequestedAllocationTooLarge => {},
+			Error::RequestedAllocationTooLarge => {}
 			e => panic!("Expected allocation size too large error, got: {:?}", e),
 		}
 	}
@@ -811,7 +811,7 @@ mod tests {
 
 		// then
 		match ptr.unwrap_err() {
-			Error::AllocatorOutOfSpace => {},
+			Error::AllocatorOutOfSpace => {}
 			e => panic!("Expected allocator out of space error, got: {:?}", e),
 		}
 	}

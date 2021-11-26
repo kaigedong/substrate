@@ -842,11 +842,11 @@ fn ready_set_should_eventually_resolve_when_block_update_arrives() {
 	match ready_set_future.poll_unpin(&mut context) {
 		Poll::Pending => {
 			panic!("Ready set should become ready after block update!");
-		},
+		}
 		Poll::Ready(iterator) => {
 			let data = iterator.collect::<Vec<_>>();
 			assert_eq!(data.len(), 1);
-		},
+		}
 	}
 }
 

@@ -138,7 +138,7 @@ impl<TBlock: BlockT> RequestHandler<TBlock> {
 			match self.handle_request(payload, pending_response) {
 				Ok(()) => {
 					debug!(target: "sync", "Handled grandpa warp sync request from {}.", peer)
-				},
+				}
 				Err(e) => debug!(
 					target: "sync",
 					"Failed to handle grandpa warp sync request from {}: {}",

@@ -26,6 +26,7 @@ and use the funds to pay developers.
 ### Dispatchable Functions
 
 General spending/proposal protocol:
+
 - `propose_spend` - Make a spending proposal and stake the required deposit.
 - `reject_proposal` - Reject a proposal, slashing the deposit.
 - `approve_proposal` - Accept the proposal, returning the deposit.

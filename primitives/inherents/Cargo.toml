@@ -13,12 +13,13 @@ readme = "README.md"
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
 
-
 [dependencies]
 sp-std = { version = "4.0.0-dev", default-features = false, path = "../std" }
 sp-core = { version = "4.0.0-dev", default-features = false, path = "../core" }
 sp-runtime = { version = "4.0.0-dev", path = "../runtime", optional = true }
-codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false, features = ["derive"] }
+codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false, features = [
+	"derive"
+] }
 thiserror = { version = "1.0.30", optional = true }
 impl-trait-for-tuples = "0.2.0"
 async-trait = { version = "0.1.50", optional = true }
@@ -27,12 +28,5 @@ async-trait = { version = "0.1.50", optional = true }
 futures = "0.3.9"
 
 [features]
-default = [ "std" ]
-std = [
-	"sp-std/std",
-	"codec/std",
-	"sp-core/std",
-	"thiserror",
-	"sp-runtime",
-	"async-trait",
-]
+default = ["std"]
+std = ["sp-std/std", "codec/std", "sp-core/std", "thiserror", "sp-runtime", "async-trait"]

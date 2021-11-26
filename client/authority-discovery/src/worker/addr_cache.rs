@@ -58,7 +58,7 @@ impl AddrCache {
 				addresses,
 			);
 
-			return
+			return;
 		} else if peer_ids.len() > 1 {
 			log::warn!(
 				target: super::LOG_TARGET,
@@ -143,7 +143,7 @@ impl AddrCache {
 			{
 				addresses
 			} else {
-				continue
+				continue;
 			};
 
 			self.remove_authority_id_from_peer_ids(

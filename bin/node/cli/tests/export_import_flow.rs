@@ -80,7 +80,7 @@ impl<'a> ExportImportRevertExecutor<'a> {
 		let arguments: Vec<&str> = match format_opt {
 			FormatOpt::Binary => {
 				vec![&sub_command_str, "--dev", "--pruning", "archive", "--binary", "-d"]
-			},
+			}
 			FormatOpt::Json => vec![&sub_command_str, "--dev", "--pruning", "archive", "-d"],
 		};
 
@@ -92,7 +92,7 @@ impl<'a> ExportImportRevertExecutor<'a> {
 			SubCommand::ImportBlocks => {
 				tmp = tempdir().unwrap();
 				tmp.path()
-			},
+			}
 		};
 
 		// Running the command and capturing the output.

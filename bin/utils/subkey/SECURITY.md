@@ -5,14 +5,17 @@ You can read more about security and risks in the [Polkadot Wiki](https://wiki.p
 The Polkadot network has a few **test networks**, e.g. **Westend**. Test networks are a great way to experiment and learn safely as you can lose tokens on those networks without any financial consequences.
 
 `subkey` generates and provides 2 pieces of **secret** information:
+
 - **secret phrase**: a bunch of words, exactly 12 by default (can be 12, 15, 18, 21 or 24)
 - **secret seed**: a big hexadecimal value
 
 There are 2 risks related to private keys:
+
 - loss of keys: this can happen if you don't have a proper backup
 - leak of the keys: this can unfortunately happen in many ways, including malware, phishing, key logger, backups on system that are online and not properly secured
 
 You want to ensure that:
+
 - you **do not lose** those secrets
 - **no one but you can access** those secrets
 

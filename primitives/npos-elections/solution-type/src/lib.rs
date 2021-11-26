@@ -140,10 +140,10 @@ fn check_attributes(input: ParseStream) -> syn::Result<bool> {
 		return Err(syn::Error::new_spanned(
 			extra_attr.clone(),
 			"compact solution can accept only #[compact]",
-		))
+		));
 	}
 	if attrs.is_empty() {
-		return Ok(false)
+		return Ok(false);
 	}
 	let attr = attrs.pop().expect("attributes vec with len 1 can be popped.");
 	if attr.path.is_ident("compact") {
@@ -168,7 +168,7 @@ impl Parse for SolutionDef {
 		let generics: syn::AngleBracketedGenericArguments = input.parse()?;
 
 		if generics.args.len() != 3 {
-			return Err(syn_err("Must provide 3 generic args."))
+			return Err(syn_err("Must provide 3 generic args."));
 		}
 
 		let expected_types = ["VoterIndex", "TargetIndex", "Accuracy"];
@@ -184,7 +184,7 @@ impl Parse for SolutionDef {
 						ty,
 						format!("Expected binding: `{} = ...`", expected),
 					))
-				},
+				}
 				syn::GenericArgument::Binding(syn::Binding { ident, ty, .. }) => {
 					// check that we have the right keyword for this position in the argument list
 					if ident == expected {
@@ -192,7 +192,7 @@ impl Parse for SolutionDef {
 					} else {
 						Err(syn::Error::new_spanned(ident, format!("Expected `{}`", expected)))
 					}
-				},
+				}
 				_ => Err(syn_err("Wrong type of generic provided. Must be a `type`.")),
 			})
 			.collect::<Result<_>>()?;
@@ -231,7 +231,7 @@ fn imports() -> Result<TokenStream2> {
 		Ok(FoundCrate::Name(sp_npos_elections)) => {
 			let ident = syn::Ident::new(&sp_npos_elections, Span::call_site());
 			Ok(quote!( extern crate #ident as _npos; ))
-		},
+		}
 		Err(e) => Err(syn::Error::new(Span::call_site(), e)),
 	}
 }

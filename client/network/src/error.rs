@@ -82,9 +82,9 @@ impl std::error::Error for Error {
 			Self::Io(ref err) => Some(err),
 			Self::Client(ref err) => Some(err),
 			Self::Prometheus(ref err) => Some(err),
-			Self::DuplicateBootnode { .. } |
-			Self::AddressesForAnotherTransport { .. } |
-			Self::DuplicateRequestResponseProtocol { .. } => None,
+			Self::DuplicateBootnode { .. }
+			| Self::AddressesForAnotherTransport { .. }
+			| Self::DuplicateRequestResponseProtocol { .. } => None,
 		}
 	}
 }

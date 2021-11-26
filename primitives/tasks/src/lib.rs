@@ -115,10 +115,10 @@ mod inner {
 								);
 
 								// This will drop sender without sending anything.
-								return
-							},
+								return;
+							}
 						}
-					},
+					}
 					Err(e) => {
 						log::error!(
 							target: "runtime",
@@ -126,8 +126,8 @@ mod inner {
 							e,
 						);
 
-						return
-					},
+						return;
+					}
 				};
 
 				let _ = sender.send(result);
